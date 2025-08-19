@@ -1,9 +1,11 @@
 // lib/features/dashboard/presentation/screens/dashboard_screen.dart
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:quit_suggar/core/providers/sugar_tracking_provider.dart';
 import 'package:quit_suggar/core/router/navigation_helper.dart';
+import 'package:quit_suggar/core/services/sugar_tracking_service.dart';
+import 'package:quit_suggar/core/services/logger_service.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
@@ -13,12 +15,11 @@ class DashboardScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // useState is a hook that manages a simple piece of state
-    final lastScannedCode = useState<String?>(null);
+    // Get sugar tracking data from provider
+    final sugarTracking = ref.watch(sugarTrackingProvider);
+    final dailySummary = sugarTracking.getDailySummary();
 
-    // Placeholder data
-    final double currentSugar = 14.0;
-    final double dailyGoal = 25.0;
+    AppLogger.logUI('Dashboard screen built - Daily summary: ${dailySummary.totalSugar.toStringAsFixed(1)}g/${dailySummary.dailyLimit.toStringAsFixed(0)}g');
 
     return CupertinoPageScaffold(
       backgroundColor: AppTheme.darkBackground,
@@ -39,18 +40,15 @@ class DashboardScreen extends HookConsumerWidget {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                _buildSugarProgress(context, currentSugar, dailyGoal),
+                _buildSugarProgress(context, dailySummary),
                 const SizedBox(height: 24),
-                _buildMotivationalCard(context),
+                _buildMotivationalCard(context, dailySummary),
                 const SizedBox(height: 16),
                 ShadButton(
                   onPressed: () async {
+                    AppLogger.logUserAction('Pressed scan product button');
                     // Navigate to the scanner using NavigationHelper
-                    final String? barcode = await NavigationHelper.goToScanner(context);
-                    // When the scanner screen pops, update our state
-                    if (barcode != null) {
-                      lastScannedCode.value = barcode;
-                    }
+                    await NavigationHelper.goToScanner(context);
                   },
                   child: Container(
                     decoration: BoxDecoration(
@@ -76,7 +74,9 @@ class DashboardScreen extends HookConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 24),
-                _buildLastScannedCard(context, lastScannedCode.value),
+                _buildTodayEntries(context, dailySummary.entries),
+                const SizedBox(height: 16),
+                _buildXPCard(context, dailySummary.xpPoints),
               ],
             ),
           ),
@@ -85,20 +85,22 @@ class DashboardScreen extends HookConsumerWidget {
     );
   }
 
-  Widget _buildMotivationalCard(BuildContext context) {
+  Widget _buildMotivationalCard(BuildContext context, DailySummary summary) {
+    AppLogger.logUI('Building motivational card with status: ${summary.status.name}');
+    
     return Container(
       decoration: CardStyles.primary,
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
           Text(
-            'You\'re doing great!',
+            summary.motivationalMessage,
             style: EmotionalTextStyles.achievement,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
           Text(
-            'Every day without sugar is a victory. Keep going!',
+            '${summary.entries.length} items tracked today',
             style: EmotionalTextStyles.supportive,
             textAlign: TextAlign.center,
           ),
@@ -107,7 +109,30 @@ class DashboardScreen extends HookConsumerWidget {
     );
   }
 
-  Widget _buildLastScannedCard(BuildContext context, String? lastCode) {
+  Widget _buildTodayEntries(BuildContext context, List<FoodEntry> entries) {
+    AppLogger.logUI('Building today entries section with ${entries.length} entries');
+    
+    if (entries.isEmpty) {
+      return Container(
+        decoration: CardStyles.primary,
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Today\'s Food Log:',
+              style: EmotionalTextStyles.motivational.copyWith(fontSize: 16),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'No items tracked yet. Start by scanning a product!',
+              style: EmotionalTextStyles.supportive,
+            ),
+          ],
+        ),
+      );
+    }
+
     return Container(
       decoration: CardStyles.primary,
       padding: const EdgeInsets.all(16),
@@ -115,13 +140,76 @@ class DashboardScreen extends HookConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Last Scanned Product:',
+            'Today\'s Food Log:',
             style: EmotionalTextStyles.motivational.copyWith(fontSize: 16),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
+          ...entries.map((entry) => _buildEntryItem(context, entry)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEntryItem(BuildContext context, FoodEntry entry) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppTheme.cardBackground.withValues(alpha: .5),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AppTheme.borderColor),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  entry.displayName,
+                  style: EmotionalTextStyles.supportive.copyWith(fontWeight: FontWeight.w600),
+                ),
+                Text(
+                  '${entry.portionGrams.toStringAsFixed(0)}g portion',
+                  style: EmotionalTextStyles.supportive.copyWith(fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: AppTheme.warningRed.withValues(alpha: .2),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              '${entry.sugarAmount.toStringAsFixed(1)}g',
+              style: EmotionalTextStyles.warning.copyWith(fontSize: 14),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildXPCard(BuildContext context, int xpPoints) {
+    AppLogger.logUI('Building XP card with $xpPoints points');
+    
+    return Container(
+      decoration: CardStyles.achievement,
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(
+            CupertinoIcons.star_fill,
+            color: AppTheme.victoryColor,
+            size: 24,
+          ),
+          const SizedBox(width: 8),
           Text(
-            lastCode ?? 'No products scanned yet. Start your journey!',
-            style: EmotionalTextStyles.supportive,
+            '$xpPoints XP earned today',
+            style: EmotionalTextStyles.achievement,
           ),
         ],
       ),
@@ -129,26 +217,37 @@ class DashboardScreen extends HookConsumerWidget {
   }
 
   // Helper widget for the progress circle with emotional design
-  Widget _buildSugarProgress(BuildContext context, double current, double goal) {
-    final double percentage = (current / goal).clamp(0.0, 1.0);
-    final theme = ShadTheme.of(context);
+  Widget _buildSugarProgress(BuildContext context, DailySummary summary) {
+    final double percentage = summary.progressPercentage;
+    
+    AppLogger.logUI('Building sugar progress with ${summary.totalSugar.toStringAsFixed(1)}g/${summary.dailyLimit.toStringAsFixed(0)}g (${(percentage * 100).toStringAsFixed(0)}%) - Status: ${summary.status.name}');
     
     // Determine emotional state based on sugar intake
-    final bool isOverLimit = current > goal;
-    final bool isCloseToLimit = current > goal * 0.8;
+    late Color progressColor;
+    late String motivationalText;
+    late String subtitleText;
     
-    Color progressColor = AppTheme.victoryColor;
-    String motivationalText = 'Great job!';
-    String subtitleText = 'You\'re under your limit';
-    
-    if (isOverLimit) {
-      progressColor = AppTheme.warningRed;
-      motivationalText = 'Stay strong!';
-      subtitleText = 'You\'re over your limit - tomorrow is a new day';
-    } else if (isCloseToLimit) {
-      progressColor = AppTheme.cravingColor;
-      motivationalText = 'Be careful!';
-      subtitleText = 'You\'re close to your limit';
+    switch (summary.status) {
+      case SugarStatus.green:
+        progressColor = AppTheme.victoryColor;
+        motivationalText = 'Great job!';
+        subtitleText = 'You\'re under your limit';
+        break;
+      case SugarStatus.yellow:
+        progressColor = AppTheme.cravingColor;
+        motivationalText = 'Be careful!';
+        subtitleText = 'You\'re close to your limit';
+        break;
+      case SugarStatus.red:
+        progressColor = AppTheme.warningRed;
+        motivationalText = 'Stay strong!';
+        subtitleText = 'You\'re very close to your limit';
+        break;
+      case SugarStatus.overLimit:
+        progressColor = AppTheme.relapseColor;
+        motivationalText = 'Tomorrow is a new day!';
+        subtitleText = 'You\'ve exceeded your limit';
+        break;
     }
     
     return Container(
@@ -179,11 +278,11 @@ class DashboardScreen extends HookConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        '${current.toStringAsFixed(0)}g',
+                        '${summary.totalSugar.toStringAsFixed(0)}g',
                         style: EmotionalTextStyles.progress,
                       ),
                       Text(
-                        'of ${goal.toStringAsFixed(0)}g',
+                        'of ${summary.dailyLimit.toStringAsFixed(0)}g',
                         style: EmotionalTextStyles.supportive,
                       ),
                     ],
@@ -198,6 +297,16 @@ class DashboardScreen extends HookConsumerWidget {
             style: EmotionalTextStyles.supportive,
             textAlign: TextAlign.center,
           ),
+          if (summary.remainingSugar > 0) ...[
+            const SizedBox(height: 8),
+            Text(
+              '${summary.remainingSugar.toStringAsFixed(0)}g remaining',
+              style: EmotionalTextStyles.supportive.copyWith(
+                color: AppTheme.victoryColor,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
         ],
       ),
     );

@@ -4,9 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:quit_suggar/core/router/app_router.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
+import 'package:quit_suggar/core/services/logger_service.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 void main() {
+  AppLogger.info('App starting up');
+  
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -15,9 +18,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    AppLogger.info('Building MyApp widget');
+    
     return ShadApp.custom(
       darkTheme: AppTheme.darkTheme,
       appBuilder: (context) {
+        AppLogger.info('Building CupertinoApp.router');
+        
         return CupertinoApp.router(
           theme: CupertinoTheme.of(context),
           localizationsDelegates: [
