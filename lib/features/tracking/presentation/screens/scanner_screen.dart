@@ -1,17 +1,22 @@
 // lib/features/tracking/presentation/screens/scanner_screen.dart
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:quit_suggar/core/providers/sugar_tracking_provider.dart';
 import 'package:quit_suggar/core/services/openfoodfacts_service.dart';
 import 'package:quit_suggar/core/services/logger_service.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 
 class ScannerScreen extends HookConsumerWidget {
   const ScannerScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Use a flag to prevent multiple sheets from opening
+    final isProcessing = useState(false);
+    
     AppLogger.logScanner('Scanner screen opened');
     
     return CupertinoPageScaffold(
@@ -32,13 +37,26 @@ class ScannerScreen extends HookConsumerWidget {
       ),
       child: MobileScanner(
         onDetect: (capture) async {
+          // Prevent multiple processing
+          if (isProcessing.value) {
+            AppLogger.logScanner('Already processing a barcode, ignoring new scan');
+            return;
+          }
+          
           final List<Barcode> barcodes = capture.barcodes;
           if (barcodes.isNotEmpty) {
             final String? code = barcodes.first.rawValue;
             if (code != null) {
               AppLogger.logScanner('Barcode detected: $code');
-              // Fetch product info and show details
-              await _showProductDetails(context, ref, code);
+              isProcessing.value = true;
+              
+              try {
+                // Fetch product info and show details
+                await _showProductDetails(context, ref, code);
+              } finally {
+                // Reset the flag after processing
+                isProcessing.value = false;
+              }
             }
           }
         },
@@ -71,9 +89,9 @@ class ScannerScreen extends HookConsumerWidget {
     Navigator.of(context).pop();
 
     if (product != null) {
-      AppLogger.logScanner('Product found, showing details dialog');
-      // Show product details dialog
-      await _showProductDialog(context, ref, product);
+      AppLogger.logScanner('Product found, showing bottom sheet');
+      // Show product details in bottom sheet
+      await _showProductBottomSheet(context, ref, product);
     } else {
       AppLogger.logScanner('Product not found, showing error dialog');
       // Show error dialog
@@ -96,95 +114,34 @@ class ScannerScreen extends HookConsumerWidget {
     }
   }
 
-  Future<void> _showProductDialog(BuildContext context, WidgetRef ref, ProductInfo product) async {
+  Future<void> _showProductBottomSheet(BuildContext context, WidgetRef ref, ProductInfo product) async {
     double selectedPortion = 100.0; // Default to 100g
     final sugarAmount = product.calculateSugarForPortion(selectedPortion);
     
-    AppLogger.logScanner('Showing product dialog for: ${product.name}');
+    AppLogger.logScanner('Showing product bottom sheet for: ${product.name}');
     
-    showCupertinoDialog(
+    showShadSheet(
+      side: ShadSheetSide.bottom,
       context: context,
       builder: (context) => StatefulBuilder(
-        builder: (context, setState) => CupertinoAlertDialog(
-          title: Text(
-            product.name,
-            style: EmotionalTextStyles.motivational.copyWith(fontSize: 16),
-          ),
-          content: Column(
-            children: [
-              if (product.brand != null) ...[
-                Text(
-                  'Brand: ${product.brand}',
-                  style: EmotionalTextStyles.supportive,
-                ),
-                const SizedBox(height: 8),
-              ],
-              if (product.sugarPer100g != null) ...[
-                Text(
-                  'Sugar: ${product.sugarPer100g!.toStringAsFixed(1)}g per 100g',
-                  style: EmotionalTextStyles.warning,
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'Portion Size:',
-                  style: EmotionalTextStyles.supportive,
-                ),
-                const SizedBox(height: 8),
-                CupertinoSlider(
-                  value: selectedPortion,
-                  min: 10.0,
-                  max: 500.0,
-                  divisions: 49,
-                  onChanged: (value) {
-                    setState(() {
-                      selectedPortion = value;
-                    });
-                    AppLogger.logUserAction('Adjusted portion size', {'portion_grams': value});
-                  },
-                ),
-                Text(
-                  '${selectedPortion.toStringAsFixed(0)}g',
-                  style: EmotionalTextStyles.progress.copyWith(fontSize: 16),
-                ),
-                const SizedBox(height: 8),
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: CardStyles.warning,
-                  child: Text(
-                    'Sugar in this portion: ${sugarAmount.toStringAsFixed(1)}g',
-                    style: EmotionalTextStyles.warning.copyWith(fontSize: 18),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ] else ...[
-                const Text(
-                  'Sugar content not available for this product.',
-                  style: TextStyle(color: AppTheme.textSecondary),
-                ),
-              ],
-            ],
-          ),
-          actions: [
-            CupertinoDialogAction(
-              child: const Text('Cancel'),
-              onPressed: () {
-                AppLogger.logUserAction('Cancelled adding product to daily log');
-                Navigator.of(context).pop();
-              },
-            ),
-            if (product.sugarPer100g != null)
-              CupertinoDialogAction(
-                child: const Text('Add to Daily Log'),
-                onPressed: () async {
-                  AppLogger.logUserAction('Confirmed adding product to daily log', {
-                    'product_name': product.name,
-                    'portion_grams': selectedPortion,
-                  });
-                  Navigator.of(context).pop();
-                  await _addProductToDailyLog(context, ref, product, selectedPortion);
-                },
-              ),
-          ],
+        builder: (context, setState) => ProductDetailsSheet(
+          product: product,
+          selectedPortion: selectedPortion,
+          sugarAmount: sugarAmount,
+          onPortionChanged: (value) {
+            setState(() {
+              selectedPortion = value;
+            });
+            AppLogger.logUserAction('Adjusted portion size', {'portion_grams': value});
+          },
+          onAddToDailyLog: () async {
+            AppLogger.logUserAction('Confirmed adding product to daily log', {
+              'product_name': product.name,
+              'portion_grams': selectedPortion,
+            });
+            Navigator.of(context).pop();
+            await _addProductToDailyLog(context, ref, product, selectedPortion);
+          },
         ),
       ),
     );
@@ -269,5 +226,142 @@ class ScannerScreen extends HookConsumerWidget {
         ),
       );
     }
+  }
+}
+
+class ProductDetailsSheet extends StatelessWidget {
+  final ProductInfo product;
+  final double selectedPortion;
+  final double sugarAmount;
+  final ValueChanged<double> onPortionChanged;
+  final VoidCallback onAddToDailyLog;
+
+  const ProductDetailsSheet({
+    super.key,
+    required this.product,
+    required this.selectedPortion,
+    required this.sugarAmount,
+    required this.onPortionChanged,
+    required this.onAddToDailyLog,
+  });
+
+  @override
+  Widget build(BuildContext context) {    
+    return ShadSheet(
+      title: Text(
+        product.name,
+        style: EmotionalTextStyles.motivational.copyWith(fontSize: 18),
+      ),
+      description: product.brand != null 
+          ? Text('Brand: ${product.brand}', style: EmotionalTextStyles.supportive)
+          : null,
+      actions: [
+        ShadButton.outline(
+          child: const Text('Cancel'),
+          onPressed: () {
+            AppLogger.logUserAction('Cancelled adding product to daily log');
+            Navigator.of(context).pop();
+          },
+        ),
+        if (product.sugarPer100g != null)
+          ShadButton(
+            onPressed: onAddToDailyLog,
+            child: const Text('Add to Daily Log'),
+          ),
+      ],
+      child: Container(
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            spacing: 16,
+            children: [
+              if (product.sugarPer100g != null) ...[
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: CardStyles.warning,
+                  child: Column(
+                    children: [
+                      Text(
+                        'Sugar Content',
+                        style: EmotionalTextStyles.motivational.copyWith(fontSize: 16),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '${product.sugarPer100g!.toStringAsFixed(1)}g per 100g',
+                        style: EmotionalTextStyles.warning,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Portion Size',
+                  style: EmotionalTextStyles.motivational.copyWith(fontSize: 16),
+                ),
+                const SizedBox(height: 8),
+                CupertinoSlider(
+                  value: selectedPortion,
+                  min: 10.0,
+                  max: 500.0,
+                  divisions: 49,
+                  onChanged: onPortionChanged,
+                ),
+                Text(
+                  '${selectedPortion.toStringAsFixed(0)}g',
+                  style: EmotionalTextStyles.progress.copyWith(fontSize: 16),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: CardStyles.progress,
+                  child: Column(
+                    children: [
+                      Text(
+                        'Sugar in this portion',
+                        style: EmotionalTextStyles.motivational.copyWith(fontSize: 14),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '${sugarAmount.toStringAsFixed(1)}g',
+                        style: EmotionalTextStyles.progress.copyWith(fontSize: 24),
+                      ),
+                    ],
+                  ),
+                ),
+              ] else ...[
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: CardStyles.warning,
+                  child: Column(
+                    children: [
+                      const Icon(
+                        CupertinoIcons.exclamationmark_triangle,
+                        color: AppTheme.warningRed,
+                        size: 32,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Sugar content not available for this product.',
+                        style: EmotionalTextStyles.warning,
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

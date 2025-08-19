@@ -137,22 +137,6 @@ class SugarTrackingService {
     }
   }
   
-  /// Get XP points based on current status
-  int getXPPoints() {
-    final status = getSugarStatus();
-    
-    switch (status) {
-      case SugarStatus.green:
-        return 20;
-      case SugarStatus.yellow:
-        return 10;
-      case SugarStatus.red:
-        return 5;
-      case SugarStatus.overLimit:
-        return 0;
-    }
-  }
-  
   /// Get daily summary
   DailySummary getDailySummary() {
     final summary = DailySummary(
@@ -162,7 +146,6 @@ class SugarTrackingService {
       progressPercentage: progressPercentage,
       status: getSugarStatus(),
       entries: todayEntries,
-      xpPoints: getXPPoints(),
       motivationalMessage: getMotivationalMessage(),
     );
     
@@ -214,7 +197,6 @@ class DailySummary {
   final double progressPercentage;
   final SugarStatus status;
   final List<FoodEntry> entries;
-  final int xpPoints;
   final String motivationalMessage;
   
   DailySummary({
@@ -224,7 +206,6 @@ class DailySummary {
     required this.progressPercentage,
     required this.status,
     required this.entries,
-    required this.xpPoints,
     required this.motivationalMessage,
   });
   

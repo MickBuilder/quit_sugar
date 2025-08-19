@@ -75,8 +75,6 @@ class DashboardScreen extends HookConsumerWidget {
                 ),
                 const SizedBox(height: 24),
                 _buildTodayEntries(context, dailySummary.entries),
-                const SizedBox(height: 16),
-                _buildXPCard(context, dailySummary.xpPoints),
               ],
             ),
           ),
@@ -186,30 +184,6 @@ class DashboardScreen extends HookConsumerWidget {
               '${entry.sugarAmount.toStringAsFixed(1)}g',
               style: EmotionalTextStyles.warning.copyWith(fontSize: 14),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildXPCard(BuildContext context, int xpPoints) {
-    AppLogger.logUI('Building XP card with $xpPoints points');
-    
-    return Container(
-      decoration: CardStyles.achievement,
-      padding: const EdgeInsets.all(16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(
-            CupertinoIcons.star_fill,
-            color: AppTheme.victoryColor,
-            size: 24,
-          ),
-          const SizedBox(width: 8),
-          Text(
-            '$xpPoints XP earned today',
-            style: EmotionalTextStyles.achievement,
           ),
         ],
       ),
