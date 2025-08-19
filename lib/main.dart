@@ -1,10 +1,12 @@
 // lib/main.dart
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:quit_suggar/features/dashboard/presentation/screens/dashboard.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:quit_suggar/core/router/app_router.dart';
+import 'package:quit_suggar/core/theme/app_theme.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 
 void main() {
-  // Wrap the entire app in a ProviderScope to enable Riverpod state management
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -13,13 +15,23 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'QuitSugar',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
-        useMaterial3: true,
-      ),
-      home: const DashboardScreen(),
+    return ShadApp.custom(
+      darkTheme: AppTheme.darkTheme,
+      appBuilder: (context) {
+        return CupertinoApp.router(
+          theme: CupertinoTheme.of(context),
+          localizationsDelegates: [
+            DefaultMaterialLocalizations.delegate,
+            DefaultCupertinoLocalizations.delegate,
+            DefaultWidgetsLocalizations.delegate,
+          ],
+          builder: (context, child) {
+            return ShadAppBuilder(child: child!);
+          },
+          routerConfig: AppRouter.router,
+          debugShowCheckedModeBanner: false,
+        );
+      },
     );
   }
 }
