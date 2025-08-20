@@ -9,10 +9,13 @@ class SugarTrackingService {
   static const String _prefsKeySugarIntake = 'current_sugar_intake';
   static const String _prefsKeyEntries = 'today_entries';
   static const String _prefsKeyLastDate = 'last_date';
+  static const String _prefsKeyStreak = 'daily_streak';
+  static const String _prefsKeyLastStreakDate = 'last_streak_date';
   
   double _dailyLimit = _defaultDailyLimit;
   double _currentSugarIntake = 0.0;
   final List<FoodEntry> _todayEntries = [];
+  int _currentStreak = 0;
   bool _isInitialized = false;
   
   // Getters
@@ -21,6 +24,7 @@ class SugarTrackingService {
   List<FoodEntry> get todayEntries => List.unmodifiable(_todayEntries);
   double get remainingSugar => (_dailyLimit - _currentSugarIntake).clamp(0.0, double.infinity);
   double get progressPercentage => (_currentSugarIntake / _dailyLimit).clamp(0.0, 1.0);
+  int get currentStreak => _currentStreak;
   bool get isInitialized => _isInitialized;
   
   /// Initialize service by loading data from persistent storage
@@ -55,6 +59,7 @@ class SugarTrackingService {
     // Load existing data
     _dailyLimit = prefs.getDouble(_prefsKeyDailyLimit) ?? _defaultDailyLimit;
     _currentSugarIntake = prefs.getDouble(_prefsKeySugarIntake) ?? 0.0;
+    _currentStreak = prefs.getInt(_prefsKeyStreak) ?? 0;
     
     // Load entries
     final entriesJson = prefs.getString(_prefsKeyEntries);
@@ -84,6 +89,7 @@ class SugarTrackingService {
         prefs.setDouble(_prefsKeyDailyLimit, _dailyLimit),
         prefs.setDouble(_prefsKeySugarIntake, _currentSugarIntake),
         prefs.setString(_prefsKeyEntries, json.encode(_todayEntries.map((e) => e.toJson()).toList())),
+        prefs.setInt(_prefsKeyStreak, _currentStreak),
       ]);
       
       AppLogger.logState('Saved to storage: ${_currentSugarIntake.toStringAsFixed(1)}g sugar, ${_todayEntries.length} entries');
@@ -94,6 +100,21 @@ class SugarTrackingService {
   
   /// Reset data for a new day
   Future<void> _resetForNewDay(SharedPreferences prefs, String today) async {
+    // Load current streak from storage, starts at 0
+    _currentStreak = prefs.getInt(_prefsKeyStreak) ?? 0;
+    
+    // Check if streak needs to be reset due to missing days
+    final lastStreakDate = prefs.getString(_prefsKeyLastStreakDate);
+    final yesterday = DateTime.now().subtract(const Duration(days: 1)).toIso8601String().split('T')[0];
+    
+    if (lastStreakDate != null && lastStreakDate != yesterday && _currentStreak > 0) {
+      // Streak was broken due to missing day(s)
+      _currentStreak = 0;
+      AppLogger.logSugarTracking('Streak broken: missed a day');
+    } else {
+      AppLogger.logSugarTracking('Current streak: $_currentStreak days');
+    }
+    
     _currentSugarIntake = 0.0;
     _todayEntries.clear();
     
@@ -101,7 +122,47 @@ class SugarTrackingService {
       prefs.setString(_prefsKeyLastDate, today),
       prefs.setDouble(_prefsKeySugarIntake, 0.0),
       prefs.setString(_prefsKeyEntries, json.encode([])),
+      prefs.setInt(_prefsKeyStreak, _currentStreak),
     ]);
+  }
+  
+  /// Evaluate and update daily streak at end of day
+  Future<bool> _evaluateDailyStreak() async {
+    final prefs = await SharedPreferences.getInstance();
+    final today = DateTime.now().toIso8601String().split('T')[0];
+    final lastStreakDate = prefs.getString(_prefsKeyLastStreakDate);
+    
+    // Only evaluate if we haven't already evaluated today
+    if (lastStreakDate == today) {
+      return false; // Already evaluated for today, no changes made
+    }
+    
+    final oldStreak = _currentStreak;
+    
+    if (_currentSugarIntake <= _dailyLimit) {
+      // Under limit - achieved daily goal, increment streak
+      _currentStreak++;
+      
+      // Mark today as a successful day
+      await prefs.setString(_prefsKeyLastStreakDate, today);
+      await prefs.setInt(_prefsKeyStreak, _currentStreak);
+      
+      AppLogger.logSugarTracking('Daily goal achieved! Streak: $_currentStreak days (stayed under ${_dailyLimit.toStringAsFixed(0)}g limit)');
+    } else {
+      // Over limit - goal not achieved, reset streak to 0
+      _currentStreak = 0;
+      await prefs.setInt(_prefsKeyStreak, 0);
+      await prefs.remove(_prefsKeyLastStreakDate);
+      
+      AppLogger.logSugarTracking('Daily goal missed: ${_currentSugarIntake.toStringAsFixed(1)}g / ${_dailyLimit.toStringAsFixed(0)}g - streak reset to 0');
+    }
+    
+    return _currentStreak != oldStreak; // Return true if streak changed
+  }
+  
+  /// Check if we should evaluate daily streak (called when user opens app)
+  Future<bool> checkDailyStreakEvaluation() async {
+    return await _evaluateDailyStreak();
   }
   
   /// Add a food entry to today's tracking
@@ -248,6 +309,7 @@ class SugarTrackingService {
       status: getSugarStatus(),
       entries: todayEntries,
       motivationalMessage: getMotivationalMessage(),
+      streak: _currentStreak,
     );
     
     AppLogger.logSugarTracking(
@@ -342,6 +404,7 @@ class DailySummary {
   final SugarStatus status;
   final List<FoodEntry> entries;
   final String motivationalMessage;
+  final int streak;
   
   DailySummary({
     required this.totalSugar,
@@ -351,6 +414,7 @@ class DailySummary {
     required this.status,
     required this.entries,
     required this.motivationalMessage,
+    required this.streak,
   });
   
   bool get isUnderLimit => totalSugar <= dailyLimit;

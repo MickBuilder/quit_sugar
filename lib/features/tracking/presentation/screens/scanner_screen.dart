@@ -1,11 +1,9 @@
 // lib/features/tracking/presentation/screens/scanner_screen.dart
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:quit_suggar/core/providers/sugar_tracking_provider.dart';
-import 'package:quit_suggar/core/router/app_router.dart';
 import 'package:quit_suggar/core/services/openfoodfacts_service.dart';
 import 'package:quit_suggar/core/services/logger_service.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
@@ -305,9 +303,9 @@ class ScannerScreen extends HookConsumerWidget {
               child: const Text('Done'),
               onPressed: () {
                 AppLogger.logUserAction('Chose to finish scanning');
-                Navigator.of(context).pop();
-                // Navigate to dashboard to show updated daily log
-                context.go(AppRouter.dashboard);
+                Navigator.of(context).pop(); // Close dialog
+                Navigator.of(context).pop(); // Close scanner screen
+                // This should return to the main navigation with dashboard tab active
               },
             ),
           ],

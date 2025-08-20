@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:quit_suggar/features/dashboard/presentation/screens/dashboard_screen.dart';
+import 'package:quit_suggar/core/router/main_navigation.dart';
 import 'package:quit_suggar/features/tracking/presentation/screens/scanner_screen.dart';
 
 class AppRouter {
@@ -17,7 +17,7 @@ class AppRouter {
           GoRoute(
             path: dashboard,
             name: 'dashboard',
-            builder: (context, state) => const DashboardScreen(),
+            builder: (context, state) => const MainNavigationScreen(),
           ),
           GoRoute(
             path: scanner,

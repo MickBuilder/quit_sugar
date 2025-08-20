@@ -2,14 +2,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:quit_suggar/core/providers/sugar_tracking_provider.dart';
-import 'package:quit_suggar/core/router/navigation_helper.dart';
 import 'package:quit_suggar/core/services/logger_service.dart';
 import 'package:quit_suggar/core/services/sugar_tracking_service.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
 import 'package:quit_suggar/features/dashboard/presentation/widgets/motivational_card.dart';
+import 'package:quit_suggar/features/dashboard/presentation/widgets/streak_counter.dart';
 import 'package:quit_suggar/features/dashboard/presentation/widgets/sugar_progress_circle.dart';
 import 'package:quit_suggar/features/dashboard/presentation/widgets/today_entries_list.dart';
-import 'package:shadcn_ui/shadcn_ui.dart';
 
 // We now use HookConsumerWidget to use hooks with Riverpod
 class DashboardScreen extends HookConsumerWidget {
@@ -24,6 +23,11 @@ class DashboardScreen extends HookConsumerWidget {
       data: (sugarTracking) {
         final dailySummary = sugarTracking.getDailySummary();
         AppLogger.logUI('Dashboard screen built - Daily summary: ${dailySummary.totalSugar.toStringAsFixed(1)}g/${dailySummary.dailyLimit.toStringAsFixed(0)}g');
+        
+        // Check daily streak evaluation when dashboard loads
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ref.read(sugarTrackingProvider.notifier).checkDailyStreakEvaluation();
+        });
         
         return _buildDashboard(context, ref, dailySummary);
       },
@@ -56,38 +60,10 @@ class DashboardScreen extends HookConsumerWidget {
             child: Column(
               children: [
                 SugarProgressCircle(summary: dailySummary),
-                const SizedBox(height: 24),
+                const SizedBox(height: 20),
+                StreakCounter(summary: dailySummary),
+                const SizedBox(height: 20),
                 MotivationalCard(summary: dailySummary),
-                const SizedBox(height: 16),
-                ShadButton(
-                  onPressed: () async {
-                    AppLogger.logUserAction('Pressed scan product button');
-                    // Navigate to the scanner using NavigationHelper
-                    await NavigationHelper.goToScanner(context);
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: EmotionalGradients.motivation,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(
-                          CupertinoIcons.qrcode_viewfinder,
-                          size: 20,
-                          color: AppTheme.textPrimary,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          'Scan a Product',
-                          style: EmotionalTextStyles.motivational.copyWith(fontSize: 18),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
                 const SizedBox(height: 24),
                 TodayEntriesList(entries: dailySummary.entries),
                 const SizedBox(height: 40), // Add bottom padding for safety

@@ -107,6 +107,16 @@ class SugarTracking extends _$SugarTracking {
     AppLogger.logState('SugarTracking state updated after resetting daily tracking');
   }
 
+  /// Check daily streak evaluation (call when app opens)
+  Future<void> checkDailyStreakEvaluation() async {
+    final serviceState = await future;
+    final streakChanged = await serviceState.checkDailyStreakEvaluation();
+    if (streakChanged) {
+      ref.invalidateSelf();
+      AppLogger.logState('SugarTracking state updated after streak evaluation');
+    }
+  }
+
   /// Get current daily summary
   DailySummary getDailySummary() {
     // For sync access, we need the service to be initialized
@@ -122,6 +132,7 @@ class SugarTracking extends _$SugarTracking {
         status: SugarStatus.green,
         entries: [],
         motivationalMessage: "Loading your daily progress...",
+        streak: 0,
       );
     }
   }
