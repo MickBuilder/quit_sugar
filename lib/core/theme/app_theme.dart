@@ -184,7 +184,7 @@ class CardStyles {
         border: Border.all(color: AppTheme.borderColor, width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withValues(alpha: 0.3),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -192,12 +192,12 @@ class CardStyles {
       );
 
   static BoxDecoration get achievement => BoxDecoration(
-        color: AppTheme.victoryColor.withOpacity(0.1),
+        color: AppTheme.victoryColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.victoryColor.withOpacity(0.3), width: 1),
+        border: Border.all(color: AppTheme.victoryColor.withValues(alpha: 0.3), width: 1),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.victoryColor.withOpacity(0.2),
+            color: AppTheme.victoryColor.withValues(alpha: 0.2),
             blurRadius: 15,
             offset: const Offset(0, 6),
           ),
@@ -205,18 +205,18 @@ class CardStyles {
       );
 
   static BoxDecoration get warning => BoxDecoration(
-        color: AppTheme.warningRed.withOpacity(0.1),
+        color: AppTheme.warningRed.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.warningRed.withOpacity(0.3), width: 1),
+        border: Border.all(color: AppTheme.warningRed.withValues(alpha: 0.3), width: 1),
       );
 
   static BoxDecoration get progress => BoxDecoration(
-        color: AppTheme.primaryOrange.withOpacity(0.1),
+        color: AppTheme.primaryOrange.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.primaryOrange.withOpacity(0.3), width: 1),
+        border: Border.all(color: AppTheme.primaryOrange.withValues(alpha: 0.3), width: 1),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.primaryOrange.withOpacity(0.2),
+            color: AppTheme.primaryOrange.withValues(alpha: 0.2),
             blurRadius: 15,
             offset: const Offset(0, 6),
           ),

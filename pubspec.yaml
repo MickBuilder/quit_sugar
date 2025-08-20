@@ -1,5 +1,5 @@
 name: quit_suggar
-description: "A new Flutter project."
+description: "A gamified mobile app to help users break free from sugar addiction by tracking daily sugar intake."
 publish_to: 'none' 
 
 
@@ -22,6 +22,7 @@ dependencies:
   go_router: ^14.6.2
   http: ^1.2.1
   logger: ^2.0.2+1
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_test:

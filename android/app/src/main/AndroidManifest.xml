@@ -2,7 +2,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
     
     <application
-        android:label="quit_suggar"
+        android:label="Quit Suggar"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

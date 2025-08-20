@@ -6,7 +6,7 @@ part of 'sugar_tracking_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$productByBarcodeHash() => r'760eee59da68fbbab99026328d6810646b8673f2';
+String _$productByBarcodeHash() => r'6afe6a6f11ae638b654258567fab86b0c6733548';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -147,7 +147,7 @@ class _ProductByBarcodeProviderElement
   String get barcode => (origin as ProductByBarcodeProvider).barcode;
 }
 
-String _$searchProductsHash() => r'237ddaf1fb07eac02ff4304c0c7f47816f5ed1f0';
+String _$searchProductsHash() => r'89562a22ef5b8df1ba920295238f2b0ee78bb6e1';
 
 /// See also [searchProducts].
 @ProviderFor(searchProducts)
@@ -268,12 +268,15 @@ class _SearchProductsProviderElement
   String get query => (origin as SearchProductsProvider).query;
 }
 
-String _$sugarTrackingHash() => r'2d1cc586f62f055b4d83ceb44afde75709f81bfa';
+String _$sugarTrackingHash() => r'7a718a13030b8154deb258b231863dda17ff956a';
 
 /// See also [SugarTracking].
 @ProviderFor(SugarTracking)
 final sugarTrackingProvider =
-    AutoDisposeNotifierProvider<SugarTracking, SugarTrackingService>.internal(
+    AutoDisposeAsyncNotifierProvider<
+      SugarTracking,
+      SugarTrackingService
+    >.internal(
       SugarTracking.new,
       name: r'sugarTrackingProvider',
       debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -283,6 +286,6 @@ final sugarTrackingProvider =
       allTransitiveDependencies: null,
     );
 
-typedef _$SugarTracking = AutoDisposeNotifier<SugarTrackingService>;
+typedef _$SugarTracking = AutoDisposeAsyncNotifier<SugarTrackingService>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

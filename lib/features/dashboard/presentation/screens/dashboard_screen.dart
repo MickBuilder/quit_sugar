@@ -1,12 +1,14 @@
 // lib/features/dashboard/presentation/screens/dashboard_screen.dart
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:quit_suggar/core/providers/sugar_tracking_provider.dart';
 import 'package:quit_suggar/core/router/navigation_helper.dart';
-import 'package:quit_suggar/core/services/sugar_tracking_service.dart';
 import 'package:quit_suggar/core/services/logger_service.dart';
+import 'package:quit_suggar/core/services/sugar_tracking_service.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
+import 'package:quit_suggar/features/dashboard/presentation/widgets/motivational_card.dart';
+import 'package:quit_suggar/features/dashboard/presentation/widgets/sugar_progress_circle.dart';
+import 'package:quit_suggar/features/dashboard/presentation/widgets/today_entries_list.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 // We now use HookConsumerWidget to use hooks with Riverpod
@@ -15,12 +17,25 @@ class DashboardScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Get sugar tracking data from provider
-    final sugarTracking = ref.watch(sugarTrackingProvider);
-    final dailySummary = sugarTracking.getDailySummary();
+    // Get sugar tracking data from provider (now async)
+    final sugarTrackingAsync = ref.watch(sugarTrackingProvider);
+    
+    return sugarTrackingAsync.when(
+      data: (sugarTracking) {
+        final dailySummary = sugarTracking.getDailySummary();
+        AppLogger.logUI('Dashboard screen built - Daily summary: ${dailySummary.totalSugar.toStringAsFixed(1)}g/${dailySummary.dailyLimit.toStringAsFixed(0)}g');
+        
+        return _buildDashboard(context, ref, dailySummary);
+      },
+      loading: () => _buildLoadingScreen(),
+      error: (error, stackTrace) {
+        AppLogger.logUI('Dashboard error: $error');
+        return _buildErrorScreen(error);
+      },
+    );
+  }
 
-    AppLogger.logUI('Dashboard screen built - Daily summary: ${dailySummary.totalSugar.toStringAsFixed(1)}g/${dailySummary.dailyLimit.toStringAsFixed(0)}g');
-
+  Widget _buildDashboard(BuildContext context, WidgetRef ref, DailySummary dailySummary) {
     return CupertinoPageScaffold(
       backgroundColor: AppTheme.darkBackground,
       navigationBar: CupertinoNavigationBar(
@@ -36,13 +51,13 @@ class DashboardScreen extends HookConsumerWidget {
           decoration: const BoxDecoration(
             gradient: EmotionalGradients.support,
           ),
-          child: Padding(
+          child: SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                _buildSugarProgress(context, dailySummary),
+                SugarProgressCircle(summary: dailySummary),
                 const SizedBox(height: 24),
-                _buildMotivationalCard(context, dailySummary),
+                MotivationalCard(summary: dailySummary),
                 const SizedBox(height: 16),
                 ShadButton(
                   onPressed: () async {
@@ -74,7 +89,8 @@ class DashboardScreen extends HookConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 24),
-                _buildTodayEntries(context, dailySummary.entries),
+                TodayEntriesList(entries: dailySummary.entries),
+                const SizedBox(height: 40), // Add bottom padding for safety
               ],
             ),
           ),
@@ -83,205 +99,80 @@ class DashboardScreen extends HookConsumerWidget {
     );
   }
 
-  Widget _buildMotivationalCard(BuildContext context, DailySummary summary) {
-    AppLogger.logUI('Building motivational card with status: ${summary.status.name}');
-    
-    return Container(
-      decoration: CardStyles.primary,
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          Text(
-            summary.motivationalMessage,
-            style: EmotionalTextStyles.achievement,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            '${summary.entries.length} items tracked today',
-            style: EmotionalTextStyles.supportive,
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTodayEntries(BuildContext context, List<FoodEntry> entries) {
-    AppLogger.logUI('Building today entries section with ${entries.length} entries');
-    
-    if (entries.isEmpty) {
-      return Container(
-        decoration: CardStyles.primary,
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Today\'s Food Log:',
-              style: EmotionalTextStyles.motivational.copyWith(fontSize: 16),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'No items tracked yet. Start by scanning a product!',
-              style: EmotionalTextStyles.supportive,
-            ),
-          ],
+  Widget _buildLoadingScreen() {
+    return CupertinoPageScaffold(
+      backgroundColor: AppTheme.darkBackground,
+      navigationBar: CupertinoNavigationBar(
+        backgroundColor: AppTheme.darkBackground,
+        border: const Border(bottom: BorderSide.none),
+        middle: Text(
+          'Today\'s Sugar',
+          style: EmotionalTextStyles.motivational,
         ),
-      );
-    }
-
-    return Container(
-      decoration: CardStyles.primary,
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Today\'s Food Log:',
-            style: EmotionalTextStyles.motivational.copyWith(fontSize: 16),
-          ),
-          const SizedBox(height: 12),
-          ...entries.map((entry) => _buildEntryItem(context, entry)),
-        ],
       ),
-    );
-  }
-
-  Widget _buildEntryItem(BuildContext context, FoodEntry entry) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: AppTheme.cardBackground.withValues(alpha: .5),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppTheme.borderColor),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  entry.displayName,
-                  style: EmotionalTextStyles.supportive.copyWith(fontWeight: FontWeight.w600),
+      child: const SafeArea(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CupertinoActivityIndicator(radius: 20),
+              SizedBox(height: 16),
+              Text(
+                'Loading your daily progress...',
+                style: TextStyle(
+                  color: AppTheme.textPrimary,
+                  fontSize: 16,
                 ),
-                Text(
-                  '${entry.portionGrams.toStringAsFixed(0)}g portion',
-                  style: EmotionalTextStyles.supportive.copyWith(fontSize: 12),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: AppTheme.warningRed.withValues(alpha: .2),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              '${entry.sugarAmount.toStringAsFixed(1)}g',
-              style: EmotionalTextStyles.warning.copyWith(fontSize: 14),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Helper widget for the progress circle with emotional design
-  Widget _buildSugarProgress(BuildContext context, DailySummary summary) {
-    final double percentage = summary.progressPercentage;
-    
-    AppLogger.logUI('Building sugar progress with ${summary.totalSugar.toStringAsFixed(1)}g/${summary.dailyLimit.toStringAsFixed(0)}g (${(percentage * 100).toStringAsFixed(0)}%) - Status: ${summary.status.name}');
-    
-    // Determine emotional state based on sugar intake
-    late Color progressColor;
-    late String motivationalText;
-    late String subtitleText;
-    
-    switch (summary.status) {
-      case SugarStatus.green:
-        progressColor = AppTheme.victoryColor;
-        motivationalText = 'Great job!';
-        subtitleText = 'You\'re under your limit';
-        break;
-      case SugarStatus.yellow:
-        progressColor = AppTheme.cravingColor;
-        motivationalText = 'Be careful!';
-        subtitleText = 'You\'re close to your limit';
-        break;
-      case SugarStatus.red:
-        progressColor = AppTheme.warningRed;
-        motivationalText = 'Stay strong!';
-        subtitleText = 'You\'re very close to your limit';
-        break;
-      case SugarStatus.overLimit:
-        progressColor = AppTheme.relapseColor;
-        motivationalText = 'Tomorrow is a new day!';
-        subtitleText = 'You\'ve exceeded your limit';
-        break;
-    }
-    
-    return Container(
-      decoration: CardStyles.progress,
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        children: [
-          Text(
-            motivationalText,
-            style: EmotionalTextStyles.achievement,
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 16),
-          SizedBox(
-            height: 200,
-            width: 200,
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                CircularProgressIndicator(
-                  value: percentage,
-                  strokeWidth: 12,
-                  backgroundColor: AppTheme.cardBackground,
-                  valueColor: AlwaysStoppedAnimation<Color>(progressColor),
-                ),
-                Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        '${summary.totalSugar.toStringAsFixed(0)}g',
-                        style: EmotionalTextStyles.progress,
-                      ),
-                      Text(
-                        'of ${summary.dailyLimit.toStringAsFixed(0)}g',
-                        style: EmotionalTextStyles.supportive,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            subtitleText,
-            style: EmotionalTextStyles.supportive,
-            textAlign: TextAlign.center,
-          ),
-          if (summary.remainingSugar > 0) ...[
-            const SizedBox(height: 8),
-            Text(
-              '${summary.remainingSugar.toStringAsFixed(0)}g remaining',
-              style: EmotionalTextStyles.supportive.copyWith(
-                color: AppTheme.victoryColor,
-                fontWeight: FontWeight.w600,
               ),
-            ),
-          ],
-        ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildErrorScreen(Object error) {
+    return CupertinoPageScaffold(
+      backgroundColor: AppTheme.darkBackground,
+      navigationBar: CupertinoNavigationBar(
+        backgroundColor: AppTheme.darkBackground,
+        border: const Border(bottom: BorderSide.none),
+        middle: Text(
+          'Today\'s Sugar',
+          style: EmotionalTextStyles.motivational,
+        ),
+      ),
+      child: SafeArea(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                CupertinoIcons.exclamationmark_triangle,
+                size: 48,
+                color: AppTheme.warningRed,
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Failed to load your data',
+                style: TextStyle(
+                  color: AppTheme.textPrimary,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Error: $error',
+                style: const TextStyle(
+                  color: AppTheme.textSecondary,
+                  fontSize: 14,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

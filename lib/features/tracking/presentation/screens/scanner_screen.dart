@@ -1,12 +1,15 @@
 // lib/features/tracking/presentation/screens/scanner_screen.dart
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:quit_suggar/core/providers/sugar_tracking_provider.dart';
+import 'package:quit_suggar/core/router/app_router.dart';
 import 'package:quit_suggar/core/services/openfoodfacts_service.dart';
 import 'package:quit_suggar/core/services/logger_service.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
+import 'package:quit_suggar/features/tracking/presentation/widgets/product_details_sheet.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 class ScannerScreen extends HookConsumerWidget {
@@ -14,8 +17,17 @@ class ScannerScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Scanner controller to pause/resume scanning
+    final scannerController = useMemoized(() => MobileScannerController());
+    
     // Use a flag to prevent multiple sheets from opening
     final isProcessing = useState(false);
+    final scannerPaused = useState(false);
+    
+    // Dispose controller when widget is disposed
+    useEffect(() {
+      return () => scannerController.dispose();
+    }, []);
     
     AppLogger.logScanner('Scanner screen opened');
     
@@ -35,36 +47,81 @@ class ScannerScreen extends HookConsumerWidget {
           },
         ),
       ),
-      child: MobileScanner(
-        onDetect: (capture) async {
-          // Prevent multiple processing
-          if (isProcessing.value) {
-            AppLogger.logScanner('Already processing a barcode, ignoring new scan');
-            return;
-          }
-          
-          final List<Barcode> barcodes = capture.barcodes;
-          if (barcodes.isNotEmpty) {
-            final String? code = barcodes.first.rawValue;
-            if (code != null) {
-              AppLogger.logScanner('Barcode detected: $code');
-              isProcessing.value = true;
-              
-              try {
-                // Fetch product info and show details
-                await _showProductDetails(context, ref, code);
-              } finally {
-                // Reset the flag after processing
-                isProcessing.value = false;
+      child: Stack(
+        children: [
+          MobileScanner(
+            controller: scannerController,
+            onDetect: (capture) async {
+              // Prevent multiple processing
+              if (isProcessing.value || scannerPaused.value) {
+                AppLogger.logScanner('Already processing a barcode or scanner paused, ignoring new scan');
+                return;
               }
-            }
-          }
-        },
+              
+              final List<Barcode> barcodes = capture.barcodes;
+              if (barcodes.isNotEmpty) {
+                final String? code = barcodes.first.rawValue;
+                if (code != null) {
+                  AppLogger.logScanner('Barcode detected: $code');
+                  isProcessing.value = true;
+                  
+                  // Pause scanning immediately to prevent multiple scans
+                  scannerPaused.value = true;
+                  await scannerController.stop();
+                  
+                  try {
+                    // Fetch product info and show details
+                    if (context.mounted) {
+                      await _showProductDetails(context, ref, code, scannerController, scannerPaused);
+                    }
+                  } finally {
+                    // Reset the processing flag
+                    isProcessing.value = false;
+                  }
+                }
+              }
+            },
+          ),
+          // Resume scanning button overlay
+          if (scannerPaused.value)
+            Positioned(
+              bottom: 100,
+              left: 20,
+              right: 20,
+              child: CupertinoButton.filled(
+                onPressed: () async {
+                  AppLogger.logScanner('Resuming scanner');
+                  scannerPaused.value = false;
+                  await scannerController.start();
+                },
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(CupertinoIcons.camera, color: CupertinoColors.white),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Tap to Scan Again',
+                      style: EmotionalTextStyles.motivational.copyWith(
+                        color: CupertinoColors.white,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
 
-  Future<void> _showProductDetails(BuildContext context, WidgetRef ref, String barcode) async {
+  Future<void> _showProductDetails(
+    BuildContext context, 
+    WidgetRef ref, 
+    String barcode, 
+    MobileScannerController scannerController, 
+    ValueNotifier<bool> scannerPaused
+  ) async {
     AppLogger.logScanner('Fetching product details for barcode: $barcode');
     
     // Show loading dialog
@@ -86,17 +143,22 @@ class ScannerScreen extends HookConsumerWidget {
     final product = await OpenFoodFactsService.getProductByBarcode(barcode);
     
     // Dismiss loading dialog
-    Navigator.of(context).pop();
+    if (context.mounted) {
+      Navigator.of(context).pop();
+    }
 
     if (product != null) {
       AppLogger.logScanner('Product found, showing bottom sheet');
       // Show product details in bottom sheet
-      await _showProductBottomSheet(context, ref, product);
+      if (context.mounted) {
+        await _showProductBottomSheet(context, ref, product, scannerController, scannerPaused);
+      }
     } else {
       AppLogger.logScanner('Product not found, showing error dialog');
       // Show error dialog
-      showCupertinoDialog(
-        context: context,
+      if (context.mounted) {
+        showCupertinoDialog(
+          context: context,
         builder: (context) => CupertinoAlertDialog(
           title: const Text('Product Not Found'),
           content: const Text('This product was not found in our database. You can add it manually.'),
@@ -110,24 +172,38 @@ class ScannerScreen extends HookConsumerWidget {
             ),
           ],
         ),
-      );
+        );
+      }
+      
+      // Auto-resume scanning after error dialog
+      Future.delayed(const Duration(seconds: 1), () async {
+        if (!scannerPaused.value) return; // Already resumed
+        AppLogger.logScanner('Auto-resuming scanner after error');
+        scannerPaused.value = false;
+        await scannerController.start();
+      });
     }
   }
 
-  Future<void> _showProductBottomSheet(BuildContext context, WidgetRef ref, ProductInfo product) async {
+  Future<void> _showProductBottomSheet(
+    BuildContext context, 
+    WidgetRef ref, 
+    ProductInfo product, 
+    MobileScannerController scannerController, 
+    ValueNotifier<bool> scannerPaused
+  ) async {
     double selectedPortion = 100.0; // Default to 100g
-    final sugarAmount = product.calculateSugarForPortion(selectedPortion);
+    final parentContext = context; // Store parent context
     
     AppLogger.logScanner('Showing product bottom sheet for: ${product.name}');
     
-    showShadSheet(
+    await showShadSheet(
       side: ShadSheetSide.bottom,
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => ProductDetailsSheet(
           product: product,
           selectedPortion: selectedPortion,
-          sugarAmount: sugarAmount,
           onPortionChanged: (value) {
             setState(() {
               selectedPortion = value;
@@ -140,25 +216,39 @@ class ScannerScreen extends HookConsumerWidget {
               'portion_grams': selectedPortion,
             });
             Navigator.of(context).pop();
-            await _addProductToDailyLog(context, ref, product, selectedPortion);
+            // Use parent context instead of bottom sheet context
+            await _addProductToDailyLog(parentContext, ref, product, selectedPortion);
           },
         ),
       ),
     );
+    
+    // Auto-resume scanning when bottom sheet is dismissed
+    if (scannerPaused.value) {
+      AppLogger.logScanner('Auto-resuming scanner after bottom sheet closed');
+      scannerPaused.value = false;
+      await scannerController.start();
+    }
   }
 
   Future<void> _addProductToDailyLog(BuildContext context, WidgetRef ref, ProductInfo product, double portion) async {
     AppLogger.logSugarTracking('Adding product to daily log: ${product.name}');
     
-    final success = await ref.read(sugarTrackingProvider.notifier).addScannedProduct(product.barcode, portion);
+    // Calculate the sugar amount for this specific product and portion
+    final sugarForThisPortion = product.calculateSugarForPortion(portion);
+    
+    final success = await ref.read(sugarTrackingProvider.notifier).addProductEntry(product, portion);
     
     if (success) {
-      final summary = ref.read(sugarTrackingProvider.notifier).getDailySummary();
+      // Wait for provider to update and get fresh data
+      final sugarTrackingService = await ref.read(sugarTrackingProvider.future);
+      final summary = sugarTrackingService.getDailySummary();
       
       AppLogger.logSugarTracking('Product successfully added to daily log');
       
-      showCupertinoDialog(
-        context: context,
+      if (context.mounted) {
+        showCupertinoDialog(
+          context: context,
         builder: (context) => CupertinoAlertDialog(
           title: const Text('Added Successfully!'),
           content: Column(
@@ -167,7 +257,22 @@ class ScannerScreen extends HookConsumerWidget {
                 'Added ${product.name} to your daily log.',
                 style: EmotionalTextStyles.supportive,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
+              // Show sugar added for this product
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: AppTheme.cardBackground.withValues(alpha: .5),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: AppTheme.borderColor),
+                ),
+                child: Text(
+                  'Sugar added: ${sugarForThisPortion.toStringAsFixed(1)}g',
+                  style: EmotionalTextStyles.warning.copyWith(fontSize: 16),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const SizedBox(height: 12),
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: CardStyles.progress,
@@ -201,16 +306,20 @@ class ScannerScreen extends HookConsumerWidget {
               onPressed: () {
                 AppLogger.logUserAction('Chose to finish scanning');
                 Navigator.of(context).pop();
+                // Navigate to dashboard to show updated daily log
+                context.go(AppRouter.dashboard);
               },
             ),
           ],
         ),
-      );
+        );
+      }
     } else {
       AppLogger.logSugarTrackingError('Failed to add product to daily log: ${product.name}');
       
-      showCupertinoDialog(
-        context: context,
+      if (context.mounted) {
+        showCupertinoDialog(
+          context: context,
         builder: (context) => CupertinoAlertDialog(
           title: const Text('Error'),
           content: const Text('Failed to add product to daily log. Please try again.'),
@@ -224,144 +333,9 @@ class ScannerScreen extends HookConsumerWidget {
             ),
           ],
         ),
-      );
+        );
+      }
     }
   }
 }
 
-class ProductDetailsSheet extends StatelessWidget {
-  final ProductInfo product;
-  final double selectedPortion;
-  final double sugarAmount;
-  final ValueChanged<double> onPortionChanged;
-  final VoidCallback onAddToDailyLog;
-
-  const ProductDetailsSheet({
-    super.key,
-    required this.product,
-    required this.selectedPortion,
-    required this.sugarAmount,
-    required this.onPortionChanged,
-    required this.onAddToDailyLog,
-  });
-
-  @override
-  Widget build(BuildContext context) {    
-    return ShadSheet(
-      title: Text(
-        product.name,
-        style: EmotionalTextStyles.motivational.copyWith(fontSize: 18),
-      ),
-      description: product.brand != null 
-          ? Text('Brand: ${product.brand}', style: EmotionalTextStyles.supportive)
-          : null,
-      actions: [
-        ShadButton.outline(
-          child: const Text('Cancel'),
-          onPressed: () {
-            AppLogger.logUserAction('Cancelled adding product to daily log');
-            Navigator.of(context).pop();
-          },
-        ),
-        if (product.sugarPer100g != null)
-          ShadButton(
-            onPressed: onAddToDailyLog,
-            child: const Text('Add to Daily Log'),
-          ),
-      ],
-      child: Container(
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            spacing: 16,
-            children: [
-              if (product.sugarPer100g != null) ...[
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: CardStyles.warning,
-                  child: Column(
-                    children: [
-                      Text(
-                        'Sugar Content',
-                        style: EmotionalTextStyles.motivational.copyWith(fontSize: 16),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        '${product.sugarPer100g!.toStringAsFixed(1)}g per 100g',
-                        style: EmotionalTextStyles.warning,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'Portion Size',
-                  style: EmotionalTextStyles.motivational.copyWith(fontSize: 16),
-                ),
-                const SizedBox(height: 8),
-                CupertinoSlider(
-                  value: selectedPortion,
-                  min: 10.0,
-                  max: 500.0,
-                  divisions: 49,
-                  onChanged: onPortionChanged,
-                ),
-                Text(
-                  '${selectedPortion.toStringAsFixed(0)}g',
-                  style: EmotionalTextStyles.progress.copyWith(fontSize: 16),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 16),
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: CardStyles.progress,
-                  child: Column(
-                    children: [
-                      Text(
-                        'Sugar in this portion',
-                        style: EmotionalTextStyles.motivational.copyWith(fontSize: 14),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        '${sugarAmount.toStringAsFixed(1)}g',
-                        style: EmotionalTextStyles.progress.copyWith(fontSize: 24),
-                      ),
-                    ],
-                  ),
-                ),
-              ] else ...[
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: CardStyles.warning,
-                  child: Column(
-                    children: [
-                      const Icon(
-                        CupertinoIcons.exclamationmark_triangle,
-                        color: AppTheme.warningRed,
-                        size: 32,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Sugar content not available for this product.',
-                        style: EmotionalTextStyles.warning,
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}

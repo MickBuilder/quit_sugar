@@ -1,4 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:quit_suggar/core/services/sugar_tracking_service.dart';
 import 'package:quit_suggar/core/services/openfoodfacts_service.dart';
 import 'package:quit_suggar/core/services/logger_service.dart';
@@ -10,14 +11,16 @@ class SugarTracking extends _$SugarTracking {
   late SugarTrackingService _service;
 
   @override
-  SugarTrackingService build() {
+  Future<SugarTrackingService> build() async {
     _service = SugarTrackingService();
-    AppLogger.logState('SugarTracking provider initialized');
+    await _service.initialize();
+    AppLogger.logState('SugarTracking provider initialized with persistent storage');
     return _service;
   }
 
-  /// Add a food entry from scanned product
+  /// Add a food entry from scanned product (with barcode lookup)
   Future<bool> addScannedProduct(String barcode, double portionGrams) async {
+    final serviceState = await future;
     AppLogger.logUserAction('Scan product', {
       'barcode': barcode,
       'portion_grams': portionGrams,
@@ -25,9 +28,9 @@ class SugarTracking extends _$SugarTracking {
     
     final product = await OpenFoodFactsService.getProductByBarcode(barcode);
     if (product != null) {
-      final success = await _service.addFoodEntry(product, portionGrams);
+      final success = await serviceState.addFoodEntry(product, portionGrams);
       if (success) {
-        state = _service;
+        ref.invalidateSelf();
         AppLogger.logState('SugarTracking state updated after adding scanned product');
       }
       return success;
@@ -37,66 +40,101 @@ class SugarTracking extends _$SugarTracking {
     return false;
   }
 
+  /// Add a food entry from ProductInfo directly (more efficient for scanner)
+  Future<bool> addProductEntry(ProductInfo product, double portionGrams) async {
+    final serviceState = await future;
+    AppLogger.logUserAction('Add product entry', {
+      'product_name': product.name,
+      'barcode': product.barcode,
+      'portion_grams': portionGrams,
+    });
+    
+    final success = await serviceState.addFoodEntry(product, portionGrams);
+    if (success) {
+      ref.invalidateSelf();
+      AppLogger.logState('SugarTracking state updated after adding product entry');
+    }
+    return success;
+  }
+
   /// Add a manual food entry
   Future<bool> addManualEntry(String foodName, double sugarAmount, {double? portionGrams}) async {
+    final serviceState = await future;
     AppLogger.logUserAction('Add manual entry', {
       'food_name': foodName,
       'sugar_amount': sugarAmount,
       'portion_grams': portionGrams,
     });
     
-    final success = await _service.addManualEntry(foodName, sugarAmount, portionGrams: portionGrams);
+    final success = await serviceState.addManualEntry(foodName, sugarAmount, portionGrams: portionGrams);
     if (success) {
-      state = _service;
+      ref.invalidateSelf();
       AppLogger.logState('SugarTracking state updated after adding manual entry');
     }
     return success;
   }
 
   /// Remove a food entry
-  bool removeEntry(String entryId) {
+  Future<bool> removeEntry(String entryId) async {
+    final serviceState = await future;
     AppLogger.logUserAction('Remove food entry', {'entry_id': entryId});
     
-    final success = _service.removeEntry(entryId);
+    final success = await serviceState.removeEntry(entryId);
     if (success) {
-      state = _service;
+      ref.invalidateSelf();
       AppLogger.logState('SugarTracking state updated after removing entry');
     }
     return success;
   }
 
   /// Set daily sugar limit
-  void setDailyLimit(double limit) {
+  Future<void> setDailyLimit(double limit) async {
+    final serviceState = await future;
     AppLogger.logUserAction('Set daily limit', {'new_limit': limit});
     
-    _service.setDailyLimit(limit);
-    state = _service;
+    await serviceState.setDailyLimit(limit);
+    ref.invalidateSelf();
     AppLogger.logState('SugarTracking state updated after setting daily limit');
   }
 
   /// Reset today's tracking
-  void resetToday() {
+  Future<void> resetToday() async {
+    final serviceState = await future;
     AppLogger.logUserAction('Reset daily tracking');
     
-    _service.resetToday();
-    state = _service;
+    await serviceState.resetToday();
+    ref.invalidateSelf();
     AppLogger.logState('SugarTracking state updated after resetting daily tracking');
   }
 
   /// Get current daily summary
   DailySummary getDailySummary() {
-    return _service.getDailySummary();
+    // For sync access, we need the service to be initialized
+    if (_service.isInitialized) {
+      return _service.getDailySummary();
+    } else {
+      // Return empty summary if not initialized yet
+      return DailySummary(
+        totalSugar: 0.0,
+        dailyLimit: 25.0,
+        remainingSugar: 25.0,
+        progressPercentage: 0.0,
+        status: SugarStatus.green,
+        entries: [],
+        motivationalMessage: "Loading your daily progress...",
+      );
+    }
   }
 }
 
 @riverpod
-Future<ProductInfo?> productByBarcode(ProductByBarcodeRef ref, String barcode) async {
+Future<ProductInfo?> productByBarcode(Ref ref, String barcode) async {
   AppLogger.logApi('Provider: Fetching product by barcode: $barcode');
   return await OpenFoodFactsService.getProductByBarcode(barcode);
 }
 
 @riverpod
-Future<List<ProductInfo>> searchProducts(SearchProductsRef ref, String query) async {
+Future<List<ProductInfo>> searchProducts(Ref ref, String query) async {
   AppLogger.logApi('Provider: Searching products for query: $query');
   return await OpenFoodFactsService.searchProducts(query);
 }

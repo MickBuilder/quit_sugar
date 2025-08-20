@@ -1,12 +1,19 @@
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:quit_suggar/core/services/openfoodfacts_service.dart';
 import 'package:quit_suggar/core/services/logger_service.dart';
 
 class SugarTrackingService {
   static const double _defaultDailyLimit = 25.0; // WHO recommended limit
+  static const String _prefsKeyDailyLimit = 'daily_limit';
+  static const String _prefsKeySugarIntake = 'current_sugar_intake';
+  static const String _prefsKeyEntries = 'today_entries';
+  static const String _prefsKeyLastDate = 'last_date';
   
   double _dailyLimit = _defaultDailyLimit;
   double _currentSugarIntake = 0.0;
   final List<FoodEntry> _todayEntries = [];
+  bool _isInitialized = false;
   
   // Getters
   double get dailyLimit => _dailyLimit;
@@ -14,6 +21,88 @@ class SugarTrackingService {
   List<FoodEntry> get todayEntries => List.unmodifiable(_todayEntries);
   double get remainingSugar => (_dailyLimit - _currentSugarIntake).clamp(0.0, double.infinity);
   double get progressPercentage => (_currentSugarIntake / _dailyLimit).clamp(0.0, 1.0);
+  bool get isInitialized => _isInitialized;
+  
+  /// Initialize service by loading data from persistent storage
+  Future<void> initialize() async {
+    if (_isInitialized) return;
+    
+    try {
+      AppLogger.logState('Initializing SugarTrackingService from storage');
+      await _loadFromStorage();
+      _isInitialized = true;
+      AppLogger.logState('SugarTrackingService initialized successfully');
+    } catch (e, stackTrace) {
+      AppLogger.logSugarTrackingError('Failed to initialize SugarTrackingService', e, stackTrace);
+      _isInitialized = true; // Still mark as initialized to prevent retry loops
+    }
+  }
+  
+  /// Load data from SharedPreferences
+  Future<void> _loadFromStorage() async {
+    final prefs = await SharedPreferences.getInstance();
+    
+    // Check if we need to reset for a new day
+    final lastDateString = prefs.getString(_prefsKeyLastDate);
+    final today = DateTime.now().toIso8601String().split('T')[0]; // YYYY-MM-DD format
+    
+    if (lastDateString != today) {
+      AppLogger.logState('New day detected, resetting daily tracking');
+      await _resetForNewDay(prefs, today);
+      return;
+    }
+    
+    // Load existing data
+    _dailyLimit = prefs.getDouble(_prefsKeyDailyLimit) ?? _defaultDailyLimit;
+    _currentSugarIntake = prefs.getDouble(_prefsKeySugarIntake) ?? 0.0;
+    
+    // Load entries
+    final entriesJson = prefs.getString(_prefsKeyEntries);
+    if (entriesJson != null) {
+      try {
+        final entriesList = json.decode(entriesJson) as List;
+        _todayEntries.clear();
+        _todayEntries.addAll(
+          entriesList.map((entryMap) => FoodEntry.fromJson(entryMap)).toList()
+        );
+      } catch (e) {
+        AppLogger.logSugarTrackingError('Failed to load entries from storage', e);
+      }
+    }
+    
+    AppLogger.logState('Loaded from storage: ${_currentSugarIntake.toStringAsFixed(1)}g sugar, ${_todayEntries.length} entries');
+  }
+  
+  /// Save current state to SharedPreferences
+  Future<void> _saveToStorage() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final today = DateTime.now().toIso8601String().split('T')[0];
+      
+      await Future.wait([
+        prefs.setString(_prefsKeyLastDate, today),
+        prefs.setDouble(_prefsKeyDailyLimit, _dailyLimit),
+        prefs.setDouble(_prefsKeySugarIntake, _currentSugarIntake),
+        prefs.setString(_prefsKeyEntries, json.encode(_todayEntries.map((e) => e.toJson()).toList())),
+      ]);
+      
+      AppLogger.logState('Saved to storage: ${_currentSugarIntake.toStringAsFixed(1)}g sugar, ${_todayEntries.length} entries');
+    } catch (e, stackTrace) {
+      AppLogger.logSugarTrackingError('Failed to save to storage', e, stackTrace);
+    }
+  }
+  
+  /// Reset data for a new day
+  Future<void> _resetForNewDay(SharedPreferences prefs, String today) async {
+    _currentSugarIntake = 0.0;
+    _todayEntries.clear();
+    
+    await Future.wait([
+      prefs.setString(_prefsKeyLastDate, today),
+      prefs.setDouble(_prefsKeySugarIntake, 0.0),
+      prefs.setString(_prefsKeyEntries, json.encode([])),
+    ]);
+  }
   
   /// Add a food entry to today's tracking
   Future<bool> addFoodEntry(ProductInfo product, double portionGrams, {String? customName}) async {
@@ -31,6 +120,9 @@ class SugarTrackingService {
       
       _todayEntries.add(entry);
       _currentSugarIntake += sugarAmount;
+      
+      // Save to persistent storage
+      await _saveToStorage();
       
       AppLogger.logSugarTracking(
         'Added food entry: ${entry.displayName} - ${sugarAmount.toStringAsFixed(1)}g sugar (${portionGrams}g portion)'
@@ -63,12 +155,15 @@ class SugarTrackingService {
   }
   
   /// Remove a food entry
-  bool removeEntry(String entryId) {
+  Future<bool> removeEntry(String entryId) async {
     final index = _todayEntries.indexWhere((entry) => entry.id == entryId);
     if (index != -1) {
       final entry = _todayEntries[index];
       _currentSugarIntake -= entry.sugarAmount;
       _todayEntries.removeAt(index);
+      
+      // Save to persistent storage
+      await _saveToStorage();
       
       AppLogger.logSugarTracking(
         'Removed food entry: ${entry.displayName} - ${entry.sugarAmount.toStringAsFixed(1)}g sugar'
@@ -83,20 +178,26 @@ class SugarTrackingService {
   }
   
   /// Set daily sugar limit
-  void setDailyLimit(double limit) {
+  Future<void> setDailyLimit(double limit) async {
     final oldLimit = _dailyLimit;
     _dailyLimit = limit.clamp(0.0, double.infinity);
+    
+    // Save to persistent storage
+    await _saveToStorage();
     
     AppLogger.logSugarTracking('Daily limit changed: ${oldLimit.toStringAsFixed(0)}g → ${_dailyLimit.toStringAsFixed(0)}g');
   }
   
   /// Reset today's tracking
-  void resetToday() {
+  Future<void> resetToday() async {
     final oldTotal = _currentSugarIntake;
     final oldEntriesCount = _todayEntries.length;
     
     _currentSugarIntake = 0.0;
     _todayEntries.clear();
+    
+    // Save to persistent storage
+    await _saveToStorage();
     
     AppLogger.logSugarTracking('Reset daily tracking: $oldEntriesCount entries, ${oldTotal.toStringAsFixed(1)}g sugar cleared');
   }
@@ -176,6 +277,49 @@ class FoodEntry {
   });
   
   String get displayName => customName ?? product.name;
+  
+  /// Convert FoodEntry to JSON for storage
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'product': {
+        'barcode': product.barcode,
+        'name': product.name,
+        'brand': product.brand,
+        'sugarPer100g': product.sugarPer100g,
+        'imageUrl': product.imageUrl,
+        'ingredients': product.ingredients,
+        'nutritionGrade': product.nutritionGrade,
+        'weightGrams': product.weightGrams,
+      },
+      'portionGrams': portionGrams,
+      'sugarAmount': sugarAmount,
+      'customName': customName,
+      'timestamp': timestamp.toIso8601String(),
+    };
+  }
+  
+  /// Create FoodEntry from JSON
+  factory FoodEntry.fromJson(Map<String, dynamic> json) {
+    final productJson = json['product'] as Map<String, dynamic>;
+    return FoodEntry(
+      id: json['id'] as String,
+      product: ProductInfo(
+        barcode: productJson['barcode'] as String,
+        name: productJson['name'] as String,
+        brand: productJson['brand'] as String?,
+        sugarPer100g: productJson['sugarPer100g'] as double?,
+        imageUrl: productJson['imageUrl'] as String?,
+        ingredients: productJson['ingredients'] as String?,
+        nutritionGrade: productJson['nutritionGrade'] as String?,
+        weightGrams: productJson['weightGrams'] as double?,
+      ),
+      portionGrams: json['portionGrams'] as double,
+      sugarAmount: json['sugarAmount'] as double,
+      customName: json['customName'] as String?,
+      timestamp: DateTime.parse(json['timestamp'] as String),
+    );
+  }
   
   @override
   String toString() {

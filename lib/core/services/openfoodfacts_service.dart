@@ -94,6 +94,7 @@ class ProductInfo {
   final String? imageUrl;
   final String? ingredients;
   final String? nutritionGrade;
+  final double? weightGrams;
   final Map<String, dynamic>? nutriments;
 
   ProductInfo({
@@ -104,6 +105,7 @@ class ProductInfo {
     this.imageUrl,
     this.ingredients,
     this.nutritionGrade,
+    this.weightGrams,
     this.nutriments,
   });
 
@@ -119,6 +121,16 @@ class ProductInfo {
     
     // Fallback to direct sugar fields
     sugarPer100g ??= _extractSugarValue(json);
+    
+    // Extract weight information
+    double? weightGrams;
+    if (json['product_quantity'] != null) {
+      weightGrams = _parseWeight(json['product_quantity']);
+    } else if (json['quantity'] != null) {
+      weightGrams = _parseWeight(json['quantity']);
+    } else if (json['net_weight_value'] != null) {
+      weightGrams = _parseWeight(json['net_weight_value']);
+    }
 
     final product = ProductInfo(
       barcode: json['code'] ?? '',
@@ -128,6 +140,7 @@ class ProductInfo {
       imageUrl: json['image_front_url'] ?? json['image_url'],
       ingredients: json['ingredients_text'],
       nutritionGrade: json['nutrition_grade_fr'] ?? json['nutrition_grade'],
+      weightGrams: weightGrams,
       nutriments: json['nutriments'],
     );
 
@@ -186,8 +199,47 @@ class ProductInfo {
     return null;
   }
 
+  /// Parse weight from various string formats
+  static double? _parseWeight(dynamic value) {
+    if (value == null) return null;
+    
+    if (value is num) {
+      return value.toDouble();
+    }
+    
+    if (value is String) {
+      // Remove common units and non-numeric characters
+      final cleanValue = value
+          .toLowerCase()
+          .replaceAll(RegExp(r'[^\d.,]'), '') // Keep only digits, dots, and commas
+          .replaceAll(',', '.'); // Replace comma with dot for decimal
+          
+      final parsed = double.tryParse(cleanValue);
+      if (parsed != null) {
+        // If the original string contained 'kg', convert to grams
+        if (value.toLowerCase().contains('kg')) {
+          return parsed * 1000;
+        }
+        // If the original string contained 'ml' or 'cl', treat as roughly equivalent to grams
+        if (value.toLowerCase().contains('ml')) {
+          return parsed;
+        }
+        if (value.toLowerCase().contains('cl')) {
+          return parsed * 10;
+        }
+        // If the original string contained 'l', treat as roughly equivalent to grams * 1000
+        if (value.toLowerCase().contains('l') && !value.toLowerCase().contains('ml') && !value.toLowerCase().contains('cl')) {
+          return parsed * 1000;
+        }
+        return parsed;
+      }
+    }
+    
+    return null;
+  }
+
   @override
   String toString() {
-    return 'ProductInfo(barcode: $barcode, name: $name, sugarPer100g: $sugarPer100g)';
+    return 'ProductInfo(barcode: $barcode, name: $name, sugarPer100g: $sugarPer100g, weightGrams: $weightGrams)';
   }
 }
