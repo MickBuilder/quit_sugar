@@ -48,8 +48,9 @@ class SubscriptionService {
 
   /// Days remaining in trial (0 if not in trial)
   int get trialDaysRemaining {
-    if (_trialStartDate == null || _status != SubscriptionStatus.trial)
+    if (_trialStartDate == null || _status != SubscriptionStatus.trial) {
       return 0;
+    }
     final daysSinceStart = DateTime.now().difference(_trialStartDate!).inDays;
     return (_trialDurationDays - daysSinceStart).clamp(0, _trialDurationDays);
   }
