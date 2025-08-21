@@ -5,25 +5,19 @@ import 'package:quit_suggar/core/services/sugar_tracking_service.dart';
 class DailyProgressCard extends StatelessWidget {
   final DailySummary summary;
 
-  const DailyProgressCard({
-    super.key,
-    required this.summary,
-  });
+  const DailyProgressCard({super.key, required this.summary});
 
   @override
   Widget build(BuildContext context) {
     final percentage = (summary.totalSugar / summary.dailyLimit) * 100;
-    
+
     return Container(
       decoration: CardStyles.primary,
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Daily Progress',
-            style: EmotionalTextStyles.motivational,
-          ),
+          Text('Daily Progress', style: EmotionalTextStyles.motivational),
           const SizedBox(height: 16),
           Row(
             children: [

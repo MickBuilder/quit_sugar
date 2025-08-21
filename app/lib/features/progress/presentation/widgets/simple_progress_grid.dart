@@ -5,10 +5,7 @@ import 'package:quit_suggar/core/services/sugar_tracking_service.dart';
 class SimpleProgressGrid extends StatelessWidget {
   final SugarTrackingService service;
 
-  const SimpleProgressGrid({
-    super.key,
-    required this.service,
-  });
+  const SimpleProgressGrid({super.key, required this.service});
 
   @override
   Widget build(BuildContext context) {
@@ -18,12 +15,9 @@ class SimpleProgressGrid extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Last 7 Days',
-            style: EmotionalTextStyles.motivational,
-          ),
+          Text('Last 7 Days', style: EmotionalTextStyles.motivational),
           const SizedBox(height: 16),
-          
+
           // Simple 7-day grid
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -49,18 +43,18 @@ class SimpleProgressGrid extends StatelessWidget {
                         width: 1,
                       ),
                     ),
-                    child: dayData['isToday'] 
-                      ? Center(
-                          child: Container(
-                            width: 8,
-                            height: 8,
-                            decoration: BoxDecoration(
-                              color: AppTheme.primaryWhite,
-                              borderRadius: BorderRadius.circular(4),
+                    child: dayData['isToday']
+                        ? Center(
+                            child: Container(
+                              width: 8,
+                              height: 8,
+                              decoration: BoxDecoration(
+                                color: AppTheme.primaryWhite,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
                             ),
-                          ),
-                        )
-                      : null,
+                          )
+                        : null,
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -74,9 +68,9 @@ class SimpleProgressGrid extends StatelessWidget {
               );
             }),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Legend
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -92,7 +86,7 @@ class SimpleProgressGrid extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildLegendItem(String label, Color color) {
     return Row(
       children: [
@@ -105,34 +99,29 @@ class SimpleProgressGrid extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 4),
-        Text(
-          label,
-          style: EmotionalTextStyles.caption.copyWith(
-            fontSize: 10,
-          ),
-        ),
+        Text(label, style: EmotionalTextStyles.caption.copyWith(fontSize: 10)),
       ],
     );
   }
-  
+
   Map<String, dynamic> _getDayData(int dayIndex) {
     final isToday = dayIndex == 6;
-    
+
     // Mock data for demonstration
     final mockSugar = _getMockSugarData(dayIndex);
-    
+
     return {
       'day': ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][dayIndex],
-      'color': mockSugar == 0 
-        ? AppTheme.accentGrey
-        : mockSugar <= 25 
+      'color': mockSugar == 0
+          ? AppTheme.accentGrey
+          : mockSugar <= 25
           ? AppTheme.accentGreen
           : AppTheme.accentOrange,
       'value': mockSugar == 0 ? '-' : '${mockSugar.toInt()}g',
       'isToday': isToday,
     };
   }
-  
+
   double _getMockSugarData(int dayIndex) {
     // Mock data - in real app, get from service
     final mockData = [22.5, 18.0, 28.3, 15.2, 0.0, 24.1, 19.8];

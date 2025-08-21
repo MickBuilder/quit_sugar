@@ -50,15 +50,15 @@ class ProgressScreen extends HookConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: 24),
-                
+
                 // Weekly summary
                 WeeklySummaryCard(service: sugarTracking),
-                
+
                 const SizedBox(height: 24),
-                
+
                 // Simple progress grid
                 SimpleProgressGrid(service: sugarTracking),
-                
+
                 const SizedBox(height: 50),
               ],
             ),

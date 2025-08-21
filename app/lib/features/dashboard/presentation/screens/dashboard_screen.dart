@@ -66,15 +66,15 @@ class DashboardScreen extends HookConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: 24),
-                
+
                 // Daily progress card
                 DailyProgressCard(summary: dailySummary),
-                
+
                 const SizedBox(height: 24),
-                
+
                 // Food log card
                 FoodLogCard(entries: dailySummary.entries),
-                
+
                 const SizedBox(height: 50),
               ],
             ),
@@ -90,7 +90,10 @@ class DashboardScreen extends HookConsumerWidget {
       navigationBar: CupertinoNavigationBar(
         backgroundColor: AppTheme.background,
         border: const Border(bottom: BorderSide.none),
-        middle: Text('Today\'s Progress', style: EmotionalTextStyles.motivational),
+        middle: Text(
+          'Today\'s Progress',
+          style: EmotionalTextStyles.motivational,
+        ),
       ),
       child: const SafeArea(
         child: Center(
@@ -116,7 +119,10 @@ class DashboardScreen extends HookConsumerWidget {
       navigationBar: CupertinoNavigationBar(
         backgroundColor: AppTheme.background,
         border: const Border(bottom: BorderSide.none),
-        middle: Text('Today\'s Progress', style: EmotionalTextStyles.motivational),
+        middle: Text(
+          'Today\'s Progress',
+          style: EmotionalTextStyles.motivational,
+        ),
       ),
       child: SafeArea(
         child: Center(

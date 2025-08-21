@@ -206,7 +206,8 @@ class ScannerScreen extends HookConsumerWidget {
           context: context,
           builder: (context) => CustomDialog(
             title: 'Product Not Found',
-            content: 'This product was not found in our database. You can add it manually.',
+            content:
+                'This product was not found in our database. You can add it manually.',
             actions: [
               CustomDialogAction(
                 text: 'OK',
@@ -311,7 +312,8 @@ class ScannerScreen extends HookConsumerWidget {
           context: context,
           builder: (context) => CustomDialog(
             title: 'Added Successfully!',
-            content: 'Added ${product.name} to your daily log.\n\nSugar added: ${sugarForThisPortion.toStringAsFixed(1)}g\nToday\'s Total: ${summary.totalSugar.toStringAsFixed(1)}g / ${summary.dailyLimit.toStringAsFixed(0)}g',
+            content:
+                'Added ${product.name} to your daily log.\n\nSugar added: ${sugarForThisPortion.toStringAsFixed(1)}g\nToday\'s Total: ${summary.totalSugar.toStringAsFixed(1)}g / ${summary.dailyLimit.toStringAsFixed(0)}g',
             actions: [
               CustomDialogAction(
                 text: 'Continue Scanning',

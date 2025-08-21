@@ -6,10 +6,7 @@ import 'today_entries_list.dart';
 class FoodLogCard extends StatelessWidget {
   final List<FoodEntry> entries;
 
-  const FoodLogCard({
-    super.key,
-    required this.entries,
-  });
+  const FoodLogCard({super.key, required this.entries});
 
   @override
   Widget build(BuildContext context) {
@@ -19,10 +16,7 @@ class FoodLogCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Today\'s Food Log',
-            style: EmotionalTextStyles.motivational,
-          ),
+          Text('Today\'s Food Log', style: EmotionalTextStyles.motivational),
           const SizedBox(height: 16),
           TodayEntriesList(entries: entries),
         ],

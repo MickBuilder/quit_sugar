@@ -34,10 +34,7 @@ class CustomDialog extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: AppTheme.primaryBlack,
                   border: Border(
-                    bottom: BorderSide(
-                      color: AppTheme.borderDefault,
-                      width: 2,
-                    ),
+                    bottom: BorderSide(color: AppTheme.borderDefault, width: 2),
                   ),
                 ),
                 child: Text(
@@ -62,7 +59,9 @@ class CustomDialog extends StatelessWidget {
                     ],
                     Text(
                       content,
-                      style: EmotionalTextStyles.supportive.copyWith(fontSize: 16),
+                      style: EmotionalTextStyles.supportive.copyWith(
+                        fontSize: 16,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                   ],
@@ -74,10 +73,7 @@ class CustomDialog extends StatelessWidget {
                 width: double.infinity,
                 decoration: BoxDecoration(
                   border: Border(
-                    top: BorderSide(
-                      color: AppTheme.borderDefault,
-                      width: 2,
-                    ),
+                    top: BorderSide(color: AppTheme.borderDefault, width: 2),
                   ),
                 ),
                 child: Row(
@@ -101,9 +97,9 @@ class CustomDialog extends StatelessWidget {
                           child: Text(
                             action.text,
                             style: EmotionalTextStyles.achievement.copyWith(
-                                                           color: action.isDestructive
-                                 ? AppTheme.accentOrange
-                                 : AppTheme.primaryBlack,
+                              color: action.isDestructive
+                                  ? AppTheme.accentOrange
+                                  : AppTheme.primaryBlack,
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
                             ),

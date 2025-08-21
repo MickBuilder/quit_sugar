@@ -48,7 +48,7 @@ class ProductDetailsSheet extends StatelessWidget {
               borderRadius: BorderRadius.circular(2),
             ),
           ),
-          
+
           // Title
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -58,9 +58,9 @@ class ProductDetailsSheet extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
           ),
-          
+
           const SizedBox(height: 20),
-          
+
           // Content
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -75,7 +75,9 @@ class ProductDetailsSheet extends StatelessWidget {
                     children: [
                       Text(
                         'Sugar Content',
-                        style: EmotionalTextStyles.motivational.copyWith(fontSize: 16),
+                        style: EmotionalTextStyles.motivational.copyWith(
+                          fontSize: 16,
+                        ),
                       ),
                       const SizedBox(height: 8),
                       Row(
@@ -83,7 +85,9 @@ class ProductDetailsSheet extends StatelessWidget {
                           Expanded(
                             child: Text(
                               '${sugarAmount.toStringAsFixed(1)}g sugar',
-                              style: EmotionalTextStyles.progress.copyWith(fontSize: 24),
+                              style: EmotionalTextStyles.progress.copyWith(
+                                fontSize: 24,
+                              ),
                             ),
                           ),
                           if (product.sugarPer100g != null)
@@ -108,7 +112,9 @@ class ProductDetailsSheet extends StatelessWidget {
                     children: [
                       Text(
                         'Portion Size',
-                        style: EmotionalTextStyles.motivational.copyWith(fontSize: 16),
+                        style: EmotionalTextStyles.motivational.copyWith(
+                          fontSize: 16,
+                        ),
                       ),
                       const SizedBox(height: 12),
                       Row(
@@ -165,7 +171,7 @@ class ProductDetailsSheet extends StatelessWidget {
                     ),
                   ),
                 ),
-                
+
                 const SizedBox(height: 20),
               ],
             ),
