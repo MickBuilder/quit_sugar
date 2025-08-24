@@ -3,10 +3,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:quit_suggar/core/providers/sugar_tracking_provider.dart';
 import 'package:quit_suggar/core/services/logger_service.dart';
+import 'package:quit_suggar/features/dashboard/presentation/widgets/today_entries_list.dart';
 import 'package:quit_suggar/features/tracking/domain/entities/daily_summary.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
 import 'package:quit_suggar/features/dashboard/presentation/widgets/daily_progress_card.dart';
-import 'package:quit_suggar/features/dashboard/presentation/widgets/food_log_card.dart';
 
 // We now use HookConsumerWidget to use hooks with Riverpod
 class DashboardScreen extends HookConsumerWidget {
@@ -73,7 +73,7 @@ class DashboardScreen extends HookConsumerWidget {
                 const SizedBox(height: 24),
 
                 // Food log card
-                FoodLogCard(entries: dailySummary.entries),
+                TodayEntriesList(entries: dailySummary.entries),
 
                 const SizedBox(height: 50),
               ],
