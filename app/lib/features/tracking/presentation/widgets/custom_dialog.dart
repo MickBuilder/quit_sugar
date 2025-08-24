@@ -23,7 +23,7 @@ class CustomDialog extends StatelessWidget {
       child: Center(
         child: Container(
           margin: const EdgeInsets.symmetric(horizontal: 40),
-          decoration: CardStyles.primary,
+          decoration: AppCardStyles.primary,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -39,7 +39,7 @@ class CustomDialog extends StatelessWidget {
                 ),
                 child: Text(
                   title,
-                  style: EmotionalTextStyles.achievement.copyWith(
+                  style: AppTextStyles.title.copyWith(
                     color: AppTheme.primaryWhite,
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
@@ -59,7 +59,7 @@ class CustomDialog extends StatelessWidget {
                     ],
                     Text(
                       content,
-                      style: EmotionalTextStyles.supportive.copyWith(
+                      style: AppTextStyles.body.copyWith(
                         fontSize: 16,
                       ),
                       textAlign: TextAlign.center,
@@ -96,7 +96,7 @@ class CustomDialog extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           child: Text(
                             action.text,
-                            style: EmotionalTextStyles.achievement.copyWith(
+                            style: AppTextStyles.title.copyWith(
                               color: action.isDestructive
                                   ? AppTheme.accentOrange
                                   : AppTheme.primaryBlack,

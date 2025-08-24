@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
-import 'package:quit_suggar/core/services/sugar_tracking_service.dart';
+import 'package:quit_suggar/features/tracking/domain/entities/daily_summary.dart';
 
 class DailyProgressCard extends StatelessWidget {
   final DailySummary summary;
@@ -12,12 +12,12 @@ class DailyProgressCard extends StatelessWidget {
     final percentage = (summary.totalSugar / summary.dailyLimit) * 100;
 
     return Container(
-      decoration: CardStyles.primary,
+      decoration: AppCardStyles.primary,
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Daily Progress', style: EmotionalTextStyles.motivational),
+          Text('Daily Progress', style: AppTextStyles.heading),
           const SizedBox(height: 16),
           Row(
             children: [
@@ -27,14 +27,14 @@ class DailyProgressCard extends StatelessWidget {
                   children: [
                     Text(
                       '${summary.totalSugar.toStringAsFixed(1)}g',
-                      style: EmotionalTextStyles.achievement.copyWith(
+                      style: AppTextStyles.title.copyWith(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
                       'of ${summary.dailyLimit.toStringAsFixed(0)}g daily limit',
-                      style: EmotionalTextStyles.supportive,
+                      style: AppTextStyles.body,
                     ),
                   ],
                 ),
@@ -49,7 +49,7 @@ class DailyProgressCard extends StatelessWidget {
                 child: Center(
                   child: Text(
                     '${percentage.toStringAsFixed(0)}%',
-                    style: EmotionalTextStyles.motivational.copyWith(
+                    style: AppTextStyles.heading.copyWith(
                       color: AppTheme.primaryWhite,
                       fontSize: 16,
                     ),

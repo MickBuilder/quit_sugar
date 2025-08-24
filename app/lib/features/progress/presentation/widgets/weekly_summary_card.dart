@@ -1,23 +1,22 @@
 import 'package:flutter/cupertino.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:quit_suggar/core/providers/sugar_tracking_provider.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
-import 'package:quit_suggar/core/services/sugar_tracking_service.dart';
 
-class WeeklySummaryCard extends StatelessWidget {
-  final SugarTrackingService service;
-
-  const WeeklySummaryCard({super.key, required this.service});
+class WeeklySummaryCard extends ConsumerWidget {
+  const WeeklySummaryCard({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final dailySummary = service.getDailySummary();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final dailySummary = ref.watch(sugarTrackingProvider.notifier).getDailySummary();
 
     return Container(
-      decoration: CardStyles.primary,
+      decoration: AppCardStyles.primary,
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('This Week', style: EmotionalTextStyles.motivational),
+          Text('This Week', style: AppTextStyles.heading),
           const SizedBox(height: 16),
 
           // Current streak
@@ -29,14 +28,14 @@ class WeeklySummaryCard extends StatelessWidget {
                   children: [
                     Text(
                       '${dailySummary.streak} days',
-                      style: EmotionalTextStyles.achievement.copyWith(
+                      style: AppTextStyles.title.copyWith(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
                       'current streak',
-                      style: EmotionalTextStyles.supportive,
+                      style: AppTextStyles.body,
                     ),
                   ],
                 ),
@@ -85,7 +84,7 @@ class WeeklySummaryCard extends StatelessWidget {
         children: [
           Text(
             value,
-            style: EmotionalTextStyles.achievement.copyWith(
+            style: AppTextStyles.title.copyWith(
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
@@ -93,7 +92,7 @@ class WeeklySummaryCard extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             label,
-            style: EmotionalTextStyles.supportive,
+            style: AppTextStyles.body,
             textAlign: TextAlign.center,
           ),
         ],

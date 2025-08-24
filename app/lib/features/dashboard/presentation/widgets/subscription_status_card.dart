@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:quit_suggar/core/providers/subscription_provider.dart';
-import 'package:quit_suggar/core/services/subscription_service.dart';
+import 'package:quit_suggar/features/subscription/domain/entities/subscription_info.dart';
+import 'package:quit_suggar/features/subscription/domain/entities/subscription_status.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
-import 'package:quit_suggar/features/paywall/presentation/screens/revenuecat_paywall_screen.dart';
+import 'package:quit_suggar/features/subscription/presentation/screens/revenuecat_paywall_screen.dart';
 
 class SubscriptionStatusCard extends ConsumerWidget {
   const SubscriptionStatusCard({super.key});
@@ -40,7 +41,7 @@ class SubscriptionStatusCard extends ConsumerWidget {
           gradient: LinearGradient(
             colors: [
               AppTheme.primaryBlack.withValues(alpha: 0.08),
-              AppTheme.supportColor.withValues(alpha: 0.05),
+              AppTheme.accentGreen.withValues(alpha: 0.05),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -74,7 +75,7 @@ class SubscriptionStatusCard extends ConsumerWidget {
                 children: [
                   Text(
                     _getTitle(info),
-                    style: EmotionalTextStyles.motivational.copyWith(
+                    style: AppTextStyles.heading.copyWith(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
@@ -82,7 +83,7 @@ class SubscriptionStatusCard extends ConsumerWidget {
                   const SizedBox(height: 2),
                   Text(
                     _getSubtitle(info),
-                    style: EmotionalTextStyles.supportive.copyWith(
+                    style: AppTextStyles.body.copyWith(
                       fontSize: 12,
                     ),
                   ),

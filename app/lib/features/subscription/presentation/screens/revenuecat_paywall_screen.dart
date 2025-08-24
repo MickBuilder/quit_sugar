@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:quit_suggar/core/providers/subscription_provider.dart';
-import 'package:quit_suggar/core/services/revenuecat_service.dart';
+
 import 'package:quit_suggar/core/services/logger_service.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
 
@@ -27,7 +27,7 @@ class RevenueCatPaywallScreen extends ConsumerWidget {
         ),
         middle: Text(
           'Go Premium',
-          style: EmotionalTextStyles.motivational.copyWith(fontSize: 18),
+          style: AppTextStyles.heading.copyWith(fontSize: 18),
         ),
       ),
       child: SafeArea(
@@ -40,7 +40,7 @@ class RevenueCatPaywallScreen extends ConsumerWidget {
               Container(
                 width: 80,
                 height: 80,
-                decoration: CardStyles.primary,
+                decoration: AppCardStyles.primary,
                 child: Icon(
                   CupertinoIcons.heart_fill,
                   size: 40,
@@ -52,7 +52,7 @@ class RevenueCatPaywallScreen extends ConsumerWidget {
 
               Text(
                 _getTitle(),
-                style: EmotionalTextStyles.motivational.copyWith(
+                style: AppTextStyles.heading.copyWith(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
                 ),
@@ -63,7 +63,7 @@ class RevenueCatPaywallScreen extends ConsumerWidget {
 
               Text(
                 _getSubtitle(),
-                style: EmotionalTextStyles.supportive.copyWith(fontSize: 16),
+                style: AppTextStyles.body.copyWith(fontSize: 16),
                 textAlign: TextAlign.center,
               ),
 
@@ -74,7 +74,7 @@ class RevenueCatPaywallScreen extends ConsumerWidget {
                 width: double.infinity,
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 child: Container(
-                  decoration: CardStyles.button,
+                  decoration: AppCardStyles.button,
                   child: CupertinoButton(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     child: Row(
@@ -87,7 +87,7 @@ class RevenueCatPaywallScreen extends ConsumerWidget {
                         const SizedBox(width: 8),
                         Text(
                           'View Premium Options',
-                          style: EmotionalTextStyles.motivational.copyWith(
+                          style: AppTextStyles.heading.copyWith(
                             color: AppTheme.primaryWhite,
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
@@ -105,14 +105,14 @@ class RevenueCatPaywallScreen extends ConsumerWidget {
               // Features list
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 20),
-                decoration: CardStyles.primary,
+                decoration: AppCardStyles.primary,
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       'Premium Features',
-                      style: EmotionalTextStyles.motivational.copyWith(
+                      style: AppTextStyles.heading.copyWith(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
@@ -133,12 +133,12 @@ class RevenueCatPaywallScreen extends ConsumerWidget {
               CupertinoButton(
                 child: Text(
                   'Restore Purchases',
-                  style: EmotionalTextStyles.supportive.copyWith(
+                  style: AppTextStyles.body.copyWith(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-                onPressed: () => _restorePurchases(context),
+                onPressed: () => _restorePurchases(context, ref),
               ),
             ],
           ),
@@ -160,7 +160,7 @@ class RevenueCatPaywallScreen extends ConsumerWidget {
           const SizedBox(width: 12),
           Text(
             feature,
-            style: EmotionalTextStyles.supportive.copyWith(fontSize: 14),
+            style: AppTextStyles.body.copyWith(fontSize: 14),
           ),
         ],
       ),
@@ -195,33 +195,28 @@ class RevenueCatPaywallScreen extends ConsumerWidget {
   ) async {
     try {
       // Show RevenueCat's native paywall
-      final purchased = await RevenueCatService.showPaywall();
+      final purchased = await ref.read(subscriptionProvider.notifier).showPaywall();
 
       if (purchased && context.mounted) {
-        // Sync the subscription status with our local state
-        await ref.read(subscriptionProvider.notifier).syncPremiumStatus();
+        // Success - close this screen and return success
+        Navigator.of(context).pop(true);
 
-        if (context.mounted) {
-          // Success - close this screen and return success
-          Navigator.of(context).pop(true);
-
-          // Show success message
-          showCupertinoDialog(
-            context: context,
-            builder: (context) => CupertinoAlertDialog(
-              title: const Text('Welcome to Premium!'),
-              content: const Text(
-                'You now have unlimited access to all features. Thank you for supporting your health journey!',
-              ),
-              actions: [
-                CupertinoDialogAction(
-                  child: const Text('Continue'),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ],
+        // Show success message
+        showCupertinoDialog(
+          context: context,
+          builder: (context) => CupertinoAlertDialog(
+            title: const Text('Welcome to Premium!'),
+            content: const Text(
+              'You now have unlimited access to all features. Thank you for supporting your health journey!',
             ),
-          );
-        }
+            actions: [
+              CupertinoDialogAction(
+                child: const Text('Continue'),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          ),
+        );
       }
     } catch (e) {
       if (context.mounted) {
@@ -244,9 +239,9 @@ class RevenueCatPaywallScreen extends ConsumerWidget {
     }
   }
 
-  Future<void> _restorePurchases(BuildContext context) async {
+  Future<void> _restorePurchases(BuildContext context, WidgetRef ref) async {
     try {
-      final restored = await RevenueCatService.restorePurchases();
+      final restored = await ref.read(subscriptionProvider.notifier).restorePurchases();
 
       if (context.mounted) {
         if (restored) {

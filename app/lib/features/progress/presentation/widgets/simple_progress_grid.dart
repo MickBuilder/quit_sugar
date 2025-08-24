@@ -1,21 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
-import 'package:quit_suggar/core/services/sugar_tracking_service.dart';
 
 class SimpleProgressGrid extends StatelessWidget {
-  final SugarTrackingService service;
 
-  const SimpleProgressGrid({super.key, required this.service});
+
+  const SimpleProgressGrid({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: CardStyles.primary,
+      decoration: AppCardStyles.primary,
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Last 7 Days', style: EmotionalTextStyles.motivational),
+          Text('Last 7 Days', style: AppTextStyles.heading),
           const SizedBox(height: 16),
 
           // Simple 7-day grid
@@ -27,7 +26,7 @@ class SimpleProgressGrid extends StatelessWidget {
                 children: [
                   Text(
                     dayData['day'],
-                    style: EmotionalTextStyles.supportive.copyWith(
+                    style: AppTextStyles.body.copyWith(
                       fontSize: 12,
                     ),
                   ),
@@ -59,7 +58,7 @@ class SimpleProgressGrid extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     dayData['value'],
-                    style: EmotionalTextStyles.caption.copyWith(
+                    style: AppTextStyles.caption.copyWith(
                       fontSize: 10,
                       color: AppTheme.textMuted,
                     ),
@@ -79,7 +78,7 @@ class SimpleProgressGrid extends StatelessWidget {
               const SizedBox(width: 16),
               _buildLegendItem('Over', AppTheme.accentOrange),
               const SizedBox(width: 16),
-              _buildLegendItem('No data', AppTheme.accentGrey),
+              _buildLegendItem('No data', AppTheme.accentYellow),
             ],
           ),
         ],
@@ -99,7 +98,7 @@ class SimpleProgressGrid extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 4),
-        Text(label, style: EmotionalTextStyles.caption.copyWith(fontSize: 10)),
+        Text(label, style: AppTextStyles.caption.copyWith(fontSize: 10)),
       ],
     );
   }
@@ -113,7 +112,7 @@ class SimpleProgressGrid extends StatelessWidget {
     return {
       'day': ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][dayIndex],
       'color': mockSugar == 0
-          ? AppTheme.accentGrey
+          ? AppTheme.accentYellow
           : mockSugar <= 25
           ? AppTheme.accentGreen
           : AppTheme.accentOrange,

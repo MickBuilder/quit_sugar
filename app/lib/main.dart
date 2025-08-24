@@ -5,7 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:quit_suggar/core/router/app_router.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
 import 'package:quit_suggar/core/services/logger_service.dart';
-import 'package:quit_suggar/core/services/revenuecat_service.dart';
+
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 void main() async {
@@ -13,8 +13,7 @@ void main() async {
 
   AppLogger.info('App starting up');
 
-  // Initialize RevenueCat
-  await RevenueCatService.initialize();
+  // RevenueCat is now initialized via providers
 
   runApp(const ProviderScope(child: MyApp()));
 }

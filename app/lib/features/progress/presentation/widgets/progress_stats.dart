@@ -1,11 +1,9 @@
 import 'package:flutter/cupertino.dart';
-import 'package:quit_suggar/core/services/sugar_tracking_service.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
 
 class ProgressStats extends StatelessWidget {
-  final SugarTrackingService service;
 
-  const ProgressStats({super.key, required this.service});
+  const ProgressStats({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +11,7 @@ class ProgressStats extends StatelessWidget {
       children: [
         // Weekly Overview
         Container(
-          decoration: CardStyles.primary,
+          decoration: AppCardStyles.primary,
           padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -23,19 +21,19 @@ class ProgressStats extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: AppTheme.secondaryTeal.withValues(alpha: 0.15),
+                      color: AppTheme.accentGreen.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
                       CupertinoIcons.chart_bar,
-                      color: AppTheme.secondaryTeal,
+                      color: AppTheme.accentGreen,
                       size: 20,
                     ),
                   ),
                   const SizedBox(width: 16),
                   Text(
                     'Weekly Overview',
-                    style: EmotionalTextStyles.achievement.copyWith(
+                    style: AppTextStyles.title.copyWith(
                       fontSize: 18,
                       color: AppTheme.textPrimary,
                     ),
@@ -52,7 +50,7 @@ class ProgressStats extends StatelessWidget {
                       'Avg Daily',
                       '18.2g',
                       'Below limit',
-                      AppTheme.progressColor,
+                      AppTheme.progressGreen,
                       CupertinoIcons.heart_fill,
                     ),
                   ),
@@ -86,7 +84,7 @@ class ProgressStats extends StatelessWidget {
                       'This Week',
                       '5/7 days',
                       'Under limit',
-                      AppTheme.supportColor,
+                      AppTheme.accentYellow,
                       CupertinoIcons.calendar,
                     ),
                   ),
@@ -100,7 +98,7 @@ class ProgressStats extends StatelessWidget {
 
         // Monthly Insights
         Container(
-          decoration: CardStyles.support,
+          decoration: AppCardStyles.success,
           padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -110,19 +108,19 @@ class ProgressStats extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: AppTheme.supportColor.withValues(alpha: 0.15),
+                      color: AppTheme.accentYellow.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
                       CupertinoIcons.lightbulb,
-                      color: AppTheme.supportColor,
+                      color: AppTheme.accentYellow,
                       size: 20,
                     ),
                   ),
                   const SizedBox(width: 16),
                   Text(
                     'Monthly Insights',
-                    style: EmotionalTextStyles.achievement.copyWith(
+                    style: AppTextStyles.title.copyWith(
                       fontSize: 18,
                       color: AppTheme.textPrimary,
                     ),
@@ -135,13 +133,13 @@ class ProgressStats extends StatelessWidget {
               _buildInsightItem(
                 'Your most successful days are Mondays and Tuesdays',
                 CupertinoIcons.calendar,
-                AppTheme.progressColor,
+                AppTheme.progressGreen,
               ),
               const SizedBox(height: 12),
               _buildInsightItem(
                 'Afternoon snacks tend to be your biggest challenge',
                 CupertinoIcons.clock,
-                AppTheme.cautionColor,
+                AppTheme.accentOrange,
               ),
               const SizedBox(height: 12),
               _buildInsightItem(
@@ -180,7 +178,7 @@ class ProgressStats extends StatelessWidget {
               Expanded(
                 child: Text(
                   title,
-                  style: EmotionalTextStyles.caption.copyWith(
+                  style: AppTextStyles.caption.copyWith(
                     color: AppTheme.textSecondary,
                     fontSize: 11,
                   ),
@@ -191,7 +189,7 @@ class ProgressStats extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             value,
-            style: EmotionalTextStyles.progress.copyWith(
+            style: AppTextStyles.display.copyWith(
               fontSize: 20,
               color: color,
             ),
@@ -199,7 +197,7 @@ class ProgressStats extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             subtitle,
-            style: EmotionalTextStyles.caption.copyWith(
+            style: AppTextStyles.caption.copyWith(
               color: color.withValues(alpha: 0.8),
               fontSize: 10,
             ),
@@ -224,7 +222,7 @@ class ProgressStats extends StatelessWidget {
         Expanded(
           child: Text(
             text,
-            style: EmotionalTextStyles.supportive.copyWith(
+            style: AppTextStyles.body.copyWith(
               fontSize: 14,
               color: AppTheme.textSecondary,
             ),

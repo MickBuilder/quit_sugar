@@ -1,36 +1,68 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:quit_suggar/core/services/sugar_tracking_service.dart';
-import 'package:quit_suggar/core/services/openfoodfacts_service.dart';
+import 'package:quit_suggar/features/tracking/domain/entities/product_info.dart';
+import 'package:quit_suggar/features/tracking/domain/entities/daily_summary.dart';
+import 'package:quit_suggar/features/tracking/domain/entities/sugar_status.dart';
+import 'package:quit_suggar/features/tracking/domain/usecases/sugar_tracking_usecase.dart';
+import 'package:quit_suggar/features/tracking/domain/repositories/tracking_repository.dart';
+import 'package:quit_suggar/features/tracking/data/repositories/tracking_repository_impl.dart';
+import 'package:quit_suggar/features/tracking/data/datasources/tracking_storage_service.dart';
+import 'package:quit_suggar/features/tracking/data/datasources/openfoodfacts_api_service.dart';
 import 'package:quit_suggar/core/services/logger_service.dart';
 
 part 'sugar_tracking_provider.g.dart';
 
+// Data sources providers
+@riverpod
+TrackingStorageService trackingStorageService(Ref ref) {
+  return TrackingStorageService();
+}
+
+@riverpod
+OpenFoodFactsApiService openFoodFactsApiService(Ref ref) {
+  return OpenFoodFactsApiService();
+}
+
+// Repository provider
+@riverpod
+TrackingRepository trackingRepository(Ref ref) {
+  final storageService = ref.watch(trackingStorageServiceProvider);
+  final apiService = ref.watch(openFoodFactsApiServiceProvider);
+  return TrackingRepositoryImpl(storageService, apiService);
+}
+
+// Usecase provider
+@riverpod
+SugarTrackingUsecase sugarTrackingUsecase(Ref ref) {
+  final repository = ref.watch(trackingRepositoryProvider);
+  return SugarTrackingUsecase(repository);
+}
+
 @riverpod
 class SugarTracking extends _$SugarTracking {
-  late SugarTrackingService _service;
+  late SugarTrackingUsecase _usecase;
 
   @override
-  Future<SugarTrackingService> build() async {
-    _service = SugarTrackingService();
-    await _service.initialize();
+  Future<SugarTrackingUsecase> build() async {
+    _usecase = ref.watch(sugarTrackingUsecaseProvider);
+    await _usecase.initialize();
     AppLogger.logState(
-      'SugarTracking provider initialized with persistent storage',
+      'SugarTracking provider initialized with Clean Architecture',
     );
-    return _service;
+    return _usecase;
   }
 
   /// Add a food entry from scanned product (with barcode lookup)
   Future<bool> addScannedProduct(String barcode, double portionGrams) async {
-    final serviceState = await future;
+    final usecaseState = await future;
     AppLogger.logUserAction('Scan product', {
       'barcode': barcode,
       'portion_grams': portionGrams,
     });
 
-    final product = await OpenFoodFactsService.getProductByBarcode(barcode);
+    final product = await usecaseState.getProductByBarcode(barcode);
     if (product != null) {
-      final success = await serviceState.addFoodEntry(product, portionGrams);
+      final success = await usecaseState.addFoodEntry(product, portionGrams);
       if (success) {
         ref.invalidateSelf();
         AppLogger.logState(
@@ -48,14 +80,14 @@ class SugarTracking extends _$SugarTracking {
 
   /// Add a food entry from ProductInfo directly (more efficient for scanner)
   Future<bool> addProductEntry(ProductInfo product, double portionGrams) async {
-    final serviceState = await future;
+    final usecaseState = await future;
     AppLogger.logUserAction('Add product entry', {
       'product_name': product.name,
       'barcode': product.barcode,
       'portion_grams': portionGrams,
     });
 
-    final success = await serviceState.addFoodEntry(product, portionGrams);
+    final success = await usecaseState.addFoodEntry(product, portionGrams);
     if (success) {
       ref.invalidateSelf();
       AppLogger.logState(
@@ -71,14 +103,14 @@ class SugarTracking extends _$SugarTracking {
     double sugarAmount, {
     double? portionGrams,
   }) async {
-    final serviceState = await future;
+    final usecaseState = await future;
     AppLogger.logUserAction('Add manual entry', {
       'food_name': foodName,
       'sugar_amount': sugarAmount,
       'portion_grams': portionGrams,
     });
 
-    final success = await serviceState.addManualEntry(
+    final success = await usecaseState.addManualEntry(
       foodName,
       sugarAmount,
       portionGrams: portionGrams,
@@ -94,10 +126,10 @@ class SugarTracking extends _$SugarTracking {
 
   /// Remove a food entry
   Future<bool> removeEntry(String entryId) async {
-    final serviceState = await future;
+    final usecaseState = await future;
     AppLogger.logUserAction('Remove food entry', {'entry_id': entryId});
 
-    final success = await serviceState.removeEntry(entryId);
+    final success = await usecaseState.removeEntry(entryId);
     if (success) {
       ref.invalidateSelf();
       AppLogger.logState('SugarTracking state updated after removing entry');
@@ -107,20 +139,20 @@ class SugarTracking extends _$SugarTracking {
 
   /// Set daily sugar limit
   Future<void> setDailyLimit(double limit) async {
-    final serviceState = await future;
+    final usecaseState = await future;
     AppLogger.logUserAction('Set daily limit', {'new_limit': limit});
 
-    await serviceState.setDailyLimit(limit);
+    await usecaseState.setDailyLimit(limit);
     ref.invalidateSelf();
     AppLogger.logState('SugarTracking state updated after setting daily limit');
   }
 
   /// Reset today's tracking
   Future<void> resetToday() async {
-    final serviceState = await future;
+    final usecaseState = await future;
     AppLogger.logUserAction('Reset daily tracking');
 
-    await serviceState.resetToday();
+    await usecaseState.resetToday();
     ref.invalidateSelf();
     AppLogger.logState(
       'SugarTracking state updated after resetting daily tracking',
@@ -129,8 +161,8 @@ class SugarTracking extends _$SugarTracking {
 
   /// Check daily streak evaluation (call when app opens)
   Future<void> checkDailyStreakEvaluation() async {
-    final serviceState = await future;
-    final streakChanged = await serviceState.checkDailyStreakEvaluation();
+    final usecaseState = await future;
+    final streakChanged = await usecaseState.checkDailyStreakEvaluation();
     if (streakChanged) {
       ref.invalidateSelf();
       AppLogger.logState('SugarTracking state updated after streak evaluation');
@@ -139,9 +171,9 @@ class SugarTracking extends _$SugarTracking {
 
   /// Get current daily summary
   DailySummary getDailySummary() {
-    // For sync access, we need the service to be initialized
-    if (_service.isInitialized) {
-      return _service.getDailySummary();
+    // For sync access, we need the usecase to be initialized
+    if (_usecase.isInitialized) {
+      return _usecase.getDailySummary();
     } else {
       // Return empty summary if not initialized yet
       return DailySummary(
@@ -161,11 +193,13 @@ class SugarTracking extends _$SugarTracking {
 @riverpod
 Future<ProductInfo?> productByBarcode(Ref ref, String barcode) async {
   AppLogger.logApi('Provider: Fetching product by barcode: $barcode');
-  return await OpenFoodFactsService.getProductByBarcode(barcode);
+  final apiService = ref.watch(openFoodFactsApiServiceProvider);
+  return await apiService.getProductByBarcode(barcode);
 }
 
 @riverpod
 Future<List<ProductInfo>> searchProducts(Ref ref, String query) async {
   AppLogger.logApi('Provider: Searching products for query: $query');
-  return await OpenFoodFactsService.searchProducts(query);
+  final apiService = ref.watch(openFoodFactsApiServiceProvider);
+  return await apiService.searchProducts(query);
 }

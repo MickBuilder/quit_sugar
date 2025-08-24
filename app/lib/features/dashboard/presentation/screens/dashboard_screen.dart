@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:quit_suggar/core/providers/sugar_tracking_provider.dart';
 import 'package:quit_suggar/core/services/logger_service.dart';
-import 'package:quit_suggar/core/services/sugar_tracking_service.dart';
+import 'package:quit_suggar/features/tracking/domain/entities/daily_summary.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
 import 'package:quit_suggar/features/dashboard/presentation/widgets/daily_progress_card.dart';
 import 'package:quit_suggar/features/dashboard/presentation/widgets/food_log_card.dart';
@@ -51,7 +51,7 @@ class DashboardScreen extends HookConsumerWidget {
         border: const Border(bottom: BorderSide.none),
         middle: Text(
           'Today\'s Progress',
-          style: EmotionalTextStyles.motivational,
+          style: AppTextStyles.heading,
         ),
       ),
       child: SafeArea(
@@ -92,7 +92,7 @@ class DashboardScreen extends HookConsumerWidget {
         border: const Border(bottom: BorderSide.none),
         middle: Text(
           'Today\'s Progress',
-          style: EmotionalTextStyles.motivational,
+          style: AppTextStyles.heading,
         ),
       ),
       child: const SafeArea(
@@ -121,7 +121,7 @@ class DashboardScreen extends HookConsumerWidget {
         border: const Border(bottom: BorderSide.none),
         middle: Text(
           'Today\'s Progress',
-          style: EmotionalTextStyles.motivational,
+          style: AppTextStyles.heading,
         ),
       ),
       child: SafeArea(

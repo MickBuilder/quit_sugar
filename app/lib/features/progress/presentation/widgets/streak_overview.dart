@@ -1,18 +1,17 @@
 import 'package:flutter/cupertino.dart';
-import 'package:quit_suggar/core/services/sugar_tracking_service.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:quit_suggar/core/providers/sugar_tracking_provider.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
 
-class StreakOverview extends StatelessWidget {
-  final SugarTrackingService service;
-
-  const StreakOverview({super.key, required this.service});
+class StreakOverview extends ConsumerWidget {
+  const StreakOverview({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final dailySummary = service.getDailySummary();
+  Widget build(BuildContext context, WidgetRef ref) {
+    final dailySummary = ref.watch(sugarTrackingProvider.notifier).getDailySummary();
 
     return Container(
-      decoration: CardStyles.achievement,
+      decoration: AppCardStyles.success,
       padding: const EdgeInsets.all(24),
       child: Column(
         children: [
@@ -23,22 +22,22 @@ class StreakOverview extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: AppTheme.progressColor.withValues(alpha: 0.2),
+                  color: AppTheme.progressGreen.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Column(
                   children: [
                     Icon(
                       CupertinoIcons.flame_fill,
-                      color: AppTheme.progressColor,
+                      color: AppTheme.progressGreen,
                       size: 32,
                     ),
                     const SizedBox(height: 8),
                     Text(
                       '${dailySummary.streak}',
-                      style: EmotionalTextStyles.progress.copyWith(
+                      style: AppTextStyles.display.copyWith(
                         fontSize: 24,
-                        color: AppTheme.progressColor,
+                        color: AppTheme.progressGreen,
                       ),
                     ),
                   ],
@@ -58,7 +57,7 @@ class StreakOverview extends StatelessWidget {
                           : dailySummary.streak == 1
                           ? 'Day Streak'
                           : 'Days Streak',
-                      style: EmotionalTextStyles.achievement.copyWith(
+                      style: AppTextStyles.title.copyWith(
                         fontSize: 20,
                         color: AppTheme.textPrimary,
                       ),
@@ -66,7 +65,7 @@ class StreakOverview extends StatelessWidget {
                     const SizedBox(height: 8),
                     Text(
                       _getStreakMessage(dailySummary.streak),
-                      style: EmotionalTextStyles.supportive.copyWith(
+                      style: AppTextStyles.body.copyWith(
                         fontSize: 14,
                         color: AppTheme.textSecondary,
                       ),
@@ -99,7 +98,7 @@ class StreakOverview extends StatelessWidget {
       children: [
         Text(
           'Achievement Milestones',
-          style: EmotionalTextStyles.supportive.copyWith(
+          style: AppTextStyles.body.copyWith(
             color: AppTheme.textSecondary,
             fontSize: 12,
             fontWeight: FontWeight.w600,
@@ -128,7 +127,7 @@ class StreakOverview extends StatelessWidget {
                       height: 40,
                       decoration: BoxDecoration(
                         color: isCompleted
-                            ? AppTheme.progressColor
+                            ? AppTheme.progressGreen
                             : isCurrent
                             ? AppTheme.primaryBlack.withValues(alpha: 0.3)
                             : AppTheme.borderSubtle,
@@ -154,9 +153,9 @@ class StreakOverview extends StatelessWidget {
                     const SizedBox(height: 8),
                     Text(
                       milestone['title'] as String,
-                      style: EmotionalTextStyles.caption.copyWith(
+                      style: AppTextStyles.caption.copyWith(
                         color: isCompleted
-                            ? AppTheme.progressColor
+                            ? AppTheme.progressGreen
                             : isCurrent
                             ? AppTheme.primaryBlack
                             : AppTheme.textMuted,
@@ -168,7 +167,7 @@ class StreakOverview extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       milestone['description'] as String,
-                      style: EmotionalTextStyles.caption.copyWith(
+                      style: AppTextStyles.caption.copyWith(
                         color: AppTheme.textMuted,
                         fontSize: 8,
                       ),

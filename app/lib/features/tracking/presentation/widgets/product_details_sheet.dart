@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:quit_suggar/core/services/openfoodfacts_service.dart';
+import 'package:quit_suggar/features/tracking/domain/entities/product_info.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
 
 class ProductDetailsSheet extends StatelessWidget {
@@ -23,7 +23,7 @@ class ProductDetailsSheet extends StatelessWidget {
 
     // Set max portion size based on product weight, with fallback to 500g
     final maxPortion = product.weightGrams != null
-        ? (product.weightGrams! * 2.0).clamp(50.0, 2000.0)
+        ? (product.weightGrams!).clamp(50.0, 2000.0)
         : 500.0;
 
     return Container(
@@ -53,7 +53,7 @@ class ProductDetailsSheet extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
             child: Text(
               product.name,
-              style: EmotionalTextStyles.motivational.copyWith(fontSize: 18),
+              style: AppTextStyles.heading.copyWith(fontSize: 18),
               textAlign: TextAlign.center,
             ),
           ),
@@ -67,14 +67,14 @@ class ProductDetailsSheet extends StatelessWidget {
               children: [
                 // Sugar content display
                 Container(
-                  decoration: CardStyles.primary,
+                  decoration: AppCardStyles.primary,
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         'Sugar Content',
-                        style: EmotionalTextStyles.motivational.copyWith(
+                        style: AppTextStyles.heading.copyWith(
                           fontSize: 16,
                         ),
                       ),
@@ -84,7 +84,7 @@ class ProductDetailsSheet extends StatelessWidget {
                           Expanded(
                             child: Text(
                               '${sugarAmount.toStringAsFixed(1)}g sugar',
-                              style: EmotionalTextStyles.progress.copyWith(
+                              style: AppTextStyles.display.copyWith(
                                 fontSize: 24,
                               ),
                             ),
@@ -92,7 +92,7 @@ class ProductDetailsSheet extends StatelessWidget {
                           if (product.sugarPer100g != null)
                             Text(
                               '(${product.sugarPer100g!.toStringAsFixed(1)}g per 100g)',
-                              style: EmotionalTextStyles.subtitle,
+                              style: AppTextStyles.subtitle,
                             ),
                         ],
                       ),
@@ -104,14 +104,14 @@ class ProductDetailsSheet extends StatelessWidget {
 
                 // Portion size selector
                 Container(
-                  decoration: CardStyles.primary,
+                  decoration: AppCardStyles.primary,
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         'Portion Size',
-                        style: EmotionalTextStyles.motivational.copyWith(
+                        style: AppTextStyles.heading.copyWith(
                           fontSize: 16,
                         ),
                       ),
@@ -131,14 +131,14 @@ class ProductDetailsSheet extends StatelessWidget {
                           ),
                           const SizedBox(width: 16),
                           Container(
-                            decoration: CardStyles.primary,
+                            decoration: AppCardStyles.primary,
                             padding: const EdgeInsets.symmetric(
                               horizontal: 12,
                               vertical: 8,
                             ),
                             child: Text(
                               '${selectedPortion.round()}g',
-                              style: EmotionalTextStyles.subtitle.copyWith(
+                              style: AppTextStyles.subtitle.copyWith(
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -155,13 +155,13 @@ class ProductDetailsSheet extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   child: Container(
-                    decoration: CardStyles.button,
+                    decoration: AppCardStyles.button,
                     child: CupertinoButton(
                       onPressed: onAddToDailyLog,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       child: Text(
                         'Add to Daily Log',
-                        style: EmotionalTextStyles.achievement.copyWith(
+                        style: AppTextStyles.title.copyWith(
                           color: AppTheme.primaryWhite,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,

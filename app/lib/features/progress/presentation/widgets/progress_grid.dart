@@ -1,16 +1,15 @@
 import 'package:flutter/cupertino.dart';
-import 'package:quit_suggar/core/services/sugar_tracking_service.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
 
-class ProgressGrid extends StatelessWidget {
-  final SugarTrackingService service;
+class ProgressGrid extends ConsumerWidget {
 
-  const ProgressGrid({super.key, required this.service});
+  const ProgressGrid({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Container(
-      decoration: CardStyles.elevated,
+      decoration: AppCardStyles.elevated,
       padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -36,7 +35,7 @@ class ProgressGrid extends StatelessWidget {
                   children: [
                     Text(
                       'Daily Progress',
-                      style: EmotionalTextStyles.achievement.copyWith(
+                      style: AppTextStyles.title.copyWith(
                         fontSize: 20,
                         color: AppTheme.textPrimary,
                       ),
@@ -44,7 +43,7 @@ class ProgressGrid extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       'Your journey over the past weeks',
-                      style: EmotionalTextStyles.subtitle,
+                      style: AppTextStyles.subtitle,
                     ),
                   ],
                 ),
@@ -82,12 +81,12 @@ class ProgressGrid extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Text('Jan', style: EmotionalTextStyles.caption),
-                Text('Feb', style: EmotionalTextStyles.caption),
-                Text('Mar', style: EmotionalTextStyles.caption),
-                Text('Apr', style: EmotionalTextStyles.caption),
-                Text('May', style: EmotionalTextStyles.caption),
-                Text('Jun', style: EmotionalTextStyles.caption),
+                Text('Jan', style: AppTextStyles.caption),
+                Text('Feb', style: AppTextStyles.caption),
+                Text('Mar', style: AppTextStyles.caption),
+                Text('Apr', style: AppTextStyles.caption),
+                Text('May', style: AppTextStyles.caption),
+                Text('Jun', style: AppTextStyles.caption),
               ],
             ),
           ),
@@ -103,13 +102,13 @@ class ProgressGrid extends StatelessWidget {
           width: 24,
           child: Column(
             children: [
-              Text('', style: EmotionalTextStyles.caption), // Mon
+              Text('', style: AppTextStyles.caption), // Mon
               const SizedBox(height: 12),
-              Text('Wed', style: EmotionalTextStyles.caption),
+              Text('Wed', style: AppTextStyles.caption),
               const SizedBox(height: 12),
-              Text('', style: EmotionalTextStyles.caption), // Fri
+              Text('', style: AppTextStyles.caption), // Fri
               const SizedBox(height: 12),
-              Text('', style: EmotionalTextStyles.caption), // Sun
+              Text('', style: AppTextStyles.caption), // Sun
             ],
           ),
         ),
@@ -176,19 +175,19 @@ class ProgressGrid extends StatelessWidget {
   Widget _buildLegend() {
     return Row(
       children: [
-        Text('Less', style: EmotionalTextStyles.caption),
+        Text('Less', style: AppTextStyles.caption),
         const SizedBox(width: 8),
         _buildLegendSquare(AppTheme.surfaceBackground),
         const SizedBox(width: 2),
-        _buildLegendSquare(AppTheme.progressColor.withValues(alpha: 0.3)),
+        _buildLegendSquare(AppTheme.progressGreen.withValues(alpha: 0.3)),
         const SizedBox(width: 2),
-        _buildLegendSquare(AppTheme.progressColor.withValues(alpha: 0.6)),
+        _buildLegendSquare(AppTheme.progressGreen.withValues(alpha: 0.6)),
         const SizedBox(width: 2),
-        _buildLegendSquare(AppTheme.cautionColor.withValues(alpha: 0.8)),
+        _buildLegendSquare(AppTheme.accentOrange.withValues(alpha: 0.8)),
         const SizedBox(width: 2),
-        _buildLegendSquare(AppTheme.criticalRed),
+        _buildLegendSquare(AppTheme.accentRed),
         const SizedBox(width: 8),
-        Text('More', style: EmotionalTextStyles.caption),
+        Text('More', style: AppTextStyles.caption),
       ],
     );
   }
@@ -205,20 +204,21 @@ class ProgressGrid extends StatelessWidget {
   }
 
   Color _getColorForDate(DateTime date) {
-    // Mock data for demonstration - in real app, get from service
+    // TODO: Replace with real data from sugar tracking provider
+    // For now, using mock data for demonstration
     final mockSugarIntake = _getMockSugarData(date);
     const dailyLimit = 25.0;
 
     if (mockSugarIntake == 0) {
       return AppTheme.surfaceBackground; // No data
     } else if (mockSugarIntake <= dailyLimit * 0.5) {
-      return AppTheme.progressColor.withValues(alpha: 0.3); // Very good
+      return AppTheme.progressGreen.withValues(alpha: 0.3); // Very good
     } else if (mockSugarIntake <= dailyLimit * 0.7) {
-      return AppTheme.progressColor.withValues(alpha: 0.6); // Good
+      return AppTheme.progressGreen.withValues(alpha: 0.6); // Good
     } else if (mockSugarIntake <= dailyLimit) {
-      return AppTheme.cautionColor.withValues(alpha: 0.8); // Warning
+      return AppTheme.accentBlue.withValues(alpha: 0.8); // Warning
     } else {
-      return AppTheme.criticalRed; // Over limit
+      return AppTheme.accentRed; // Over limit
     }
   }
 

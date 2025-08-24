@@ -36,7 +36,7 @@ class ProgressScreen extends HookConsumerWidget {
       navigationBar: CupertinoNavigationBar(
         backgroundColor: AppTheme.background,
         border: const Border(bottom: BorderSide.none),
-        middle: Text('Progress', style: EmotionalTextStyles.motivational),
+        middle: Text('Progress', style: AppTextStyles.heading),
       ),
       child: SafeArea(
         child: Container(
@@ -52,12 +52,12 @@ class ProgressScreen extends HookConsumerWidget {
                 const SizedBox(height: 24),
 
                 // Weekly summary
-                WeeklySummaryCard(service: sugarTracking),
+                WeeklySummaryCard(),
 
                 const SizedBox(height: 24),
 
                 // Simple progress grid
-                SimpleProgressGrid(service: sugarTracking),
+                SimpleProgressGrid(),
 
                 const SizedBox(height: 50),
               ],
@@ -74,7 +74,7 @@ class ProgressScreen extends HookConsumerWidget {
       navigationBar: CupertinoNavigationBar(
         backgroundColor: AppTheme.background,
         border: const Border(bottom: BorderSide.none),
-        middle: Text('Progress', style: EmotionalTextStyles.motivational),
+        middle: Text('Progress', style: AppTextStyles.heading),
       ),
       child: const SafeArea(
         child: Center(
@@ -100,7 +100,7 @@ class ProgressScreen extends HookConsumerWidget {
       navigationBar: CupertinoNavigationBar(
         backgroundColor: AppTheme.background,
         border: const Border(bottom: BorderSide.none),
-        middle: Text('Progress', style: EmotionalTextStyles.motivational),
+        middle: Text('Progress', style: AppTextStyles.heading),
       ),
       child: SafeArea(
         child: Center(
@@ -117,7 +117,7 @@ class ProgressScreen extends HookConsumerWidget {
                 const SizedBox(height: 16),
                 Text(
                   'Something went wrong',
-                  style: EmotionalTextStyles.achievement.copyWith(
+                  style: AppTextStyles.title.copyWith(
                     color: AppTheme.textPrimary,
                   ),
                   textAlign: TextAlign.center,
@@ -125,7 +125,7 @@ class ProgressScreen extends HookConsumerWidget {
                 const SizedBox(height: 8),
                 Text(
                   'Please try again later',
-                  style: EmotionalTextStyles.supportive.copyWith(
+                  style: AppTextStyles.body.copyWith(
                     color: AppTheme.textMuted,
                   ),
                   textAlign: TextAlign.center,

@@ -7,12 +7,12 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:quit_suggar/core/providers/sugar_tracking_provider.dart';
 import 'package:quit_suggar/core/providers/subscription_provider.dart';
-import 'package:quit_suggar/core/services/openfoodfacts_service.dart';
+import 'package:quit_suggar/features/tracking/domain/entities/product_info.dart';
 import 'package:quit_suggar/core/services/logger_service.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
 import 'package:quit_suggar/features/tracking/presentation/widgets/product_details_sheet.dart';
 import 'package:quit_suggar/features/tracking/presentation/widgets/custom_dialog.dart';
-import 'package:quit_suggar/features/paywall/presentation/screens/revenuecat_paywall_screen.dart';
+import 'package:quit_suggar/features/subscription/presentation/screens/revenuecat_paywall_screen.dart';
 
 class ScannerScreen extends HookConsumerWidget {
   const ScannerScreen({super.key});
@@ -40,7 +40,7 @@ class ScannerScreen extends HookConsumerWidget {
         border: const Border(bottom: BorderSide.none),
         middle: Text(
           'Scan Product',
-          style: EmotionalTextStyles.motivational.copyWith(fontSize: 18),
+          style: AppTextStyles.heading.copyWith(fontSize: 18),
         ),
         leading: CupertinoNavigationBarBackButton(
           onPressed: () {
@@ -141,7 +141,7 @@ class ScannerScreen extends HookConsumerWidget {
                       const SizedBox(width: 12),
                       Text(
                         'Tap to Scan Again',
-                        style: EmotionalTextStyles.motivational.copyWith(
+                        style: AppTextStyles.heading.copyWith(
                           color: AppTheme.primaryWhite,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -178,8 +178,8 @@ class ScannerScreen extends HookConsumerWidget {
       ),
     );
 
-    // Fetch product from OpenFoodFacts
-    final product = await OpenFoodFactsService.getProductByBarcode(barcode);
+    // Fetch product from OpenFoodFacts via provider
+    final product = await ref.read(productByBarcodeProvider(barcode).future);
 
     // Dismiss loading dialog
     if (context.mounted) {

@@ -1,10 +1,10 @@
 import 'dart:io';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:purchases_ui_flutter/purchases_ui_flutter.dart';
+import 'package:quit_suggar/features/subscription/domain/entities/subscription_type.dart';
 import 'package:quit_suggar/core/services/logger_service.dart';
-import 'package:quit_suggar/core/services/subscription_service.dart';
 
-class RevenueCatService {
+class RevenueCatApiService {
   // TODO: Replace with your actual RevenueCat API keys from the dashboard
   static const String _androidAPIKey = 'rc_android_YOUR_KEY_HERE';
   static const String _iosAPIKey = 'rc_ios_YOUR_KEY_HERE';
@@ -12,7 +12,7 @@ class RevenueCatService {
   static bool _isConfigured = false;
 
   /// Initialize RevenueCat SDK
-  static Future<bool> initialize() async {
+  Future<bool> initialize() async {
     if (_isConfigured) return true;
 
     try {
@@ -49,11 +49,11 @@ class RevenueCatService {
   }
 
   /// Show RevenueCat paywall
-  static Future<bool> showPaywall({String? displayCloseButton}) async {
+  Future<PaywallResult> showPaywall({String? displayCloseButton}) async {
     try {
       if (!_isConfigured) {
         final initialized = await initialize();
-        if (!initialized) return false;
+        if (!initialized) return PaywallResult.error;
       }
 
       AppLogger.logUserAction('Showing RevenueCat paywall');
@@ -63,26 +63,29 @@ class RevenueCatService {
         "premium",
       );
 
-      if (paywallResult == PaywallResult.purchased) {
-        AppLogger.logUserAction('Purchase completed via RevenueCat paywall');
-        return true;
-      } else if (paywallResult == PaywallResult.cancelled) {
-        AppLogger.logUserAction('Paywall cancelled by user');
-        return false;
-      } else if (paywallResult == PaywallResult.error) {
-        AppLogger.logSugarTrackingError('Paywall error');
-        return false;
+      switch (paywallResult) {
+        case PaywallResult.purchased:
+          AppLogger.logUserAction('Purchase completed via RevenueCat paywall');
+          break;
+        case PaywallResult.cancelled:
+          AppLogger.logUserAction('Paywall cancelled by user');
+          break;
+        case PaywallResult.error:
+          AppLogger.logSugarTrackingError('Paywall error');
+          break;
+        default:
+          break;
       }
 
-      return false;
+      return paywallResult;
     } catch (e, stackTrace) {
       AppLogger.logSugarTrackingError('Failed to show paywall', e, stackTrace);
-      return false;
+      return PaywallResult.error;
     }
   }
 
   /// Check if user has premium entitlement
-  static Future<bool> hasPremiumAccess() async {
+  Future<bool> hasPremiumAccess() async {
     try {
       if (!_isConfigured) {
         final initialized = await initialize();
@@ -106,7 +109,7 @@ class RevenueCatService {
   }
 
   /// Restore purchases
-  static Future<bool> restorePurchases() async {
+  Future<bool> restorePurchases() async {
     try {
       if (!_isConfigured) {
         final initialized = await initialize();
@@ -139,7 +142,7 @@ class RevenueCatService {
   }
 
   /// Get customer info
-  static Future<CustomerInfo?> getCustomerInfo() async {
+  Future<CustomerInfo?> getCustomerInfo() async {
     try {
       if (!_isConfigured) {
         final initialized = await initialize();
@@ -159,9 +162,48 @@ class RevenueCatService {
   }
 
   /// Convert active entitlement to subscription type
-  static SubscriptionType? getActiveSubscriptionType() {
-    // This would need to be implemented based on your product setup
-    // For now, return monthly as default
-    return SubscriptionType.monthly;
+  Future<SubscriptionType?> getActiveSubscriptionType() async {
+    try {
+      final customerInfo = await getCustomerInfo();
+      if (customerInfo == null) return null;
+
+      final premiumEntitlement = customerInfo.entitlements.all['premium'];
+      if (premiumEntitlement?.isActive != true) return null;
+
+      // This would need to be implemented based on your product setup
+      // For now, return monthly as default
+      // You could check the product identifier or other fields to determine the type
+      return SubscriptionType.monthly;
+    } catch (e, stackTrace) {
+      AppLogger.logSugarTrackingError(
+        'Failed to get subscription type',
+        e,
+        stackTrace,
+      );
+      return null;
+    }
+  }
+
+  /// Get subscription expiry date
+  Future<DateTime?> getSubscriptionExpiry() async {
+    try {
+      final customerInfo = await getCustomerInfo();
+      if (customerInfo == null) return null;
+
+      final premiumEntitlement = customerInfo.entitlements.all['premium'];
+      if (premiumEntitlement?.isActive != true) return null;
+
+      final expirationDateString = premiumEntitlement?.expirationDate;
+      if (expirationDateString == null) return null;
+      
+      return DateTime.tryParse(expirationDateString);
+    } catch (e, stackTrace) {
+      AppLogger.logSugarTrackingError(
+        'Failed to get subscription expiry',
+        e,
+        stackTrace,
+      );
+      return null;
+    }
   }
 }

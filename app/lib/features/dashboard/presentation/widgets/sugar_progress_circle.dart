@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:quit_suggar/core/services/sugar_tracking_service.dart';
+import 'package:quit_suggar/features/tracking/domain/entities/daily_summary.dart';
+import 'package:quit_suggar/features/tracking/domain/entities/sugar_status.dart';
 import 'package:quit_suggar/core/services/logger_service.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
 
@@ -23,12 +24,12 @@ class SugarProgressCircle extends StatelessWidget {
 
     switch (summary.status) {
       case SugarStatus.green:
-        progressColor = AppTheme.progressColor;
+        progressColor = AppTheme.progressGreen;
         motivationalText = 'Excellent progress!';
         subtitleText = 'You\'re doing great today';
         break;
       case SugarStatus.yellow:
-        progressColor = AppTheme.cautionColor;
+        progressColor = AppTheme.accentOrange;
         motivationalText = 'Stay mindful';
         subtitleText = 'You\'re approaching your limit';
         break;
@@ -38,20 +39,20 @@ class SugarProgressCircle extends StatelessWidget {
         subtitleText = 'Consider healthier choices';
         break;
       case SugarStatus.overLimit:
-        progressColor = AppTheme.criticalRed;
+        progressColor = AppTheme.accentRed;
         motivationalText = 'Fresh start tomorrow!';
         subtitleText = 'Every step forward counts';
         break;
     }
 
     return Container(
-      decoration: CardStyles.elevated,
+      decoration: AppCardStyles.elevated,
       padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 32),
       child: Column(
         children: [
           Text(
             motivationalText,
-            style: EmotionalTextStyles.achievement.copyWith(
+            style: AppTextStyles.title.copyWith(
               color: progressColor,
               fontSize: 22,
             ),
@@ -79,7 +80,7 @@ class SugarProgressCircle extends StatelessWidget {
                     children: [
                       Text(
                         '${summary.totalSugar.toStringAsFixed(0)}g',
-                        style: EmotionalTextStyles.progress.copyWith(
+                        style: AppTextStyles.display.copyWith(
                           fontSize: 32,
                           color: AppTheme.textPrimary,
                         ),
@@ -87,7 +88,7 @@ class SugarProgressCircle extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         'of ${summary.dailyLimit.toStringAsFixed(0)}g',
-                        style: EmotionalTextStyles.subtitle.copyWith(
+                        style: AppTextStyles.subtitle.copyWith(
                           fontSize: 14,
                         ),
                       ),
@@ -100,7 +101,7 @@ class SugarProgressCircle extends StatelessWidget {
           const SizedBox(height: 20),
           Text(
             subtitleText,
-            style: EmotionalTextStyles.supportive.copyWith(fontSize: 15),
+            style: AppTextStyles.body.copyWith(fontSize: 15),
             textAlign: TextAlign.center,
           ),
           if (summary.remainingSugar > 0) ...[
@@ -108,17 +109,17 @@ class SugarProgressCircle extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: AppTheme.progressColor.withValues(alpha: 0.1),
+                color: AppTheme.progressGreen.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: AppTheme.progressColor.withValues(alpha: 0.3),
+                  color: AppTheme.progressGreen.withValues(alpha: 0.3),
                   width: 1,
                 ),
               ),
               child: Text(
                 '${summary.remainingSugar.toStringAsFixed(0)}g remaining today',
-                style: EmotionalTextStyles.supportive.copyWith(
-                  color: AppTheme.progressColor,
+                style: AppTextStyles.body.copyWith(
+                  color: AppTheme.progressGreen,
                   fontWeight: FontWeight.w600,
                   fontSize: 14,
                 ),

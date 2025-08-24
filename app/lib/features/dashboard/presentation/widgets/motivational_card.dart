@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:quit_suggar/core/services/sugar_tracking_service.dart';
+import 'package:quit_suggar/features/tracking/domain/entities/daily_summary.dart';
 import 'package:quit_suggar/core/services/logger_service.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
 
@@ -15,7 +15,7 @@ class MotivationalCard extends StatelessWidget {
     );
 
     return Container(
-      decoration: CardStyles.support,
+      decoration: AppCardStyles.success,
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
       child: Column(
         children: [
@@ -24,12 +24,12 @@ class MotivationalCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: AppTheme.supportColor.withValues(alpha: 0.15),
+                  color: AppTheme.accentGreen.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
                   Icons.psychology_rounded,
-                  color: AppTheme.supportColor,
+                  color: AppTheme.accentGreen,
                   size: 20,
                 ),
               ),
@@ -37,7 +37,7 @@ class MotivationalCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   summary.motivationalMessage,
-                  style: EmotionalTextStyles.achievement.copyWith(
+                  style: AppTextStyles.title.copyWith(
                     fontSize: 18,
                     color: AppTheme.textPrimary,
                   ),
@@ -66,7 +66,7 @@ class MotivationalCard extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   '${summary.entries.length} items tracked today',
-                  style: EmotionalTextStyles.subtitle.copyWith(
+                  style: AppTextStyles.subtitle.copyWith(
                     color: AppTheme.textSecondary,
                   ),
                 ),

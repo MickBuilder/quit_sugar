@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:quit_suggar/core/services/sugar_tracking_service.dart';
+import 'package:quit_suggar/features/tracking/domain/entities/daily_summary.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
 
 class StreakCounter extends StatelessWidget {
@@ -13,12 +13,12 @@ class StreakCounter extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: summary.streak > 0
-            ? AppTheme.progressColor.withValues(alpha: 0.08)
+            ? AppTheme.progressGreen.withValues(alpha: 0.08)
             : AppTheme.surfaceBackground,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: summary.streak > 0
-              ? AppTheme.progressColor.withValues(alpha: 0.25)
+              ? AppTheme.progressGreen.withValues(alpha: 0.25)
               : AppTheme.borderSubtle,
           width: 1,
         ),
@@ -31,7 +31,7 @@ class StreakCounter extends StatelessWidget {
             children: [
               Text(
                 'Daily Streak',
-                style: EmotionalTextStyles.supportive.copyWith(fontSize: 14),
+                style: AppTextStyles.body.copyWith(fontSize: 14),
               ),
               const SizedBox(height: 4),
               Text(
@@ -41,10 +41,10 @@ class StreakCounter extends StatelessWidget {
                     ? 'Over limit today'
                     : 'Stay under ${summary.dailyLimit.toStringAsFixed(0)}g!',
                 style: summary.streak > 0
-                    ? EmotionalTextStyles.achievement.copyWith(fontSize: 18)
+                    ? AppTextStyles.title.copyWith(fontSize: 18)
                     : summary.isOverLimit
-                    ? EmotionalTextStyles.caution.copyWith(fontSize: 14)
-                    : EmotionalTextStyles.supportive.copyWith(fontSize: 14),
+                    ? AppTextStyles.button.copyWith(fontSize: 14)
+                    : AppTextStyles.body.copyWith(fontSize: 14),
               ),
             ],
           ),
@@ -54,7 +54,7 @@ class StreakCounter extends StatelessWidget {
                 : CupertinoIcons.flame,
             size: 32,
             color: summary.streak > 0
-                ? AppTheme.progressColor
+                ? AppTheme.progressGreen
                 : AppTheme.textSecondary,
           ),
         ],

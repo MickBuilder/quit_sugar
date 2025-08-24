@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:quit_suggar/core/services/sugar_tracking_service.dart';
+import 'package:quit_suggar/features/tracking/domain/entities/food_entry.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
 
 class FoodEntryItem extends StatelessWidget {
@@ -55,7 +55,7 @@ class FoodEntryItem extends StatelessWidget {
               children: [
                 Text(
                   entry.displayName,
-                  style: EmotionalTextStyles.supportive.copyWith(
+                  style: AppTextStyles.body.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
                   maxLines: 1,
@@ -65,7 +65,7 @@ class FoodEntryItem extends StatelessWidget {
                 if (entry.product.brand != null) ...[
                   Text(
                     entry.product.brand!,
-                    style: EmotionalTextStyles.supportive.copyWith(
+                    style: AppTextStyles.body.copyWith(
                       fontSize: 11,
                       color: AppTheme.textSecondary.withValues(alpha: .7),
                     ),
@@ -76,7 +76,7 @@ class FoodEntryItem extends StatelessWidget {
                 ],
                 Text(
                   '${entry.portionGrams.toStringAsFixed(0)}g portion',
-                  style: EmotionalTextStyles.supportive.copyWith(fontSize: 12),
+                  style: AppTextStyles.body.copyWith(fontSize: 12),
                 ),
               ],
             ),
@@ -84,12 +84,12 @@ class FoodEntryItem extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: AppTheme.cautionColor.withValues(alpha: .2),
+              color: AppTheme.accentOrange.withValues(alpha: .2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
               '${entry.sugarAmount.toStringAsFixed(1)}g',
-              style: EmotionalTextStyles.caution.copyWith(fontSize: 14),
+              style: AppTextStyles.button.copyWith(fontSize: 14),
             ),
           ),
         ],
