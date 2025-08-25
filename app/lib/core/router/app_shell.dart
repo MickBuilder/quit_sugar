@@ -18,68 +18,36 @@ class AppShell extends ConsumerWidget {
       backgroundColor: AppTheme.background,
       body: child,
       bottomNavigationBar: _buildBottomNavigation(context, currentLocation),
-      floatingActionButton: currentLocation == '/dashboard'
-          ? _buildFloatingActionButton(context)
-          : null,
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 
   Widget _buildBottomNavigation(BuildContext context, String currentLocation) {
+    final currentIndex = _getTabIndex(currentLocation);
+    
     return CupertinoTabBar(
       backgroundColor: AppTheme.background,
-      border: const Border(top: BorderSide.none), // Remove the top border line
+      border: const Border(top: BorderSide.none),
       activeColor: AppTheme.primaryBlack,
       inactiveColor: AppTheme.textMuted,
       items: const [
         BottomNavigationBarItem(
           icon: Icon(CupertinoIcons.home),
+          activeIcon: Icon(CupertinoIcons.house_fill),
           label: 'Dashboard',
         ),
         BottomNavigationBarItem(
           icon: Icon(CupertinoIcons.chart_bar),
+          activeIcon: Icon(CupertinoIcons.chart_bar_fill),
           label: 'Progress',
         ),
         BottomNavigationBarItem(
           icon: Icon(CupertinoIcons.person),
+          activeIcon: Icon(CupertinoIcons.person_fill),
           label: 'Profile',
         ),
       ],
-      currentIndex: _getTabIndex(currentLocation),
-      onTap: (index) => _onTabTapped(context, index),
-    );
-  }
-
-  Widget _buildFloatingActionButton(BuildContext context) {
-    return Container(
-      width: 64,
-      height: 64,
-      decoration: BoxDecoration(
-        color: AppTheme.primaryBlack,
-        borderRadius: BorderRadius.circular(8), // Rounded corners
-        border: Border.all(color: AppTheme.borderDefault, width: 2),
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.primaryBlack.withValues(alpha: 0.7),
-            blurRadius: 0,
-            offset: const Offset(4, 4), // Smaller shadow
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () {
-            AppLogger.logUserAction('Pressed floating scan button');
-            context.push('/scanner');
-          },
-          child: const Icon(
-            CupertinoIcons.qrcode_viewfinder,
-            color: AppTheme.primaryWhite,
-            size: 28,
-          ),
-        ),
-      ),
+      currentIndex: currentIndex,
+      onTap: (index) => _onTabTapped(context, index, currentIndex),
     );
   }
 
@@ -96,8 +64,14 @@ class AppShell extends ConsumerWidget {
     }
   }
 
-  void _onTabTapped(BuildContext context, int index) {
-    AppLogger.logNavigation('Tab switched to index: $index');
+  void _onTabTapped(BuildContext context, int index, int currentIndex) {
+    // Prevent unnecessary navigation if already on the same tab
+    if (index == currentIndex) {
+      AppLogger.logNavigation('Already on tab index: $index');
+      return;
+    }
+
+    AppLogger.logNavigation('Tab switched from index: $currentIndex to index: $index');
 
     switch (index) {
       case 0:

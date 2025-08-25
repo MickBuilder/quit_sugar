@@ -6,6 +6,7 @@ import 'package:quit_suggar/core/router/app_shell.dart';
 import 'package:quit_suggar/features/dashboard/presentation/screens/dashboard_screen.dart';
 import 'package:quit_suggar/features/progress/presentation/screens/progress_screen.dart';
 import 'package:quit_suggar/features/tracking/presentation/screens/scanner_screen.dart';
+import 'package:quit_suggar/features/tracking/presentation/screens/manual_entry_screen.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
 
 // Provider for the router
@@ -37,6 +38,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/scanner',
         pageBuilder: (context, state) =>
             const MaterialPage(child: ScannerScreen()),
+      ),
+      GoRoute(
+        path: '/manual-entry',
+        pageBuilder: (context, state) =>
+            const MaterialPage(child: ManualEntryScreen()),
       ),
     ],
   );
