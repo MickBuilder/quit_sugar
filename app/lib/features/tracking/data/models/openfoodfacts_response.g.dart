@@ -23,25 +23,3 @@ Map<String, dynamic> _$OpenFoodFactsResponseToJson(
   'statusVerbose': instance.statusVerbose,
   'product': instance.product,
 };
-
-_OpenFoodFactsSearchResponse _$OpenFoodFactsSearchResponseFromJson(
-  Map<String, dynamic> json,
-) => _OpenFoodFactsSearchResponse(
-  count: (json['count'] as num).toInt(),
-  page: (json['page'] as num).toInt(),
-  pageCount: (json['page_count'] as num).toInt(),
-  pageSize: (json['page_size'] as num).toInt(),
-  products: (json['products'] as List<dynamic>)
-      .map((e) => ProductInfoModel.fromJson(e as Map<String, dynamic>))
-      .toList(),
-);
-
-Map<String, dynamic> _$OpenFoodFactsSearchResponseToJson(
-  _OpenFoodFactsSearchResponse instance,
-) => <String, dynamic>{
-  'count': instance.count,
-  'page': instance.page,
-  'page_count': instance.pageCount,
-  'page_size': instance.pageSize,
-  'products': instance.products,
-};

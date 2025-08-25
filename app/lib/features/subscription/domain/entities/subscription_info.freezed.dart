@@ -14,12 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$SubscriptionInfo {
 
- SubscriptionStatus get status;
-  SubscriptionType? get subscriptionType;
-  int get trialDaysRemaining;
-  int get remainingScans;
-  bool get hasUnlimitedScans;
-  DateTime? get subscriptionExpiry;
+ SubscriptionStatus get status; SubscriptionType? get subscriptionType; int get trialDaysRemaining; int get remainingScans; bool get hasUnlimitedScans; DateTime? get subscriptionExpiry;
 /// Create a copy of SubscriptionInfo
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)

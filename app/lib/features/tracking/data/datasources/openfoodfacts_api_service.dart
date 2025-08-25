@@ -95,9 +95,9 @@ class OpenFoodFactsApiService {
         final searchResponse = OpenFoodFactsSearchResponse.fromApiJson(data);
 
         final filteredProducts = searchResponse.products
-            .where((product) => product.sugarPer100g != null)
+            ?.where((product) => product.sugarPer100g != null)
             .map((product) => product.toDomain())
-            .toList();
+            .toList() ?? [];
 
         AppLogger.logApi(
           'Found ${filteredProducts.length} products with sugar data for query: $query',

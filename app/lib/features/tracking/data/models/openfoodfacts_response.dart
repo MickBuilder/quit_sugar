@@ -29,18 +29,14 @@ abstract class OpenFoodFactsResponse with _$OpenFoodFactsResponse {
 }
 
 @freezed
-@JsonSerializable(fieldRename: FieldRename.snake)
 abstract class OpenFoodFactsSearchResponse with _$OpenFoodFactsSearchResponse {
   const factory OpenFoodFactsSearchResponse({
-    required int count,
-    required int page,
-    required int pageCount,
-    required int pageSize,
-    required List<ProductInfoModel> products,
+    int? count,
+    int? page,
+    int? pageCount,
+    int? pageSize,
+    List<ProductInfoModel>? products,
   }) = _OpenFoodFactsSearchResponse;
-
-  factory OpenFoodFactsSearchResponse.fromJson(Map<String, dynamic> json) =>
-      _$OpenFoodFactsSearchResponseFromJson(json);
 
   factory OpenFoodFactsSearchResponse.fromApiJson(Map<String, dynamic> json) {
     final products =

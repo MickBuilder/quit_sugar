@@ -304,19 +304,16 @@ $ProductInfoModelCopyWith<$Res>? get product {
 }
 }
 
-
 /// @nodoc
 mixin _$OpenFoodFactsSearchResponse {
 
- int get count; int get page;@JsonKey(name: 'page_count') int get pageCount;@JsonKey(name: 'page_size') int get pageSize; List<ProductInfoModel> get products;
+ int? get count; int? get page; int? get pageCount; int? get pageSize; List<ProductInfoModel>? get products;
 /// Create a copy of OpenFoodFactsSearchResponse
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
 $OpenFoodFactsSearchResponseCopyWith<OpenFoodFactsSearchResponse> get copyWith => _$OpenFoodFactsSearchResponseCopyWithImpl<OpenFoodFactsSearchResponse>(this as OpenFoodFactsSearchResponse, _$identity);
 
-  /// Serializes this OpenFoodFactsSearchResponse to a JSON map.
-  Map<String, dynamic> toJson();
 
 
 @override
@@ -324,7 +321,7 @@ bool operator ==(Object other) {
   return identical(this, other) || (other.runtimeType == runtimeType&&other is OpenFoodFactsSearchResponse&&(identical(other.count, count) || other.count == count)&&(identical(other.page, page) || other.page == page)&&(identical(other.pageCount, pageCount) || other.pageCount == pageCount)&&(identical(other.pageSize, pageSize) || other.pageSize == pageSize)&&const DeepCollectionEquality().equals(other.products, products));
 }
 
-@JsonKey(includeFromJson: false, includeToJson: false)
+
 @override
 int get hashCode => Object.hash(runtimeType,count,page,pageCount,pageSize,const DeepCollectionEquality().hash(products));
 
@@ -341,7 +338,7 @@ abstract mixin class $OpenFoodFactsSearchResponseCopyWith<$Res>  {
   factory $OpenFoodFactsSearchResponseCopyWith(OpenFoodFactsSearchResponse value, $Res Function(OpenFoodFactsSearchResponse) _then) = _$OpenFoodFactsSearchResponseCopyWithImpl;
 @useResult
 $Res call({
- int count, int page,@JsonKey(name: 'page_count') int pageCount,@JsonKey(name: 'page_size') int pageSize, List<ProductInfoModel> products
+ int? count, int? page, int? pageCount, int? pageSize, List<ProductInfoModel>? products
 });
 
 
@@ -358,14 +355,14 @@ class _$OpenFoodFactsSearchResponseCopyWithImpl<$Res>
 
 /// Create a copy of OpenFoodFactsSearchResponse
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? count = null,Object? page = null,Object? pageCount = null,Object? pageSize = null,Object? products = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? count = freezed,Object? page = freezed,Object? pageCount = freezed,Object? pageSize = freezed,Object? products = freezed,}) {
   return _then(_self.copyWith(
-count: null == count ? _self.count : count // ignore: cast_nullable_to_non_nullable
-as int,page: null == page ? _self.page : page // ignore: cast_nullable_to_non_nullable
-as int,pageCount: null == pageCount ? _self.pageCount : pageCount // ignore: cast_nullable_to_non_nullable
-as int,pageSize: null == pageSize ? _self.pageSize : pageSize // ignore: cast_nullable_to_non_nullable
-as int,products: null == products ? _self.products : products // ignore: cast_nullable_to_non_nullable
-as List<ProductInfoModel>,
+count: freezed == count ? _self.count : count // ignore: cast_nullable_to_non_nullable
+as int?,page: freezed == page ? _self.page : page // ignore: cast_nullable_to_non_nullable
+as int?,pageCount: freezed == pageCount ? _self.pageCount : pageCount // ignore: cast_nullable_to_non_nullable
+as int?,pageSize: freezed == pageSize ? _self.pageSize : pageSize // ignore: cast_nullable_to_non_nullable
+as int?,products: freezed == products ? _self.products : products // ignore: cast_nullable_to_non_nullable
+as List<ProductInfoModel>?,
   ));
 }
 
@@ -450,7 +447,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int count,  int page, @JsonKey(name: 'page_count')  int pageCount, @JsonKey(name: 'page_size')  int pageSize,  List<ProductInfoModel> products)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int? count,  int? page,  int? pageCount,  int? pageSize,  List<ProductInfoModel>? products)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _OpenFoodFactsSearchResponse() when $default != null:
 return $default(_that.count,_that.page,_that.pageCount,_that.pageSize,_that.products);case _:
@@ -471,7 +468,7 @@ return $default(_that.count,_that.page,_that.pageCount,_that.pageSize,_that.prod
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int count,  int page, @JsonKey(name: 'page_count')  int pageCount, @JsonKey(name: 'page_size')  int pageSize,  List<ProductInfoModel> products)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int? count,  int? page,  int? pageCount,  int? pageSize,  List<ProductInfoModel>? products)  $default,) {final _that = this;
 switch (_that) {
 case _OpenFoodFactsSearchResponse():
 return $default(_that.count,_that.page,_that.pageCount,_that.pageSize,_that.products);case _:
@@ -491,7 +488,7 @@ return $default(_that.count,_that.page,_that.pageCount,_that.pageSize,_that.prod
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int count,  int page, @JsonKey(name: 'page_count')  int pageCount, @JsonKey(name: 'page_size')  int pageSize,  List<ProductInfoModel> products)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int? count,  int? page,  int? pageCount,  int? pageSize,  List<ProductInfoModel>? products)?  $default,) {final _that = this;
 switch (_that) {
 case _OpenFoodFactsSearchResponse() when $default != null:
 return $default(_that.count,_that.page,_that.pageCount,_that.pageSize,_that.products);case _:
@@ -503,21 +500,23 @@ return $default(_that.count,_that.page,_that.pageCount,_that.pageSize,_that.prod
 }
 
 /// @nodoc
-@JsonSerializable()
+
 
 class _OpenFoodFactsSearchResponse implements OpenFoodFactsSearchResponse {
-  const _OpenFoodFactsSearchResponse({required this.count, required this.page, @JsonKey(name: 'page_count') required this.pageCount, @JsonKey(name: 'page_size') required this.pageSize, required final  List<ProductInfoModel> products}): _products = products;
-  factory _OpenFoodFactsSearchResponse.fromJson(Map<String, dynamic> json) => _$OpenFoodFactsSearchResponseFromJson(json);
+  const _OpenFoodFactsSearchResponse({this.count, this.page, this.pageCount, this.pageSize, final  List<ProductInfoModel>? products}): _products = products;
+  
 
-@override final  int count;
-@override final  int page;
-@override@JsonKey(name: 'page_count') final  int pageCount;
-@override@JsonKey(name: 'page_size') final  int pageSize;
- final  List<ProductInfoModel> _products;
-@override List<ProductInfoModel> get products {
+@override final  int? count;
+@override final  int? page;
+@override final  int? pageCount;
+@override final  int? pageSize;
+ final  List<ProductInfoModel>? _products;
+@override List<ProductInfoModel>? get products {
+  final value = _products;
+  if (value == null) return null;
   if (_products is EqualUnmodifiableListView) return _products;
   // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_products);
+  return EqualUnmodifiableListView(value);
 }
 
 
@@ -527,17 +526,14 @@ class _OpenFoodFactsSearchResponse implements OpenFoodFactsSearchResponse {
 @pragma('vm:prefer-inline')
 _$OpenFoodFactsSearchResponseCopyWith<_OpenFoodFactsSearchResponse> get copyWith => __$OpenFoodFactsSearchResponseCopyWithImpl<_OpenFoodFactsSearchResponse>(this, _$identity);
 
-@override
-Map<String, dynamic> toJson() {
-  return _$OpenFoodFactsSearchResponseToJson(this, );
-}
+
 
 @override
 bool operator ==(Object other) {
   return identical(this, other) || (other.runtimeType == runtimeType&&other is _OpenFoodFactsSearchResponse&&(identical(other.count, count) || other.count == count)&&(identical(other.page, page) || other.page == page)&&(identical(other.pageCount, pageCount) || other.pageCount == pageCount)&&(identical(other.pageSize, pageSize) || other.pageSize == pageSize)&&const DeepCollectionEquality().equals(other._products, _products));
 }
 
-@JsonKey(includeFromJson: false, includeToJson: false)
+
 @override
 int get hashCode => Object.hash(runtimeType,count,page,pageCount,pageSize,const DeepCollectionEquality().hash(_products));
 
@@ -554,7 +550,7 @@ abstract mixin class _$OpenFoodFactsSearchResponseCopyWith<$Res> implements $Ope
   factory _$OpenFoodFactsSearchResponseCopyWith(_OpenFoodFactsSearchResponse value, $Res Function(_OpenFoodFactsSearchResponse) _then) = __$OpenFoodFactsSearchResponseCopyWithImpl;
 @override @useResult
 $Res call({
- int count, int page,@JsonKey(name: 'page_count') int pageCount,@JsonKey(name: 'page_size') int pageSize, List<ProductInfoModel> products
+ int? count, int? page, int? pageCount, int? pageSize, List<ProductInfoModel>? products
 });
 
 
@@ -571,14 +567,14 @@ class __$OpenFoodFactsSearchResponseCopyWithImpl<$Res>
 
 /// Create a copy of OpenFoodFactsSearchResponse
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? count = null,Object? page = null,Object? pageCount = null,Object? pageSize = null,Object? products = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? count = freezed,Object? page = freezed,Object? pageCount = freezed,Object? pageSize = freezed,Object? products = freezed,}) {
   return _then(_OpenFoodFactsSearchResponse(
-count: null == count ? _self.count : count // ignore: cast_nullable_to_non_nullable
-as int,page: null == page ? _self.page : page // ignore: cast_nullable_to_non_nullable
-as int,pageCount: null == pageCount ? _self.pageCount : pageCount // ignore: cast_nullable_to_non_nullable
-as int,pageSize: null == pageSize ? _self.pageSize : pageSize // ignore: cast_nullable_to_non_nullable
-as int,products: null == products ? _self._products : products // ignore: cast_nullable_to_non_nullable
-as List<ProductInfoModel>,
+count: freezed == count ? _self.count : count // ignore: cast_nullable_to_non_nullable
+as int?,page: freezed == page ? _self.page : page // ignore: cast_nullable_to_non_nullable
+as int?,pageCount: freezed == pageCount ? _self.pageCount : pageCount // ignore: cast_nullable_to_non_nullable
+as int?,pageSize: freezed == pageSize ? _self.pageSize : pageSize // ignore: cast_nullable_to_non_nullable
+as int?,products: freezed == products ? _self._products : products // ignore: cast_nullable_to_non_nullable
+as List<ProductInfoModel>?,
   ));
 }
 

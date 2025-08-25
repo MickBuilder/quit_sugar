@@ -14,14 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$DailySummary {
 
- double get totalSugar;
-  double get dailyLimit;
-  double get remainingSugar;
-  double get progressPercentage;
-  SugarStatus get status;
-  List<FoodEntry> get entries;
-  String get motivationalMessage;
-  int get streak;
+ double get totalSugar; double get dailyLimit; double get remainingSugar; double get progressPercentage; SugarStatus get status; List<FoodEntry> get entries; String get motivationalMessage; int get streak;
 /// Create a copy of DailySummary
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)

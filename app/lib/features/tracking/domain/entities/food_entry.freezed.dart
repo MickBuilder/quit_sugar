@@ -14,12 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$FoodEntry {
 
- String get id;
-  ProductInfo get product;
-  double get portionGrams;
-  double get sugarAmount;
-  String? get customName;
-  DateTime get timestamp;
+ String get id; ProductInfo get product; double get portionGrams; double get sugarAmount; String? get customName; DateTime get timestamp;
 /// Create a copy of FoodEntry
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)

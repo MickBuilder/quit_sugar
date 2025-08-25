@@ -1,7 +1,7 @@
 // lib/features/dashboard/presentation/screens/dashboard_screen.dart
 import 'package:flutter/cupertino.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:quit_suggar/core/providers/sugar_tracking_provider.dart';
+import 'package:quit_suggar/features/tracking/presentation/providers/sugar_tracking_provider.dart';
 import 'package:quit_suggar/core/services/logger_service.dart';
 import 'package:quit_suggar/features/dashboard/presentation/widgets/today_entries_list.dart';
 import 'package:quit_suggar/features/tracking/domain/entities/daily_summary.dart';
