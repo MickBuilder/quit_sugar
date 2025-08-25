@@ -1,5 +1,6 @@
 // lib/features/dashboard/presentation/screens/dashboard_screen.dart
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:quit_suggar/features/tracking/presentation/providers/sugar_tracking_provider.dart';
 import 'package:quit_suggar/core/services/logger_service.dart';
@@ -44,43 +45,48 @@ class DashboardScreen extends HookConsumerWidget {
     WidgetRef ref,
     DailySummary dailySummary,
   ) {
-    return CupertinoPageScaffold(
+    return Scaffold(
       backgroundColor: AppTheme.background,
-      navigationBar: CupertinoNavigationBar(
+      body: CupertinoPageScaffold(
         backgroundColor: AppTheme.background,
-        border: const Border(bottom: BorderSide.none),
-        middle: Text(
-          'Today\'s Progress',
-          style: AppTextStyles.heading,
+        navigationBar: CupertinoNavigationBar(
+          backgroundColor: AppTheme.background,
+          border: const Border(bottom: BorderSide.none),
+          middle: Text(
+            'Today\'s Progress',
+            style: AppTextStyles.heading,
+          ),
         ),
-      ),
-      child: SafeArea(
-        child: Container(
-          color: AppTheme.background,
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 20.0,
-              vertical: 16.0,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SizedBox(height: 24),
+        child: SafeArea(
+          child: Container(
+            color: AppTheme.background,
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20.0,
+                vertical: 16.0,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(height: 24),
 
-                // Daily progress card
-                DailyProgressCard(summary: dailySummary),
+                  // Daily progress card
+                  DailyProgressCard(summary: dailySummary),
 
-                const SizedBox(height: 24),
+                  const SizedBox(height: 24),
 
-                // Food log card
-                TodayEntriesList(entries: dailySummary.entries),
+                  // Food log card
+                  TodayEntriesList(entries: dailySummary.entries),
 
-                const SizedBox(height: 50),
-              ],
+                  const SizedBox(height: 50),
+                ],
+              ),
             ),
           ),
         ),
       ),
+      // floatingActionButton: (expanded fab)
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 
