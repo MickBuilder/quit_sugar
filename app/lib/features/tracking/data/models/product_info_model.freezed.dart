@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ProductInfoModel {
 
- String get barcode; String get name; String? get brand; double? get sugarPer100g; String? get imageUrl; String? get ingredients; String? get nutritionGrade; double? get weightGrams; Map<String, dynamic>? get nutriments;
+ String get barcode; String get name; String? get brand; double? get sugarPer100g; String? get imageUrl; String? get ingredients; String? get nutritionGrade; double? get weightGrams; Map<String, dynamic>? get nutriments; List<String> get categories; double get servingSize;
 /// Create a copy of ProductInfoModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $ProductInfoModelCopyWith<ProductInfoModel> get copyWith => _$ProductInfoModelCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProductInfoModel&&(identical(other.barcode, barcode) || other.barcode == barcode)&&(identical(other.name, name) || other.name == name)&&(identical(other.brand, brand) || other.brand == brand)&&(identical(other.sugarPer100g, sugarPer100g) || other.sugarPer100g == sugarPer100g)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.ingredients, ingredients) || other.ingredients == ingredients)&&(identical(other.nutritionGrade, nutritionGrade) || other.nutritionGrade == nutritionGrade)&&(identical(other.weightGrams, weightGrams) || other.weightGrams == weightGrams)&&const DeepCollectionEquality().equals(other.nutriments, nutriments));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProductInfoModel&&(identical(other.barcode, barcode) || other.barcode == barcode)&&(identical(other.name, name) || other.name == name)&&(identical(other.brand, brand) || other.brand == brand)&&(identical(other.sugarPer100g, sugarPer100g) || other.sugarPer100g == sugarPer100g)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.ingredients, ingredients) || other.ingredients == ingredients)&&(identical(other.nutritionGrade, nutritionGrade) || other.nutritionGrade == nutritionGrade)&&(identical(other.weightGrams, weightGrams) || other.weightGrams == weightGrams)&&const DeepCollectionEquality().equals(other.nutriments, nutriments)&&const DeepCollectionEquality().equals(other.categories, categories)&&(identical(other.servingSize, servingSize) || other.servingSize == servingSize));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,barcode,name,brand,sugarPer100g,imageUrl,ingredients,nutritionGrade,weightGrams,const DeepCollectionEquality().hash(nutriments));
+int get hashCode => Object.hash(runtimeType,barcode,name,brand,sugarPer100g,imageUrl,ingredients,nutritionGrade,weightGrams,const DeepCollectionEquality().hash(nutriments),const DeepCollectionEquality().hash(categories),servingSize);
 
 @override
 String toString() {
-  return 'ProductInfoModel(barcode: $barcode, name: $name, brand: $brand, sugarPer100g: $sugarPer100g, imageUrl: $imageUrl, ingredients: $ingredients, nutritionGrade: $nutritionGrade, weightGrams: $weightGrams, nutriments: $nutriments)';
+  return 'ProductInfoModel(barcode: $barcode, name: $name, brand: $brand, sugarPer100g: $sugarPer100g, imageUrl: $imageUrl, ingredients: $ingredients, nutritionGrade: $nutritionGrade, weightGrams: $weightGrams, nutriments: $nutriments, categories: $categories, servingSize: $servingSize)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $ProductInfoModelCopyWith<$Res>  {
   factory $ProductInfoModelCopyWith(ProductInfoModel value, $Res Function(ProductInfoModel) _then) = _$ProductInfoModelCopyWithImpl;
 @useResult
 $Res call({
- String barcode, String name, String? brand, double? sugarPer100g, String? imageUrl, String? ingredients, String? nutritionGrade, double? weightGrams, Map<String, dynamic>? nutriments
+ String barcode, String name, String? brand, double? sugarPer100g, String? imageUrl, String? ingredients, String? nutritionGrade, double? weightGrams, Map<String, dynamic>? nutriments, List<String> categories, double servingSize
 });
 
 
@@ -65,7 +65,7 @@ class _$ProductInfoModelCopyWithImpl<$Res>
 
 /// Create a copy of ProductInfoModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? barcode = null,Object? name = null,Object? brand = freezed,Object? sugarPer100g = freezed,Object? imageUrl = freezed,Object? ingredients = freezed,Object? nutritionGrade = freezed,Object? weightGrams = freezed,Object? nutriments = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? barcode = null,Object? name = null,Object? brand = freezed,Object? sugarPer100g = freezed,Object? imageUrl = freezed,Object? ingredients = freezed,Object? nutritionGrade = freezed,Object? weightGrams = freezed,Object? nutriments = freezed,Object? categories = null,Object? servingSize = null,}) {
   return _then(_self.copyWith(
 barcode: null == barcode ? _self.barcode : barcode // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -76,7 +76,9 @@ as String?,ingredients: freezed == ingredients ? _self.ingredients : ingredients
 as String?,nutritionGrade: freezed == nutritionGrade ? _self.nutritionGrade : nutritionGrade // ignore: cast_nullable_to_non_nullable
 as String?,weightGrams: freezed == weightGrams ? _self.weightGrams : weightGrams // ignore: cast_nullable_to_non_nullable
 as double?,nutriments: freezed == nutriments ? _self.nutriments : nutriments // ignore: cast_nullable_to_non_nullable
-as Map<String, dynamic>?,
+as Map<String, dynamic>?,categories: null == categories ? _self.categories : categories // ignore: cast_nullable_to_non_nullable
+as List<String>,servingSize: null == servingSize ? _self.servingSize : servingSize // ignore: cast_nullable_to_non_nullable
+as double,
   ));
 }
 
@@ -161,10 +163,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String barcode,  String name,  String? brand,  double? sugarPer100g,  String? imageUrl,  String? ingredients,  String? nutritionGrade,  double? weightGrams,  Map<String, dynamic>? nutriments)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String barcode,  String name,  String? brand,  double? sugarPer100g,  String? imageUrl,  String? ingredients,  String? nutritionGrade,  double? weightGrams,  Map<String, dynamic>? nutriments,  List<String> categories,  double servingSize)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ProductInfoModel() when $default != null:
-return $default(_that.barcode,_that.name,_that.brand,_that.sugarPer100g,_that.imageUrl,_that.ingredients,_that.nutritionGrade,_that.weightGrams,_that.nutriments);case _:
+return $default(_that.barcode,_that.name,_that.brand,_that.sugarPer100g,_that.imageUrl,_that.ingredients,_that.nutritionGrade,_that.weightGrams,_that.nutriments,_that.categories,_that.servingSize);case _:
   return orElse();
 
 }
@@ -182,10 +184,10 @@ return $default(_that.barcode,_that.name,_that.brand,_that.sugarPer100g,_that.im
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String barcode,  String name,  String? brand,  double? sugarPer100g,  String? imageUrl,  String? ingredients,  String? nutritionGrade,  double? weightGrams,  Map<String, dynamic>? nutriments)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String barcode,  String name,  String? brand,  double? sugarPer100g,  String? imageUrl,  String? ingredients,  String? nutritionGrade,  double? weightGrams,  Map<String, dynamic>? nutriments,  List<String> categories,  double servingSize)  $default,) {final _that = this;
 switch (_that) {
 case _ProductInfoModel():
-return $default(_that.barcode,_that.name,_that.brand,_that.sugarPer100g,_that.imageUrl,_that.ingredients,_that.nutritionGrade,_that.weightGrams,_that.nutriments);case _:
+return $default(_that.barcode,_that.name,_that.brand,_that.sugarPer100g,_that.imageUrl,_that.ingredients,_that.nutritionGrade,_that.weightGrams,_that.nutriments,_that.categories,_that.servingSize);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -202,10 +204,10 @@ return $default(_that.barcode,_that.name,_that.brand,_that.sugarPer100g,_that.im
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String barcode,  String name,  String? brand,  double? sugarPer100g,  String? imageUrl,  String? ingredients,  String? nutritionGrade,  double? weightGrams,  Map<String, dynamic>? nutriments)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String barcode,  String name,  String? brand,  double? sugarPer100g,  String? imageUrl,  String? ingredients,  String? nutritionGrade,  double? weightGrams,  Map<String, dynamic>? nutriments,  List<String> categories,  double servingSize)?  $default,) {final _that = this;
 switch (_that) {
 case _ProductInfoModel() when $default != null:
-return $default(_that.barcode,_that.name,_that.brand,_that.sugarPer100g,_that.imageUrl,_that.ingredients,_that.nutritionGrade,_that.weightGrams,_that.nutriments);case _:
+return $default(_that.barcode,_that.name,_that.brand,_that.sugarPer100g,_that.imageUrl,_that.ingredients,_that.nutritionGrade,_that.weightGrams,_that.nutriments,_that.categories,_that.servingSize);case _:
   return null;
 
 }
@@ -217,7 +219,7 @@ return $default(_that.barcode,_that.name,_that.brand,_that.sugarPer100g,_that.im
 @JsonSerializable()
 
 class _ProductInfoModel implements ProductInfoModel {
-  const _ProductInfoModel({required this.barcode, required this.name, this.brand, this.sugarPer100g, this.imageUrl, this.ingredients, this.nutritionGrade, this.weightGrams, final  Map<String, dynamic>? nutriments}): _nutriments = nutriments;
+  const _ProductInfoModel({required this.barcode, required this.name, this.brand, this.sugarPer100g, this.imageUrl, this.ingredients, this.nutritionGrade, this.weightGrams, final  Map<String, dynamic>? nutriments, final  List<String> categories = const [], this.servingSize = 100.0}): _nutriments = nutriments,_categories = categories;
   factory _ProductInfoModel.fromJson(Map<String, dynamic> json) => _$ProductInfoModelFromJson(json);
 
 @override final  String barcode;
@@ -237,6 +239,14 @@ class _ProductInfoModel implements ProductInfoModel {
   return EqualUnmodifiableMapView(value);
 }
 
+ final  List<String> _categories;
+@override@JsonKey() List<String> get categories {
+  if (_categories is EqualUnmodifiableListView) return _categories;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_categories);
+}
+
+@override@JsonKey() final  double servingSize;
 
 /// Create a copy of ProductInfoModel
 /// with the given fields replaced by the non-null parameter values.
@@ -251,16 +261,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProductInfoModel&&(identical(other.barcode, barcode) || other.barcode == barcode)&&(identical(other.name, name) || other.name == name)&&(identical(other.brand, brand) || other.brand == brand)&&(identical(other.sugarPer100g, sugarPer100g) || other.sugarPer100g == sugarPer100g)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.ingredients, ingredients) || other.ingredients == ingredients)&&(identical(other.nutritionGrade, nutritionGrade) || other.nutritionGrade == nutritionGrade)&&(identical(other.weightGrams, weightGrams) || other.weightGrams == weightGrams)&&const DeepCollectionEquality().equals(other._nutriments, _nutriments));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProductInfoModel&&(identical(other.barcode, barcode) || other.barcode == barcode)&&(identical(other.name, name) || other.name == name)&&(identical(other.brand, brand) || other.brand == brand)&&(identical(other.sugarPer100g, sugarPer100g) || other.sugarPer100g == sugarPer100g)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.ingredients, ingredients) || other.ingredients == ingredients)&&(identical(other.nutritionGrade, nutritionGrade) || other.nutritionGrade == nutritionGrade)&&(identical(other.weightGrams, weightGrams) || other.weightGrams == weightGrams)&&const DeepCollectionEquality().equals(other._nutriments, _nutriments)&&const DeepCollectionEquality().equals(other._categories, _categories)&&(identical(other.servingSize, servingSize) || other.servingSize == servingSize));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,barcode,name,brand,sugarPer100g,imageUrl,ingredients,nutritionGrade,weightGrams,const DeepCollectionEquality().hash(_nutriments));
+int get hashCode => Object.hash(runtimeType,barcode,name,brand,sugarPer100g,imageUrl,ingredients,nutritionGrade,weightGrams,const DeepCollectionEquality().hash(_nutriments),const DeepCollectionEquality().hash(_categories),servingSize);
 
 @override
 String toString() {
-  return 'ProductInfoModel(barcode: $barcode, name: $name, brand: $brand, sugarPer100g: $sugarPer100g, imageUrl: $imageUrl, ingredients: $ingredients, nutritionGrade: $nutritionGrade, weightGrams: $weightGrams, nutriments: $nutriments)';
+  return 'ProductInfoModel(barcode: $barcode, name: $name, brand: $brand, sugarPer100g: $sugarPer100g, imageUrl: $imageUrl, ingredients: $ingredients, nutritionGrade: $nutritionGrade, weightGrams: $weightGrams, nutriments: $nutriments, categories: $categories, servingSize: $servingSize)';
 }
 
 
@@ -271,7 +281,7 @@ abstract mixin class _$ProductInfoModelCopyWith<$Res> implements $ProductInfoMod
   factory _$ProductInfoModelCopyWith(_ProductInfoModel value, $Res Function(_ProductInfoModel) _then) = __$ProductInfoModelCopyWithImpl;
 @override @useResult
 $Res call({
- String barcode, String name, String? brand, double? sugarPer100g, String? imageUrl, String? ingredients, String? nutritionGrade, double? weightGrams, Map<String, dynamic>? nutriments
+ String barcode, String name, String? brand, double? sugarPer100g, String? imageUrl, String? ingredients, String? nutritionGrade, double? weightGrams, Map<String, dynamic>? nutriments, List<String> categories, double servingSize
 });
 
 
@@ -288,7 +298,7 @@ class __$ProductInfoModelCopyWithImpl<$Res>
 
 /// Create a copy of ProductInfoModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? barcode = null,Object? name = null,Object? brand = freezed,Object? sugarPer100g = freezed,Object? imageUrl = freezed,Object? ingredients = freezed,Object? nutritionGrade = freezed,Object? weightGrams = freezed,Object? nutriments = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? barcode = null,Object? name = null,Object? brand = freezed,Object? sugarPer100g = freezed,Object? imageUrl = freezed,Object? ingredients = freezed,Object? nutritionGrade = freezed,Object? weightGrams = freezed,Object? nutriments = freezed,Object? categories = null,Object? servingSize = null,}) {
   return _then(_ProductInfoModel(
 barcode: null == barcode ? _self.barcode : barcode // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -299,7 +309,9 @@ as String?,ingredients: freezed == ingredients ? _self.ingredients : ingredients
 as String?,nutritionGrade: freezed == nutritionGrade ? _self.nutritionGrade : nutritionGrade // ignore: cast_nullable_to_non_nullable
 as String?,weightGrams: freezed == weightGrams ? _self.weightGrams : weightGrams // ignore: cast_nullable_to_non_nullable
 as double?,nutriments: freezed == nutriments ? _self._nutriments : nutriments // ignore: cast_nullable_to_non_nullable
-as Map<String, dynamic>?,
+as Map<String, dynamic>?,categories: null == categories ? _self._categories : categories // ignore: cast_nullable_to_non_nullable
+as List<String>,servingSize: null == servingSize ? _self.servingSize : servingSize // ignore: cast_nullable_to_non_nullable
+as double,
   ));
 }
 

@@ -16,6 +16,8 @@ abstract class ProductInfoModel with _$ProductInfoModel {
     String? nutritionGrade,
     double? weightGrams,
     Map<String, dynamic>? nutriments,
+    @Default([]) List<String> categories,
+    @Default(100.0) double servingSize,
   }) = _ProductInfoModel;
 
   factory ProductInfoModel.fromJson(Map<String, dynamic> json) =>
@@ -44,6 +46,31 @@ abstract class ProductInfoModel with _$ProductInfoModel {
       weightGrams = _parseWeight(json['net_weight_value']);
     }
 
+    // Extract categories
+    List<String> categories = [];
+    if (json['categories'] != null) {
+      if (json['categories'] is String) {
+        categories = (json['categories'] as String)
+            .split(',')
+            .map((c) => c.trim())
+            .where((c) => c.isNotEmpty)
+            .toList();
+      } else if (json['categories'] is List) {
+        categories = (json['categories'] as List)
+            .map((c) => c.toString().trim())
+            .where((c) => c.isNotEmpty)
+            .toList();
+      }
+    }
+
+    // Extract serving size (default to 100g if not found)
+    double servingSize = 100.0;
+    if (json['serving_size'] != null) {
+      servingSize = _parseWeight(json['serving_size']) ?? 100.0;
+    } else if (weightGrams != null && weightGrams > 0) {
+      servingSize = weightGrams;
+    }
+
     return ProductInfoModel(
       barcode: json['code'] ?? '',
       name: json['product_name'] ?? json['generic_name'] ?? 'Unknown Product',
@@ -54,6 +81,8 @@ abstract class ProductInfoModel with _$ProductInfoModel {
       nutritionGrade: json['nutrition_grade_fr'] ?? json['nutrition_grade'],
       weightGrams: weightGrams,
       nutriments: json['nutriments'],
+      categories: categories,
+      servingSize: servingSize,
     );
   }
 
@@ -140,6 +169,8 @@ extension ProductInfoModelExtension on ProductInfoModel {
       nutritionGrade: nutritionGrade,
       weightGrams: weightGrams,
       nutriments: nutriments,
+      categories: categories,
+      servingSize: servingSize,
     );
   }
 }
@@ -157,6 +188,8 @@ extension ProductInfoDomainExtension on ProductInfo {
       nutritionGrade: nutritionGrade,
       weightGrams: weightGrams,
       nutriments: nutriments,
+      categories: categories,
+      servingSize: servingSize,
     );
   }
 }

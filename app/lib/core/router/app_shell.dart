@@ -41,6 +41,11 @@ class AppShell extends ConsumerWidget {
           label: 'Progress',
         ),
         BottomNavigationBarItem(
+          icon: Icon(CupertinoIcons.calendar),
+          activeIcon: Icon(CupertinoIcons.calendar),
+          label: 'Daily Logs',
+        ),
+        BottomNavigationBarItem(
           icon: Icon(CupertinoIcons.person),
           activeIcon: Icon(CupertinoIcons.person_fill),
           label: 'Profile',
@@ -57,8 +62,10 @@ class AppShell extends ConsumerWidget {
         return 0;
       case '/progress':
         return 1;
-      case '/profile':
+      case '/daily-logs':
         return 2;
+      case '/profile':
+        return 3;
       default:
         return 0;
     }
@@ -81,6 +88,9 @@ class AppShell extends ConsumerWidget {
         context.go('/progress');
         break;
       case 2:
+        context.go('/daily-logs');
+        break;
+      case 3:
         context.go('/profile');
         break;
     }

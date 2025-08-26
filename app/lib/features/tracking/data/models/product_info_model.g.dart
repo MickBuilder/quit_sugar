@@ -17,6 +17,12 @@ _ProductInfoModel _$ProductInfoModelFromJson(Map<String, dynamic> json) =>
       nutritionGrade: json['nutritionGrade'] as String?,
       weightGrams: (json['weightGrams'] as num?)?.toDouble(),
       nutriments: json['nutriments'] as Map<String, dynamic>?,
+      categories:
+          (json['categories'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
+      servingSize: (json['servingSize'] as num?)?.toDouble() ?? 100.0,
     );
 
 Map<String, dynamic> _$ProductInfoModelToJson(_ProductInfoModel instance) =>
@@ -30,4 +36,6 @@ Map<String, dynamic> _$ProductInfoModelToJson(_ProductInfoModel instance) =>
       'nutritionGrade': instance.nutritionGrade,
       'weightGrams': instance.weightGrams,
       'nutriments': instance.nutriments,
+      'categories': instance.categories,
+      'servingSize': instance.servingSize,
     };

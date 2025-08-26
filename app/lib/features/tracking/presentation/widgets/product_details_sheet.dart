@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:quit_suggar/features/tracking/domain/entities/product_info.dart';
+import 'package:quit_suggar/features/tracking/presentation/widgets/sugar_swap_suggestions.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
 
-class ProductDetailsSheet extends StatelessWidget {
+class ProductDetailsSheet extends HookWidget {
   final ProductInfo product;
   final double selectedPortion;
   final ValueChanged<double> onPortionChanged;
@@ -18,6 +20,7 @@ class ProductDetailsSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final showSuggestions = useState(true);
     // Calculate sugar amount dynamically based on current portion size
     final sugarAmount = product.calculateSugarForPortion(selectedPortion);
 
@@ -148,6 +151,15 @@ class ProductDetailsSheet extends StatelessWidget {
                     ],
                   ),
                 ),
+
+                // Sugar swap suggestions (only show for high-sugar products)
+                if (showSuggestions.value && (product.sugarPer100g ?? 0.0) > 15.0) ...[
+                  const SizedBox(height: 16),
+                  SugarSwapSuggestions(
+                    scannedProduct: product,
+                    onDismiss: () => showSuggestions.value = false,
+                  ),
+                ],
 
                 const SizedBox(height: 20),
 

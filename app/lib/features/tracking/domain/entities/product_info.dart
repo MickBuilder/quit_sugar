@@ -14,6 +14,8 @@ abstract class ProductInfo with _$ProductInfo {
     String? nutritionGrade,
     double? weightGrams,
     Map<String, dynamic>? nutriments,
+    @Default([]) List<String> categories,
+    @Default(100.0) double servingSize,
   }) = _ProductInfo;
 
   const ProductInfo._();

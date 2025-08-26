@@ -308,12 +308,14 @@ class ScannerScreen extends HookConsumerWidget {
       AppLogger.logSugarTracking('Product successfully added to daily log');
 
       if (context.mounted) {
+        // Generate personalized feedback based on sugar content and progress
+        final feedbackData = _generateTrackingFeedback(product, sugarForThisPortion, summary);
+        
         showDialog(
           context: context,
           builder: (context) => CustomDialog(
-            title: 'Added Successfully!',
-            content:
-                'Added ${product.name} to your daily log.\n\nSugar added: ${sugarForThisPortion.toStringAsFixed(1)}g\nToday\'s Total: ${summary.totalSugar.toStringAsFixed(1)}g / ${summary.dailyLimit.toStringAsFixed(0)}g',
+            title: feedbackData['title']!,
+            content: feedbackData['content']!,
             actions: [
               CustomDialogAction(
                 text: 'Continue Scanning',
@@ -358,6 +360,65 @@ class ScannerScreen extends HookConsumerWidget {
         );
       }
     }
+  }
+
+  /// Generate personalized feedback based on product and user progress
+  Map<String, String> _generateTrackingFeedback(
+    ProductInfo product,
+    double sugarAdded,
+    dynamic summary, // DailySummary from sugar tracking service
+  ) {
+    final sugarPer100g = product.sugarPer100g ?? 0.0;
+    final progressPercentage = (summary.totalSugar / summary.dailyLimit) * 100;
+    final remainingSugar = summary.dailyLimit - summary.totalSugar;
+    
+    String title;
+    String content;
+    
+    // Determine feedback based on product sugar content and user progress
+    if (sugarPer100g < 5.0) {
+      // Low sugar product
+      title = '🌟 Great Choice!';
+      content = 'Excellent! ${product.name} is low in sugar (${sugarPer100g.toStringAsFixed(1)}g per 100g).\n\nSugar added: ${sugarAdded.toStringAsFixed(1)}g\nToday\'s Total: ${summary.totalSugar.toStringAsFixed(1)}g / ${summary.dailyLimit.toStringAsFixed(0)}g\n\nYou\'re making smart choices! Keep it up! 💪';
+    } else if (sugarPer100g < 10.0) {
+      // Moderate sugar product
+      title = '👍 Good Choice!';
+      content = '${product.name} has moderate sugar content (${sugarPer100g.toStringAsFixed(1)}g per 100g).\n\nSugar added: ${sugarAdded.toStringAsFixed(1)}g\nToday\'s Total: ${summary.totalSugar.toStringAsFixed(1)}g / ${summary.dailyLimit.toStringAsFixed(0)}g\n\nStill within a reasonable range. You\'re doing well!';
+    } else if (sugarPer100g < 20.0) {
+      // High sugar product
+      title = '⚠️ High Sugar Alert';
+      content = '${product.name} is high in sugar (${sugarPer100g.toStringAsFixed(1)}g per 100g).\n\nSugar added: ${sugarAdded.toStringAsFixed(1)}g\nToday\'s Total: ${summary.totalSugar.toStringAsFixed(1)}g / ${summary.dailyLimit.toStringAsFixed(0)}g';
+      
+      if (progressPercentage > 80) {
+        content += '\n\n🔴 You\'re close to your daily limit! Consider healthier alternatives tomorrow.';
+      } else {
+        content += '\n\n💡 Try to balance this with lower-sugar foods today.';
+      }
+    } else {
+      // Very high sugar product
+      title = '🚨 Very High Sugar!';
+      content = '${product.name} is very high in sugar (${sugarPer100g.toStringAsFixed(1)}g per 100g).\n\nSugar added: ${sugarAdded.toStringAsFixed(1)}g\nToday\'s Total: ${summary.totalSugar.toStringAsFixed(1)}g / ${summary.dailyLimit.toStringAsFixed(0)}g';
+      
+      if (progressPercentage >= 100) {
+        content += '\n\n🔴 You\'ve exceeded your daily limit. Consider this a learning experience!';
+      } else if (progressPercentage > 80) {
+        content += '\n\n⚠️ This puts you very close to your daily limit. Be extra careful with the rest of your day!';
+      } else {
+        content += '\n\n💡 This is a high-sugar item. Try to make healthier choices for the rest of the day.';
+      }
+    }
+    
+    // Add progress encouragement
+    if (progressPercentage <= 50) {
+      content += '\n\n✅ You have plenty of room left in your daily budget: ${remainingSugar.toStringAsFixed(1)}g remaining!';
+    } else if (progressPercentage <= 75) {
+      content += '\n\n⏰ You\'re at ${progressPercentage.toStringAsFixed(0)}% of your daily limit. ${remainingSugar.toStringAsFixed(1)}g remaining.';
+    }
+    
+    return {
+      'title': title,
+      'content': content,
+    };
   }
 
   /// Check if user can scan based on subscription limits

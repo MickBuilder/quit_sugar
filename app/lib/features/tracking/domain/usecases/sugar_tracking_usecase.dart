@@ -136,8 +136,9 @@ class SugarTrackingUsecase {
 
     final oldStreak = _currentStreak;
 
+    // STREAK RULE: User gets a streak point ONLY if they stay within daily limit
     if (_currentSugarIntake <= _dailyLimit) {
-      // Under limit - achieved daily goal, increment streak
+      // SUCCESS: Under or at limit - achieved daily goal, increment streak
       _currentStreak++;
 
       // Mark today as a successful day
@@ -145,20 +146,39 @@ class SugarTrackingUsecase {
       await _repository.saveCurrentStreak(_currentStreak);
 
       AppLogger.logSugarTracking(
-        'Daily goal achieved! Streak: $_currentStreak days (stayed under ${_dailyLimit.toStringAsFixed(0)}g limit)',
+        'Daily goal achieved! Streak: $_currentStreak days (stayed under ${_dailyLimit.toStringAsFixed(0)}g limit with ${_currentSugarIntake.toStringAsFixed(1)}g)',
       );
     } else {
-      // Over limit - goal not achieved, reset streak to 0
+      // FAILURE: Over limit - goal not achieved, RESET STREAK TO 0
       _currentStreak = 0;
       await _repository.saveCurrentStreak(0);
       await _repository.removeLastStreakDate();
 
       AppLogger.logSugarTracking(
-        'Daily goal missed: ${_currentSugarIntake.toStringAsFixed(1)}g / ${_dailyLimit.toStringAsFixed(0)}g - streak reset to 0',
+        'Daily goal FAILED: ${_currentSugarIntake.toStringAsFixed(1)}g exceeds ${_dailyLimit.toStringAsFixed(0)}g limit - STREAK RESET TO 0',
       );
     }
 
+    // Always save the updated streak
+    await _saveToRepository();
+
     return _currentStreak != oldStreak; // Return true if streak changed
+  }
+
+  /// Handle immediate streak reset when user exceeds daily limit
+  Future<void> _handleLimitExceeded(double oldIntake, double newIntake) async {
+    // If user was under limit but now exceeds it, reset streak immediately
+    if (oldIntake <= _dailyLimit && newIntake > _dailyLimit && _currentStreak > 0) {
+      final oldStreak = _currentStreak;
+      _currentStreak = 0;
+      
+      await _repository.saveCurrentStreak(0);
+      await _repository.removeLastStreakDate();
+
+      AppLogger.logSugarTracking(
+        'LIMIT EXCEEDED! Daily limit of ${_dailyLimit.toStringAsFixed(0)}g exceeded with ${newIntake.toStringAsFixed(1)}g - Streak reset from $oldStreak to 0 immediately',
+      );
+    }
   }
 
   /// Check if we should evaluate daily streak (called when user opens app)
@@ -195,7 +215,11 @@ class SugarTrackingUsecase {
       );
 
       _todayEntries.add(entry);
+      final oldSugarIntake = _currentSugarIntake;
       _currentSugarIntake += sugarAmount;
+
+      // Check if user exceeded limit with this entry
+      await _handleLimitExceeded(oldSugarIntake, _currentSugarIntake);
 
       // Save to repository
       await _saveToRepository();

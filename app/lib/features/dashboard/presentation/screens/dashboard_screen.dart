@@ -8,6 +8,7 @@ import 'package:quit_suggar/features/dashboard/presentation/widgets/today_entrie
 import 'package:quit_suggar/features/tracking/domain/entities/daily_summary.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
 import 'package:quit_suggar/features/dashboard/presentation/widgets/daily_progress_card.dart';
+import 'package:quit_suggar/features/dashboard/presentation/widgets/expandable_fab.dart';
 
 // We now use HookConsumerWidget to use hooks with Riverpod
 class DashboardScreen extends HookConsumerWidget {
@@ -30,7 +31,12 @@ class DashboardScreen extends HookConsumerWidget {
           ref.read(sugarTrackingProvider.notifier).checkDailyStreakEvaluation();
         });
 
-        return _buildDashboard(context, ref, dailySummary);
+        return Stack(
+          children: [
+            _buildDashboard(context, ref, dailySummary),
+            const ExpandableFab(),
+          ],
+        );
       },
       loading: () => _buildLoadingScreen(),
       error: (error, stackTrace) {
@@ -85,8 +91,6 @@ class DashboardScreen extends HookConsumerWidget {
           ),
         ),
       ),
-      // floatingActionButton: (expanded fab)
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 

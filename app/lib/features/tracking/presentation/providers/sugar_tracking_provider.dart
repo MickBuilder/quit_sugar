@@ -8,6 +8,10 @@ import 'package:quit_suggar/features/tracking/domain/repositories/tracking_repos
 import 'package:quit_suggar/features/tracking/data/repositories/tracking_repository_impl.dart';
 import 'package:quit_suggar/features/tracking/data/datasources/tracking_storage_service.dart';
 import 'package:quit_suggar/features/tracking/data/datasources/openfoodfacts_api_service.dart';
+import 'package:quit_suggar/features/tracking/domain/entities/daily_summary_history.dart';
+import 'package:quit_suggar/features/tracking/domain/repositories/historical_data_repository.dart';
+import 'package:quit_suggar/features/tracking/data/repositories/historical_data_repository_impl.dart';
+import 'package:quit_suggar/features/tracking/data/datasources/historical_data_service.dart';
 import 'package:quit_suggar/core/services/logger_service.dart';
 
 part 'sugar_tracking_provider.g.dart';
@@ -202,4 +206,45 @@ Future<List<ProductInfo>> searchProducts(Ref ref, String query) async {
   AppLogger.logApi('Provider: Searching products for query: $query');
   final apiService = ref.watch(openFoodFactsApiServiceProvider);
   return await apiService.searchProducts(query);
+}
+
+// Historical data providers
+@riverpod
+HistoricalDataService historicalDataService(Ref ref) {
+  return HistoricalDataService();
+}
+
+@riverpod
+HistoricalDataRepository historicalDataRepository(Ref ref) {
+  final dataService = ref.watch(historicalDataServiceProvider);
+  return HistoricalDataRepositoryImpl(dataService);
+}
+
+// Historical data queries
+@riverpod
+Future<List<DailySummaryHistory>> recentDailySummaries(
+  Ref ref,
+  int count,
+) async {
+  final repository = ref.watch(historicalDataRepositoryProvider);
+  return await repository.getRecentDailySummaries(count);
+}
+
+@riverpod
+Future<List<DailySummaryHistory>> dailySummariesInRange(
+  Ref ref,
+  String startDate,
+  String endDate,
+) async {
+  final repository = ref.watch(historicalDataRepositoryProvider);
+  return await repository.getDailySummariesInRange(
+    startDate: startDate,
+    endDate: endDate,
+  );
+}
+
+@riverpod
+Future<Map<String, dynamic>> historicalStats(Ref ref) async {
+  final repository = ref.watch(historicalDataRepositoryProvider);
+  return await repository.getHistoricalStats();
 }

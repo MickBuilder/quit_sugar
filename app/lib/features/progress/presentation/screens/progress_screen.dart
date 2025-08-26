@@ -5,6 +5,8 @@ import 'package:quit_suggar/core/services/logger_service.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
 import 'package:quit_suggar/features/progress/presentation/widgets/weekly_summary_card.dart';
 import 'package:quit_suggar/features/progress/presentation/widgets/simple_progress_grid.dart';
+import 'package:quit_suggar/features/progress/presentation/widgets/sugar_consumption_graph.dart';
+import 'package:quit_suggar/features/progress/presentation/widgets/current_month_calendar.dart';
 
 class ProgressScreen extends HookConsumerWidget {
   const ProgressScreen({super.key});
@@ -51,8 +53,18 @@ class ProgressScreen extends HookConsumerWidget {
               children: [
                 const SizedBox(height: 24),
 
+                // Sugar Consumption Graph (main feature)
+                const SugarConsumptionGraph(),
+
+                const SizedBox(height: 24),
+
                 // Weekly summary
                 WeeklySummaryCard(),
+
+                const SizedBox(height: 24),
+
+                // Current Month Calendar (like the running app example)
+                const CurrentMonthCalendar(),
 
                 const SizedBox(height: 24),
 

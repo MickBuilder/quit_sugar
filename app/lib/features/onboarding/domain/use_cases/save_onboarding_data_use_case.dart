@@ -1,0 +1,51 @@
+import 'package:quit_suggar/features/onboarding/domain/entities/onboarding_data.dart';
+import 'package:quit_suggar/features/onboarding/domain/repositories/onboarding_repository.dart';
+
+class SaveOnboardingDataUseCase {
+  final OnboardingRepository _repository;
+  
+  SaveOnboardingDataUseCase(this._repository);
+  
+  Future<void> call(OnboardingData data) async {
+    // Generate daily limits progression based on the goal
+    final dailyLimitsProgression = _generateDailyLimitsProgression(
+      data.currentDailySugar,
+      data.targetDailySugar,
+      data.targetDays,
+    );
+    
+    final completeData = data.copyWith(
+      dailyLimitsProgression: dailyLimitsProgression,
+    );
+    
+    await _repository.saveOnboardingData(completeData);
+    await _repository.markOnboardingCompleted();
+  }
+  
+  List<double> _generateDailyLimitsProgression(
+    double currentDailySugar,
+    double targetDailySugar,
+    int targetDays,
+  ) {
+    final progression = <double>[];
+    final totalReduction = currentDailySugar - targetDailySugar;
+    
+    for (int day = 0; day < targetDays; day++) {
+      // Calculate the reduction progress for this day (0.0 to 1.0)
+      final progress = day / (targetDays - 1);
+      
+      // Use a smooth curve for reduction (quadratic easing)
+      final easedProgress = progress * progress;
+      
+      // Calculate the daily limit for this day
+      final dailyLimit = currentDailySugar - (totalReduction * easedProgress);
+      
+      // Ensure we don't go below the target
+      final clampedLimit = dailyLimit.clamp(targetDailySugar, currentDailySugar);
+      
+      progression.add(double.parse(clampedLimit.toStringAsFixed(1)));
+    }
+    
+    return progression;
+  }
+}
