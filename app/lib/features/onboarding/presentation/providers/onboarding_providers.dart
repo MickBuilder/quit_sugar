@@ -59,7 +59,7 @@ class OnboardingFlow extends _$OnboardingFlow {
       name: '',
       age: 18,
       gender: 'prefer_not_to_say',
-      currentDailySugar: 25.0,
+      currentDailySugar: 0.0,
       sugarSources: const SugarSourcesProfile(
         sodaDrinks: 0,
         sweetSnacks: 0,
@@ -73,11 +73,11 @@ class OnboardingFlow extends _$OnboardingFlow {
       dietType: null,
       reductionGoal: SugarReductionGoal.healthy,
       primaryMotivation: '',
-      targetDays: 45,
-      targetDailySugar: 25.0,
+      targetDays: 60,
+      targetDailySugar: SugarReductionGoal.healthy.targetAmount,
       dailyLimitsProgression: [],
       startDate: DateTime.now(),
-      targetDate: DateTime.now().add(const Duration(days: 45)),
+      targetDate: DateTime.now().add(const Duration(days: 60)),
     );
   }
   
@@ -152,7 +152,7 @@ class OnboardingFlow extends _$OnboardingFlow {
       name: '',
       age: 18,
       gender: 'prefer_not_to_say',
-      currentDailySugar: 25.0,
+      currentDailySugar: 0.0,
       sugarSources: const SugarSourcesProfile(
         sodaDrinks: 0,
         sweetSnacks: 0,
@@ -166,11 +166,11 @@ class OnboardingFlow extends _$OnboardingFlow {
       dietType: null,
       reductionGoal: SugarReductionGoal.healthy,
       primaryMotivation: '',
-      targetDays: 45,
-      targetDailySugar: 25.0,
+      targetDays: 60,
+      targetDailySugar: SugarReductionGoal.healthy.targetAmount,
       dailyLimitsProgression: [],
       startDate: DateTime.now(),
-      targetDate: DateTime.now().add(const Duration(days: 45)),
+      targetDate: DateTime.now().add(const Duration(days: 60)),
     );
   }
 }

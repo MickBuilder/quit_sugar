@@ -47,7 +47,7 @@ final openFoodFactsApiServiceProvider =
 typedef OpenFoodFactsApiServiceRef =
     AutoDisposeProviderRef<OpenFoodFactsApiService>;
 String _$trackingRepositoryHash() =>
-    r'5062e98b2abf5b0d02124542aa9b95c0178274af';
+    r'90807e51027b1090c7296a993398fa0ea2f31308';
 
 /// See also [trackingRepository].
 @ProviderFor(trackingRepository)
@@ -387,15 +387,14 @@ final historicalDataRepositoryProvider =
 typedef HistoricalDataRepositoryRef =
     AutoDisposeProviderRef<HistoricalDataRepository>;
 String _$recentDailySummariesHash() =>
-    r'019c4834018f1497bffb3c7c158e5fb108a2f378';
+    r'cfc3e645b65882d1861cd9e63f84a55c09cc6cf6';
 
 /// See also [recentDailySummaries].
 @ProviderFor(recentDailySummaries)
 const recentDailySummariesProvider = RecentDailySummariesFamily();
 
 /// See also [recentDailySummaries].
-class RecentDailySummariesFamily
-    extends Family<AsyncValue<List<DailySummaryHistory>>> {
+class RecentDailySummariesFamily extends Family<AsyncValue<List<DailyLog>>> {
   /// See also [recentDailySummaries].
   const RecentDailySummariesFamily();
 
@@ -428,7 +427,7 @@ class RecentDailySummariesFamily
 
 /// See also [recentDailySummaries].
 class RecentDailySummariesProvider
-    extends AutoDisposeFutureProvider<List<DailySummaryHistory>> {
+    extends AutoDisposeFutureProvider<List<DailyLog>> {
   /// See also [recentDailySummaries].
   RecentDailySummariesProvider(int count)
     : this._internal(
@@ -458,10 +457,7 @@ class RecentDailySummariesProvider
 
   @override
   Override overrideWith(
-    FutureOr<List<DailySummaryHistory>> Function(
-      RecentDailySummariesRef provider,
-    )
-    create,
+    FutureOr<List<DailyLog>> Function(RecentDailySummariesRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -478,7 +474,7 @@ class RecentDailySummariesProvider
   }
 
   @override
-  AutoDisposeFutureProviderElement<List<DailySummaryHistory>> createElement() {
+  AutoDisposeFutureProviderElement<List<DailyLog>> createElement() {
     return _RecentDailySummariesProviderElement(this);
   }
 
@@ -498,14 +494,13 @@ class RecentDailySummariesProvider
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin RecentDailySummariesRef
-    on AutoDisposeFutureProviderRef<List<DailySummaryHistory>> {
+mixin RecentDailySummariesRef on AutoDisposeFutureProviderRef<List<DailyLog>> {
   /// The parameter `count` of this provider.
   int get count;
 }
 
 class _RecentDailySummariesProviderElement
-    extends AutoDisposeFutureProviderElement<List<DailySummaryHistory>>
+    extends AutoDisposeFutureProviderElement<List<DailyLog>>
     with RecentDailySummariesRef {
   _RecentDailySummariesProviderElement(super.provider);
 
@@ -514,15 +509,14 @@ class _RecentDailySummariesProviderElement
 }
 
 String _$dailySummariesInRangeHash() =>
-    r'3ded4ef67cfb5b7868da2bbb7cf66faa8db40fb4';
+    r'52e71060f91260bcbe0af8a9c186ee9025434ea2';
 
 /// See also [dailySummariesInRange].
 @ProviderFor(dailySummariesInRange)
 const dailySummariesInRangeProvider = DailySummariesInRangeFamily();
 
 /// See also [dailySummariesInRange].
-class DailySummariesInRangeFamily
-    extends Family<AsyncValue<List<DailySummaryHistory>>> {
+class DailySummariesInRangeFamily extends Family<AsyncValue<List<DailyLog>>> {
   /// See also [dailySummariesInRange].
   const DailySummariesInRangeFamily();
 
@@ -555,7 +549,7 @@ class DailySummariesInRangeFamily
 
 /// See also [dailySummariesInRange].
 class DailySummariesInRangeProvider
-    extends AutoDisposeFutureProvider<List<DailySummaryHistory>> {
+    extends AutoDisposeFutureProvider<List<DailyLog>> {
   /// See also [dailySummariesInRange].
   DailySummariesInRangeProvider(String startDate, String endDate)
     : this._internal(
@@ -592,10 +586,7 @@ class DailySummariesInRangeProvider
 
   @override
   Override overrideWith(
-    FutureOr<List<DailySummaryHistory>> Function(
-      DailySummariesInRangeRef provider,
-    )
-    create,
+    FutureOr<List<DailyLog>> Function(DailySummariesInRangeRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -613,7 +604,7 @@ class DailySummariesInRangeProvider
   }
 
   @override
-  AutoDisposeFutureProviderElement<List<DailySummaryHistory>> createElement() {
+  AutoDisposeFutureProviderElement<List<DailyLog>> createElement() {
     return _DailySummariesInRangeProviderElement(this);
   }
 
@@ -636,8 +627,7 @@ class DailySummariesInRangeProvider
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin DailySummariesInRangeRef
-    on AutoDisposeFutureProviderRef<List<DailySummaryHistory>> {
+mixin DailySummariesInRangeRef on AutoDisposeFutureProviderRef<List<DailyLog>> {
   /// The parameter `startDate` of this provider.
   String get startDate;
 
@@ -646,7 +636,7 @@ mixin DailySummariesInRangeRef
 }
 
 class _DailySummariesInRangeProviderElement
-    extends AutoDisposeFutureProviderElement<List<DailySummaryHistory>>
+    extends AutoDisposeFutureProviderElement<List<DailyLog>>
     with DailySummariesInRangeRef {
   _DailySummariesInRangeProviderElement(super.provider);
 

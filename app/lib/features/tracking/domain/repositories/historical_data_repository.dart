@@ -1,20 +1,20 @@
-import 'package:quit_suggar/features/tracking/domain/entities/daily_summary_history.dart';
+import 'package:quit_suggar/features/tracking/domain/entities/daily_log.dart';
 
 abstract class HistoricalDataRepository {
   /// Save a daily summary for historical tracking
-  Future<void> saveDailySummary(DailySummaryHistory summary);
+  Future<void> saveDailySummary(DailyLog summary);
   
   /// Get daily summary for a specific date (YYYY-MM-DD format)
-  Future<DailySummaryHistory?> getDailySummary(String date);
+  Future<DailyLog?> getDailySummary(String date);
   
   /// Get daily summaries within a date range (inclusive)
-  Future<List<DailySummaryHistory>> getDailySummariesInRange({
+  Future<List<DailyLog>> getDailySummariesInRange({
     required String startDate,
     required String endDate,
   });
   
   /// Get the most recent N daily summaries
-  Future<List<DailySummaryHistory>> getRecentDailySummaries(int count);
+  Future<List<DailyLog>> getRecentDailySummaries(int count);
   
   /// Get all available dates that have data
   Future<List<String>> getAvailableDates();

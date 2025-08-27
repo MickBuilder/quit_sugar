@@ -6,7 +6,7 @@ part of 'sugar_swap_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$sugarSwapServiceHash() => r'de1f6cae08a5ecb54a72407c2120d3442e16cfe2';
+String _$sugarSwapServiceHash() => r'aaf66c7615ce00323b4da971ea2a12f01aee9f66';
 
 /// Provides the sugar swap service
 ///
@@ -26,7 +26,7 @@ final sugarSwapServiceProvider = Provider<SugarSwapService>.internal(
 // ignore: unused_element
 typedef SugarSwapServiceRef = ProviderRef<SugarSwapService>;
 String _$sugarSwapRecommendationsHash() =>
-    r'5aa67abc70bd2ef9378e5039e0919ab401dc31ef';
+    r'ed7d0578769a23aaf215a5c7c24be66f6a593f0e';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -191,7 +191,7 @@ class _SugarSwapRecommendationsProviderElement
 }
 
 String _$shouldSuggestAlternativesHash() =>
-    r'c80618dae08bf4dc6b147d3ff173d7ade578c4d9';
+    r'017e0290b90013e0d279790891f8ef53bdb9c3a4';
 
 /// Checks if alternatives should be suggested for a product
 ///
@@ -330,7 +330,7 @@ class _ShouldSuggestAlternativesProviderElement
 }
 
 String _$recommendedStrategyHash() =>
-    r'52e96b56710ff1e36628dd651c173679ed06a60c';
+    r'3e3ce91d4111303beb788ca6581cf86c334a29fa';
 
 /// Gets the recommended strategy for a product
 ///

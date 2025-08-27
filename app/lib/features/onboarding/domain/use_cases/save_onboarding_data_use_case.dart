@@ -28,6 +28,16 @@ class SaveOnboardingDataUseCase {
     int targetDays,
   ) {
     final progression = <double>[];
+    
+    // Handle edge case: if current is already at or below target
+    if (currentDailySugar <= targetDailySugar) {
+      // Stay at current level throughout the program
+      for (int day = 0; day < targetDays; day++) {
+        progression.add(double.parse(currentDailySugar.toStringAsFixed(1)));
+      }
+      return progression;
+    }
+    
     final totalReduction = currentDailySugar - targetDailySugar;
     
     for (int day = 0; day < targetDays; day++) {
@@ -40,7 +50,7 @@ class SaveOnboardingDataUseCase {
       // Calculate the daily limit for this day
       final dailyLimit = currentDailySugar - (totalReduction * easedProgress);
       
-      // Ensure we don't go below the target
+      // Clamp with correct bounds (min = target, max = current)
       final clampedLimit = dailyLimit.clamp(targetDailySugar, currentDailySugar);
       
       progression.add(double.parse(clampedLimit.toStringAsFixed(1)));

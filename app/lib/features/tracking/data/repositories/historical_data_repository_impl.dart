@@ -1,4 +1,4 @@
-import 'package:quit_suggar/features/tracking/domain/entities/daily_summary_history.dart';
+import 'package:quit_suggar/features/tracking/domain/entities/daily_log.dart';
 import 'package:quit_suggar/features/tracking/domain/repositories/historical_data_repository.dart';
 import 'package:quit_suggar/features/tracking/data/datasources/historical_data_service.dart';
 
@@ -8,17 +8,17 @@ class HistoricalDataRepositoryImpl implements HistoricalDataRepository {
   HistoricalDataRepositoryImpl(this._dataService);
 
   @override
-  Future<void> saveDailySummary(DailySummaryHistory summary) async {
+  Future<void> saveDailySummary(DailyLog summary) async {
     await _dataService.saveDailySummary(summary);
   }
 
   @override
-  Future<DailySummaryHistory?> getDailySummary(String date) async {
+  Future<DailyLog?> getDailySummary(String date) async {
     return await _dataService.getDailySummary(date);
   }
 
   @override
-  Future<List<DailySummaryHistory>> getDailySummariesInRange({
+  Future<List<DailyLog>> getDailySummariesInRange({
     required String startDate,
     required String endDate,
   }) async {
@@ -29,7 +29,7 @@ class HistoricalDataRepositoryImpl implements HistoricalDataRepository {
   }
 
   @override
-  Future<List<DailySummaryHistory>> getRecentDailySummaries(int count) async {
+  Future<List<DailyLog>> getRecentDailySummaries(int count) async {
     return await _dataService.getRecentDailySummaries(count);
   }
 

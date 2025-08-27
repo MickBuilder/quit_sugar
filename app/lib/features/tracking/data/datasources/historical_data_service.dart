@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:quit_suggar/features/tracking/domain/entities/daily_summary_history.dart';
-import 'package:quit_suggar/features/tracking/data/models/daily_summary_history_model.dart';
+import 'package:quit_suggar/features/tracking/domain/entities/daily_log.dart';
+import 'package:quit_suggar/features/tracking/data/models/daily_log_model.dart';
 import 'package:quit_suggar/core/services/logger_service.dart';
 
 class HistoricalDataService {
@@ -9,10 +9,10 @@ class HistoricalDataService {
   static const String _historyIndexKey = 'history_date_index';
 
   /// Save a daily summary to historical storage
-  Future<void> saveDailySummary(DailySummaryHistory summary) async {
+  Future<void> saveDailySummary(DailyLog summary) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final model = DailySummaryHistoryModel.fromDomain(summary);
+      final model = DailyLogModel.fromDomain(summary);
       final jsonString = json.encode(model.toJson());
       
       // Save the summary with date as key
@@ -35,7 +35,7 @@ class HistoricalDataService {
   }
 
   /// Get a specific daily summary by date (YYYY-MM-DD format)
-  Future<DailySummaryHistory?> getDailySummary(String date) async {
+  Future<DailyLog?> getDailySummary(String date) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final key = '$_prefixKey$date';
@@ -44,7 +44,7 @@ class HistoricalDataService {
       if (jsonString == null) return null;
       
       final jsonMap = json.decode(jsonString) as Map<String, dynamic>;
-      final model = DailySummaryHistoryModel.fromJson(jsonMap);
+      final model = DailyLogModel.fromJson(jsonMap);
       return model.toDomain();
     } catch (e, stackTrace) {
       AppLogger.logSugarTrackingError(
@@ -57,7 +57,7 @@ class HistoricalDataService {
   }
 
   /// Get all daily summaries in date range (inclusive)
-  Future<List<DailySummaryHistory>> getDailySummariesInRange({
+  Future<List<DailyLog>> getDailySummariesInRange({
     required String startDate,
     required String endDate,
   }) async {
@@ -67,7 +67,7 @@ class HistoricalDataService {
         return date.compareTo(startDate) >= 0 && date.compareTo(endDate) <= 0;
       }).toList();
       
-      final summaries = <DailySummaryHistory>[];
+      final summaries = <DailyLog>[];
       for (final date in filteredDates) {
         final summary = await getDailySummary(date);
         if (summary != null) {
@@ -94,13 +94,13 @@ class HistoricalDataService {
   }
 
   /// Get the most recent N daily summaries
-  Future<List<DailySummaryHistory>> getRecentDailySummaries(int count) async {
+  Future<List<DailyLog>> getRecentDailySummaries(int count) async {
     try {
       final dates = await _getDateIndex();
       dates.sort((a, b) => b.compareTo(a)); // Sort newest first
       final recentDates = dates.take(count);
       
-      final summaries = <DailySummaryHistory>[];
+      final summaries = <DailyLog>[];
       for (final date in recentDates) {
         final summary = await getDailySummary(date);
         if (summary != null) {
@@ -192,8 +192,8 @@ class HistoricalDataService {
 
       double totalSugar = 0.0;
       int streakDays = 0;
-      DailySummaryHistory? bestDay;
-      DailySummaryHistory? worstDay;
+      DailyLog? bestDay;
+      DailyLog? worstDay;
 
       for (final date in dates) {
         final summary = await getDailySummary(date);

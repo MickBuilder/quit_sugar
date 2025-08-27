@@ -11,30 +11,43 @@ part of 'daily_log.dart';
 
 // dart format off
 T _$identity<T>(T value) => value;
+
 /// @nodoc
 mixin _$DailyLog {
 
- DateTime get date; double get totalSugar; double get dailyLimit; List<FoodEntry> get entries; SugarStatus get status; bool get goalAchieved; int get streakDayNumber;
+ String get date;// Format: YYYY-MM-DD
+ double get totalSugar;// Total sugar consumed that day
+ double get dailyLimit;// The limit for that specific day
+ double get remainingSugar;// How much sugar was remaining
+ double get progressPercentage;// Percentage of daily limit used
+ bool get limitExceeded;// Whether the daily limit was exceeded
+ bool get streakDay;// Whether this day contributed to streak
+ int get streakCountAtEndOfDay;// Streak count at end of this day
+ int get entryCount;// Number of food entries that day
+ List<String> get topFoods;// Top 3 foods consumed (names only for storage efficiency)
+ DateTime get timestamp;
 /// Create a copy of DailyLog
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
 $DailyLogCopyWith<DailyLog> get copyWith => _$DailyLogCopyWithImpl<DailyLog>(this as DailyLog, _$identity);
 
+  /// Serializes this DailyLog to a JSON map.
+  Map<String, dynamic> toJson();
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is DailyLog&&(identical(other.date, date) || other.date == date)&&(identical(other.totalSugar, totalSugar) || other.totalSugar == totalSugar)&&(identical(other.dailyLimit, dailyLimit) || other.dailyLimit == dailyLimit)&&const DeepCollectionEquality().equals(other.entries, entries)&&(identical(other.status, status) || other.status == status)&&(identical(other.goalAchieved, goalAchieved) || other.goalAchieved == goalAchieved)&&(identical(other.streakDayNumber, streakDayNumber) || other.streakDayNumber == streakDayNumber));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DailyLog&&(identical(other.date, date) || other.date == date)&&(identical(other.totalSugar, totalSugar) || other.totalSugar == totalSugar)&&(identical(other.dailyLimit, dailyLimit) || other.dailyLimit == dailyLimit)&&(identical(other.remainingSugar, remainingSugar) || other.remainingSugar == remainingSugar)&&(identical(other.progressPercentage, progressPercentage) || other.progressPercentage == progressPercentage)&&(identical(other.limitExceeded, limitExceeded) || other.limitExceeded == limitExceeded)&&(identical(other.streakDay, streakDay) || other.streakDay == streakDay)&&(identical(other.streakCountAtEndOfDay, streakCountAtEndOfDay) || other.streakCountAtEndOfDay == streakCountAtEndOfDay)&&(identical(other.entryCount, entryCount) || other.entryCount == entryCount)&&const DeepCollectionEquality().equals(other.topFoods, topFoods)&&(identical(other.timestamp, timestamp) || other.timestamp == timestamp));
 }
 
-
+@JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,date,totalSugar,dailyLimit,const DeepCollectionEquality().hash(entries),status,goalAchieved,streakDayNumber);
+int get hashCode => Object.hash(runtimeType,date,totalSugar,dailyLimit,remainingSugar,progressPercentage,limitExceeded,streakDay,streakCountAtEndOfDay,entryCount,const DeepCollectionEquality().hash(topFoods),timestamp);
 
 @override
 String toString() {
-  return 'DailyLog(date: $date, totalSugar: $totalSugar, dailyLimit: $dailyLimit, entries: $entries, status: $status, goalAchieved: $goalAchieved, streakDayNumber: $streakDayNumber)';
+  return 'DailyLog(date: $date, totalSugar: $totalSugar, dailyLimit: $dailyLimit, remainingSugar: $remainingSugar, progressPercentage: $progressPercentage, limitExceeded: $limitExceeded, streakDay: $streakDay, streakCountAtEndOfDay: $streakCountAtEndOfDay, entryCount: $entryCount, topFoods: $topFoods, timestamp: $timestamp)';
 }
 
 
@@ -45,7 +58,7 @@ abstract mixin class $DailyLogCopyWith<$Res>  {
   factory $DailyLogCopyWith(DailyLog value, $Res Function(DailyLog) _then) = _$DailyLogCopyWithImpl;
 @useResult
 $Res call({
- DateTime date, double totalSugar, double dailyLimit, List<FoodEntry> entries, SugarStatus status, bool goalAchieved, int streakDayNumber
+ String date, double totalSugar, double dailyLimit, double remainingSugar, double progressPercentage, bool limitExceeded, bool streakDay, int streakCountAtEndOfDay, int entryCount, List<String> topFoods, DateTime timestamp
 });
 
 
@@ -62,16 +75,20 @@ class _$DailyLogCopyWithImpl<$Res>
 
 /// Create a copy of DailyLog
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? date = null,Object? totalSugar = null,Object? dailyLimit = null,Object? entries = null,Object? status = null,Object? goalAchieved = null,Object? streakDayNumber = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? date = null,Object? totalSugar = null,Object? dailyLimit = null,Object? remainingSugar = null,Object? progressPercentage = null,Object? limitExceeded = null,Object? streakDay = null,Object? streakCountAtEndOfDay = null,Object? entryCount = null,Object? topFoods = null,Object? timestamp = null,}) {
   return _then(_self.copyWith(
 date: null == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
-as DateTime,totalSugar: null == totalSugar ? _self.totalSugar : totalSugar // ignore: cast_nullable_to_non_nullable
+as String,totalSugar: null == totalSugar ? _self.totalSugar : totalSugar // ignore: cast_nullable_to_non_nullable
 as double,dailyLimit: null == dailyLimit ? _self.dailyLimit : dailyLimit // ignore: cast_nullable_to_non_nullable
-as double,entries: null == entries ? _self.entries : entries // ignore: cast_nullable_to_non_nullable
-as List<FoodEntry>,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as SugarStatus,goalAchieved: null == goalAchieved ? _self.goalAchieved : goalAchieved // ignore: cast_nullable_to_non_nullable
-as bool,streakDayNumber: null == streakDayNumber ? _self.streakDayNumber : streakDayNumber // ignore: cast_nullable_to_non_nullable
-as int,
+as double,remainingSugar: null == remainingSugar ? _self.remainingSugar : remainingSugar // ignore: cast_nullable_to_non_nullable
+as double,progressPercentage: null == progressPercentage ? _self.progressPercentage : progressPercentage // ignore: cast_nullable_to_non_nullable
+as double,limitExceeded: null == limitExceeded ? _self.limitExceeded : limitExceeded // ignore: cast_nullable_to_non_nullable
+as bool,streakDay: null == streakDay ? _self.streakDay : streakDay // ignore: cast_nullable_to_non_nullable
+as bool,streakCountAtEndOfDay: null == streakCountAtEndOfDay ? _self.streakCountAtEndOfDay : streakCountAtEndOfDay // ignore: cast_nullable_to_non_nullable
+as int,entryCount: null == entryCount ? _self.entryCount : entryCount // ignore: cast_nullable_to_non_nullable
+as int,topFoods: null == topFoods ? _self.topFoods : topFoods // ignore: cast_nullable_to_non_nullable
+as List<String>,timestamp: null == timestamp ? _self.timestamp : timestamp // ignore: cast_nullable_to_non_nullable
+as DateTime,
   ));
 }
 
@@ -156,10 +173,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( DateTime date,  double totalSugar,  double dailyLimit,  List<FoodEntry> entries,  SugarStatus status,  bool goalAchieved,  int streakDayNumber)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String date,  double totalSugar,  double dailyLimit,  double remainingSugar,  double progressPercentage,  bool limitExceeded,  bool streakDay,  int streakCountAtEndOfDay,  int entryCount,  List<String> topFoods,  DateTime timestamp)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _DailyLog() when $default != null:
-return $default(_that.date,_that.totalSugar,_that.dailyLimit,_that.entries,_that.status,_that.goalAchieved,_that.streakDayNumber);case _:
+return $default(_that.date,_that.totalSugar,_that.dailyLimit,_that.remainingSugar,_that.progressPercentage,_that.limitExceeded,_that.streakDay,_that.streakCountAtEndOfDay,_that.entryCount,_that.topFoods,_that.timestamp);case _:
   return orElse();
 
 }
@@ -177,10 +194,10 @@ return $default(_that.date,_that.totalSugar,_that.dailyLimit,_that.entries,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( DateTime date,  double totalSugar,  double dailyLimit,  List<FoodEntry> entries,  SugarStatus status,  bool goalAchieved,  int streakDayNumber)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String date,  double totalSugar,  double dailyLimit,  double remainingSugar,  double progressPercentage,  bool limitExceeded,  bool streakDay,  int streakCountAtEndOfDay,  int entryCount,  List<String> topFoods,  DateTime timestamp)  $default,) {final _that = this;
 switch (_that) {
 case _DailyLog():
-return $default(_that.date,_that.totalSugar,_that.dailyLimit,_that.entries,_that.status,_that.goalAchieved,_that.streakDayNumber);case _:
+return $default(_that.date,_that.totalSugar,_that.dailyLimit,_that.remainingSugar,_that.progressPercentage,_that.limitExceeded,_that.streakDay,_that.streakCountAtEndOfDay,_that.entryCount,_that.topFoods,_that.timestamp);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -197,10 +214,10 @@ return $default(_that.date,_that.totalSugar,_that.dailyLimit,_that.entries,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( DateTime date,  double totalSugar,  double dailyLimit,  List<FoodEntry> entries,  SugarStatus status,  bool goalAchieved,  int streakDayNumber)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String date,  double totalSugar,  double dailyLimit,  double remainingSugar,  double progressPercentage,  bool limitExceeded,  bool streakDay,  int streakCountAtEndOfDay,  int entryCount,  List<String> topFoods,  DateTime timestamp)?  $default,) {final _that = this;
 switch (_that) {
 case _DailyLog() when $default != null:
-return $default(_that.date,_that.totalSugar,_that.dailyLimit,_that.entries,_that.status,_that.goalAchieved,_that.streakDayNumber);case _:
+return $default(_that.date,_that.totalSugar,_that.dailyLimit,_that.remainingSugar,_that.progressPercentage,_that.limitExceeded,_that.streakDay,_that.streakCountAtEndOfDay,_that.entryCount,_that.topFoods,_that.timestamp);case _:
   return null;
 
 }
@@ -209,25 +226,40 @@ return $default(_that.date,_that.totalSugar,_that.dailyLimit,_that.entries,_that
 }
 
 /// @nodoc
-
+@JsonSerializable()
 
 class _DailyLog extends DailyLog {
-  const _DailyLog({required this.date, required this.totalSugar, required this.dailyLimit, required final  List<FoodEntry> entries, required this.status, required this.goalAchieved, required this.streakDayNumber}): _entries = entries,super._();
-  
+  const _DailyLog({required this.date, required this.totalSugar, required this.dailyLimit, required this.remainingSugar, required this.progressPercentage, required this.limitExceeded, required this.streakDay, required this.streakCountAtEndOfDay, required this.entryCount, required final  List<String> topFoods, required this.timestamp}): _topFoods = topFoods,super._();
+  factory _DailyLog.fromJson(Map<String, dynamic> json) => _$DailyLogFromJson(json);
 
-@override final  DateTime date;
+@override final  String date;
+// Format: YYYY-MM-DD
 @override final  double totalSugar;
+// Total sugar consumed that day
 @override final  double dailyLimit;
- final  List<FoodEntry> _entries;
-@override List<FoodEntry> get entries {
-  if (_entries is EqualUnmodifiableListView) return _entries;
+// The limit for that specific day
+@override final  double remainingSugar;
+// How much sugar was remaining
+@override final  double progressPercentage;
+// Percentage of daily limit used
+@override final  bool limitExceeded;
+// Whether the daily limit was exceeded
+@override final  bool streakDay;
+// Whether this day contributed to streak
+@override final  int streakCountAtEndOfDay;
+// Streak count at end of this day
+@override final  int entryCount;
+// Number of food entries that day
+ final  List<String> _topFoods;
+// Number of food entries that day
+@override List<String> get topFoods {
+  if (_topFoods is EqualUnmodifiableListView) return _topFoods;
   // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_entries);
+  return EqualUnmodifiableListView(_topFoods);
 }
 
-@override final  SugarStatus status;
-@override final  bool goalAchieved;
-@override final  int streakDayNumber;
+// Top 3 foods consumed (names only for storage efficiency)
+@override final  DateTime timestamp;
 
 /// Create a copy of DailyLog
 /// with the given fields replaced by the non-null parameter values.
@@ -235,20 +267,23 @@ class _DailyLog extends DailyLog {
 @pragma('vm:prefer-inline')
 _$DailyLogCopyWith<_DailyLog> get copyWith => __$DailyLogCopyWithImpl<_DailyLog>(this, _$identity);
 
-
+@override
+Map<String, dynamic> toJson() {
+  return _$DailyLogToJson(this, );
+}
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DailyLog&&(identical(other.date, date) || other.date == date)&&(identical(other.totalSugar, totalSugar) || other.totalSugar == totalSugar)&&(identical(other.dailyLimit, dailyLimit) || other.dailyLimit == dailyLimit)&&const DeepCollectionEquality().equals(other._entries, _entries)&&(identical(other.status, status) || other.status == status)&&(identical(other.goalAchieved, goalAchieved) || other.goalAchieved == goalAchieved)&&(identical(other.streakDayNumber, streakDayNumber) || other.streakDayNumber == streakDayNumber));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DailyLog&&(identical(other.date, date) || other.date == date)&&(identical(other.totalSugar, totalSugar) || other.totalSugar == totalSugar)&&(identical(other.dailyLimit, dailyLimit) || other.dailyLimit == dailyLimit)&&(identical(other.remainingSugar, remainingSugar) || other.remainingSugar == remainingSugar)&&(identical(other.progressPercentage, progressPercentage) || other.progressPercentage == progressPercentage)&&(identical(other.limitExceeded, limitExceeded) || other.limitExceeded == limitExceeded)&&(identical(other.streakDay, streakDay) || other.streakDay == streakDay)&&(identical(other.streakCountAtEndOfDay, streakCountAtEndOfDay) || other.streakCountAtEndOfDay == streakCountAtEndOfDay)&&(identical(other.entryCount, entryCount) || other.entryCount == entryCount)&&const DeepCollectionEquality().equals(other._topFoods, _topFoods)&&(identical(other.timestamp, timestamp) || other.timestamp == timestamp));
 }
 
-
+@JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,date,totalSugar,dailyLimit,const DeepCollectionEquality().hash(_entries),status,goalAchieved,streakDayNumber);
+int get hashCode => Object.hash(runtimeType,date,totalSugar,dailyLimit,remainingSugar,progressPercentage,limitExceeded,streakDay,streakCountAtEndOfDay,entryCount,const DeepCollectionEquality().hash(_topFoods),timestamp);
 
 @override
 String toString() {
-  return 'DailyLog(date: $date, totalSugar: $totalSugar, dailyLimit: $dailyLimit, entries: $entries, status: $status, goalAchieved: $goalAchieved, streakDayNumber: $streakDayNumber)';
+  return 'DailyLog(date: $date, totalSugar: $totalSugar, dailyLimit: $dailyLimit, remainingSugar: $remainingSugar, progressPercentage: $progressPercentage, limitExceeded: $limitExceeded, streakDay: $streakDay, streakCountAtEndOfDay: $streakCountAtEndOfDay, entryCount: $entryCount, topFoods: $topFoods, timestamp: $timestamp)';
 }
 
 
@@ -259,7 +294,7 @@ abstract mixin class _$DailyLogCopyWith<$Res> implements $DailyLogCopyWith<$Res>
   factory _$DailyLogCopyWith(_DailyLog value, $Res Function(_DailyLog) _then) = __$DailyLogCopyWithImpl;
 @override @useResult
 $Res call({
- DateTime date, double totalSugar, double dailyLimit, List<FoodEntry> entries, SugarStatus status, bool goalAchieved, int streakDayNumber
+ String date, double totalSugar, double dailyLimit, double remainingSugar, double progressPercentage, bool limitExceeded, bool streakDay, int streakCountAtEndOfDay, int entryCount, List<String> topFoods, DateTime timestamp
 });
 
 
@@ -276,16 +311,20 @@ class __$DailyLogCopyWithImpl<$Res>
 
 /// Create a copy of DailyLog
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? date = null,Object? totalSugar = null,Object? dailyLimit = null,Object? entries = null,Object? status = null,Object? goalAchieved = null,Object? streakDayNumber = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? date = null,Object? totalSugar = null,Object? dailyLimit = null,Object? remainingSugar = null,Object? progressPercentage = null,Object? limitExceeded = null,Object? streakDay = null,Object? streakCountAtEndOfDay = null,Object? entryCount = null,Object? topFoods = null,Object? timestamp = null,}) {
   return _then(_DailyLog(
 date: null == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
-as DateTime,totalSugar: null == totalSugar ? _self.totalSugar : totalSugar // ignore: cast_nullable_to_non_nullable
+as String,totalSugar: null == totalSugar ? _self.totalSugar : totalSugar // ignore: cast_nullable_to_non_nullable
 as double,dailyLimit: null == dailyLimit ? _self.dailyLimit : dailyLimit // ignore: cast_nullable_to_non_nullable
-as double,entries: null == entries ? _self._entries : entries // ignore: cast_nullable_to_non_nullable
-as List<FoodEntry>,status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
-as SugarStatus,goalAchieved: null == goalAchieved ? _self.goalAchieved : goalAchieved // ignore: cast_nullable_to_non_nullable
-as bool,streakDayNumber: null == streakDayNumber ? _self.streakDayNumber : streakDayNumber // ignore: cast_nullable_to_non_nullable
-as int,
+as double,remainingSugar: null == remainingSugar ? _self.remainingSugar : remainingSugar // ignore: cast_nullable_to_non_nullable
+as double,progressPercentage: null == progressPercentage ? _self.progressPercentage : progressPercentage // ignore: cast_nullable_to_non_nullable
+as double,limitExceeded: null == limitExceeded ? _self.limitExceeded : limitExceeded // ignore: cast_nullable_to_non_nullable
+as bool,streakDay: null == streakDay ? _self.streakDay : streakDay // ignore: cast_nullable_to_non_nullable
+as bool,streakCountAtEndOfDay: null == streakCountAtEndOfDay ? _self.streakCountAtEndOfDay : streakCountAtEndOfDay // ignore: cast_nullable_to_non_nullable
+as int,entryCount: null == entryCount ? _self.entryCount : entryCount // ignore: cast_nullable_to_non_nullable
+as int,topFoods: null == topFoods ? _self._topFoods : topFoods // ignore: cast_nullable_to_non_nullable
+as List<String>,timestamp: null == timestamp ? _self.timestamp : timestamp // ignore: cast_nullable_to_non_nullable
+as DateTime,
   ));
 }
 

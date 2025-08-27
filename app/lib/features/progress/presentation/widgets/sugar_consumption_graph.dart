@@ -3,7 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
 import 'package:quit_suggar/features/tracking/presentation/providers/sugar_tracking_provider.dart';
-import 'package:quit_suggar/features/tracking/domain/entities/daily_summary_history.dart';
+import 'package:quit_suggar/features/tracking/domain/entities/daily_log.dart';
 
 class SugarConsumptionGraph extends HookConsumerWidget {
   const SugarConsumptionGraph({super.key});
@@ -37,14 +37,14 @@ class SugarConsumptionGraph extends HookConsumerWidget {
           const SizedBox(height: 20),
           
           // Stats for the period
-          _buildPeriodStats(selectedPeriod.value, data),
+          _buildPeriodStats(selectedPeriod.value, data, ref),
           
           const SizedBox(height: 24),
           
           // The graph
           SizedBox(
             height: 200,
-            child: _buildGraph(selectedPeriod.value, data),
+            child: _buildGraph(selectedPeriod.value, data, ref),
           ),
           
           const SizedBox(height: 16),
@@ -147,8 +147,8 @@ class SugarConsumptionGraph extends HookConsumerWidget {
     );
   }
 
-  Widget _buildPeriodStats(GraphPeriod period, List<DailySummaryHistory> data) {
-    final stats = _getStatsFromData(data);
+  Widget _buildPeriodStats(GraphPeriod period, List<DailyLog> data, WidgetRef ref) {
+    final stats = _getStatsFromData(data, ref);
     
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -196,8 +196,10 @@ class SugarConsumptionGraph extends HookConsumerWidget {
     );
   }
 
-  Widget _buildGraph(GraphPeriod period, List<DailySummaryHistory> data) {
+  Widget _buildGraph(GraphPeriod period, List<DailyLog> data, WidgetRef ref) {
     final dataPoints = _getDataPointsFromHistory(data, period);
+    final stats = _getStatsFromData(data, ref);
+    final dailyLimit = stats['limit'] ?? 25.0;
     
     return Container(
       padding: const EdgeInsets.all(12),
@@ -213,7 +215,7 @@ class SugarConsumptionGraph extends HookConsumerWidget {
         painter: SugarGraphPainter(
           dataPoints: dataPoints,
           maxValue: 40.0, // Max sugar consumption to show
-          dailyLimit: 25.0,
+          dailyLimit: dailyLimit,
         ),
         child: Container(),
       ),
@@ -239,7 +241,7 @@ class SugarConsumptionGraph extends HookConsumerWidget {
   }
 
   // Helper method to get historical data for the selected period
-  AsyncValue<List<DailySummaryHistory>> _getHistoricalDataForPeriod(
+  AsyncValue<List<DailyLog>> _getHistoricalDataForPeriod(
     WidgetRef ref,
     GraphPeriod period,
   ) {
@@ -266,19 +268,27 @@ class SugarConsumptionGraph extends HookConsumerWidget {
 
 
   // Get statistics from real historical data
-  Map<String, double> _getStatsFromData(List<DailySummaryHistory> data) {
+  Map<String, double> _getStatsFromData(List<DailyLog> data, WidgetRef ref) {
     if (data.isEmpty) {
+      // Get current daily limit from sugar tracking
+      final sugarTrackingAsync = ref.read(sugarTrackingProvider);
+      final currentLimit = sugarTrackingAsync.when(
+        data: (tracking) => tracking.dailyLimit,
+        loading: () => 25.0,
+        error: (_, __) => 25.0,
+      );
+      
       return {
         'average': 0.0,
         'best': 0.0,
-        'limit': 25.0,
+        'limit': currentLimit,
       };
     }
 
     final totalSugar = data.map((d) => d.totalSugar).fold(0.0, (a, b) => a + b);
     final average = totalSugar / data.length;
     final best = data.map((d) => d.totalSugar).reduce((a, b) => a < b ? a : b);
-    final limit = data.isNotEmpty ? data.first.dailyLimit : 25.0;
+    final limit = data.first.dailyLimit;
 
     return {
       'average': average,
@@ -288,7 +298,7 @@ class SugarConsumptionGraph extends HookConsumerWidget {
   }
 
   // Convert historical data to graph data points
-  List<double> _getDataPointsFromHistory(List<DailySummaryHistory> data, GraphPeriod period) {
+  List<double> _getDataPointsFromHistory(List<DailyLog> data, GraphPeriod period) {
     if (data.isEmpty) {
       // Return empty points for the expected period length
       return period == GraphPeriod.thisWeek 

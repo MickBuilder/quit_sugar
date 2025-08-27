@@ -1,6 +1,6 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:quit_suggar/features/tracking/domain/entities/daily_summary_history.dart';
+import 'package:quit_suggar/features/tracking/domain/entities/daily_log.dart';
 import 'package:quit_suggar/features/tracking/domain/entities/daily_summary.dart';
 import 'package:quit_suggar/features/tracking/domain/repositories/historical_data_repository.dart';
 import 'package:quit_suggar/features/tracking/data/repositories/historical_data_repository_impl.dart';
@@ -102,7 +102,7 @@ class DailyTransitionService {
   }
   
   /// Create a historical summary from current daily summary
-  Future<DailySummaryHistory> _createHistoricalSummary(
+  Future<DailyLog> _createHistoricalSummary(
     String date,
     DailySummary currentSummary,
   ) async {
@@ -119,7 +119,7 @@ class DailyTransitionService {
     // Get top foods from entries
     final topFoods = _getTopFoodsFromEntries(currentSummary.entries);
     
-    return DailySummaryHistory(
+    return DailyLog(
       date: date,
       totalSugar: currentSummary.totalSugar,
       dailyLimit: currentSummary.dailyLimit,

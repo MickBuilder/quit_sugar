@@ -1,12 +1,12 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:quit_suggar/features/tracking/domain/entities/daily_summary_history.dart';
+import 'package:quit_suggar/features/tracking/domain/entities/daily_log.dart';
 
-part 'daily_summary_history_model.freezed.dart';
-part 'daily_summary_history_model.g.dart';
+part 'daily_log_model.freezed.dart';
+part 'daily_log_model.g.dart';
 
 @freezed
-abstract class DailySummaryHistoryModel with _$DailySummaryHistoryModel {
-  const factory DailySummaryHistoryModel({
+abstract class DailyLogModel with _$DailyLogModel {
+  const factory DailyLogModel({
     required String date,
     required double totalSugar,
     required double dailyLimit,
@@ -18,16 +18,16 @@ abstract class DailySummaryHistoryModel with _$DailySummaryHistoryModel {
     required int entryCount,
     required List<String> topFoods,
     required String timestamp, // ISO string for JSON serialization
-  }) = _DailySummaryHistoryModel;
+  }) = _DailyLogModel;
 
-  const DailySummaryHistoryModel._();
+  const DailyLogModel._();
 
-  factory DailySummaryHistoryModel.fromJson(Map<String, dynamic> json) => 
-      _$DailySummaryHistoryModelFromJson(json);
+  factory DailyLogModel.fromJson(Map<String, dynamic> json) => 
+      _$DailyLogModelFromJson(json);
 
   // Convert from domain entity
-  factory DailySummaryHistoryModel.fromDomain(DailySummaryHistory summary) {
-    return DailySummaryHistoryModel(
+  factory DailyLogModel.fromDomain(DailyLog summary) {
+    return DailyLogModel(
       date: summary.date,
       totalSugar: summary.totalSugar,
       dailyLimit: summary.dailyLimit,
@@ -43,8 +43,8 @@ abstract class DailySummaryHistoryModel with _$DailySummaryHistoryModel {
   }
 
   // Convert to domain entity
-  DailySummaryHistory toDomain() {
-    return DailySummaryHistory(
+  DailyLog toDomain() {
+    return DailyLog(
       date: date,
       totalSugar: totalSugar,
       dailyLimit: dailyLimit,

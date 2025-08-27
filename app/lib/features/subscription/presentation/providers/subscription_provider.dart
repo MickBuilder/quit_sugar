@@ -122,7 +122,7 @@ class Subscription extends _$Subscription {
       return SubscriptionInfo(
         status: SubscriptionStatus.free,
         trialDaysRemaining: 0,
-        remainingScans: 3,
+        remainingScans: 10,
         hasUnlimitedScans: false,
       );
     }

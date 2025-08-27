@@ -9,7 +9,6 @@ import 'package:quit_suggar/features/onboarding/presentation/widgets/onboarding_
 import 'package:quit_suggar/features/onboarding/presentation/widgets/goal_option_card.dart';
 import 'package:quit_suggar/features/onboarding/presentation/widgets/reduction_plan_preview.dart';
 import 'package:quit_suggar/features/onboarding/presentation/widgets/onboarding_continue_button.dart';
-import 'package:quit_suggar/features/onboarding/presentation/widgets/program_info_card.dart';
 
 class GoalSettingScreen extends HookConsumerWidget {
   final double currentDailySugar;
@@ -22,7 +21,27 @@ class GoalSettingScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedGoal = useState<SugarReductionGoal?>(null);
-    const targetDays = 60; // Fixed 60-day program
+    final onboardingData = ref.watch(onboardingFlowProvider);
+    final targetDays = onboardingData.targetDays;
+    
+    // Ensure the provider has the correct currentDailySugar from navigation parameter
+    useEffect(() {
+      if (onboardingData.currentDailySugar != currentDailySugar) {
+        // Update the provider with the correct current daily sugar from navigation
+        Future.microtask(() {
+          ref.read(onboardingFlowProvider.notifier).updateSugarAssessment(
+            sodaDrinks: onboardingData.sugarSources.sodaDrinks,
+            sweetSnacks: onboardingData.sugarSources.sweetSnacks,
+            desserts: onboardingData.sugarSources.desserts,
+            addedSugar: onboardingData.sugarSources.addedSugar,
+            juiceDrinks: onboardingData.sugarSources.juiceDrinks,
+            currentDailySugar: currentDailySugar,
+            commonFoods: onboardingData.sugarSources.commonFoods,
+          );
+        });
+      }
+      return null;
+    }, [currentDailySugar]);
 
     return CupertinoPageScaffold(
       backgroundColor: AppTheme.background,
@@ -88,9 +107,8 @@ class GoalSettingScreen extends HookConsumerWidget {
                     
                     const SizedBox(height: 32),
                     
-                    // Reduction plan preview (60-day program)
+                    // Reduction plan preview
                     if (selectedGoal.value != null) ...[
-                      const ProgramInfoCard(),
                       const SizedBox(height: 24),
                       ReductionPlanPreview(
                         currentSugar: currentDailySugar,
@@ -107,7 +125,7 @@ class GoalSettingScreen extends HookConsumerWidget {
             Padding(
               padding: const EdgeInsets.all(24.0),
               child: OnboardingContinueButton(
-                text: 'Start My 60-Day Journey',
+                text: 'Start My $targetDays-Day Journey',
                 isEnabled: selectedGoal.value != null,
                 onPressed: selectedGoal.value != null ? () {
                   ref.read(onboardingFlowProvider.notifier).updateGoalSetting(

@@ -1,13 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'daily_summary_history.dart';
+part of 'daily_log_model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-_DailySummaryHistory _$DailySummaryHistoryFromJson(Map<String, dynamic> json) =>
-    _DailySummaryHistory(
+_DailyLogModel _$DailyLogModelFromJson(Map<String, dynamic> json) =>
+    _DailyLogModel(
       date: json['date'] as String,
       totalSugar: (json['totalSugar'] as num).toDouble(),
       dailyLimit: (json['dailyLimit'] as num).toDouble(),
@@ -20,21 +20,20 @@ _DailySummaryHistory _$DailySummaryHistoryFromJson(Map<String, dynamic> json) =>
       topFoods: (json['topFoods'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
-      timestamp: DateTime.parse(json['timestamp'] as String),
+      timestamp: json['timestamp'] as String,
     );
 
-Map<String, dynamic> _$DailySummaryHistoryToJson(
-  _DailySummaryHistory instance,
-) => <String, dynamic>{
-  'date': instance.date,
-  'totalSugar': instance.totalSugar,
-  'dailyLimit': instance.dailyLimit,
-  'remainingSugar': instance.remainingSugar,
-  'progressPercentage': instance.progressPercentage,
-  'limitExceeded': instance.limitExceeded,
-  'streakDay': instance.streakDay,
-  'streakCountAtEndOfDay': instance.streakCountAtEndOfDay,
-  'entryCount': instance.entryCount,
-  'topFoods': instance.topFoods,
-  'timestamp': instance.timestamp.toIso8601String(),
-};
+Map<String, dynamic> _$DailyLogModelToJson(_DailyLogModel instance) =>
+    <String, dynamic>{
+      'date': instance.date,
+      'totalSugar': instance.totalSugar,
+      'dailyLimit': instance.dailyLimit,
+      'remainingSugar': instance.remainingSugar,
+      'progressPercentage': instance.progressPercentage,
+      'limitExceeded': instance.limitExceeded,
+      'streakDay': instance.streakDay,
+      'streakCountAtEndOfDay': instance.streakCountAtEndOfDay,
+      'entryCount': instance.entryCount,
+      'topFoods': instance.topFoods,
+      'timestamp': instance.timestamp,
+    };

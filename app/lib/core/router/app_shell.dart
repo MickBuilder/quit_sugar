@@ -31,9 +31,9 @@ class AppShell extends ConsumerWidget {
       inactiveColor: AppTheme.textMuted,
       items: const [
         BottomNavigationBarItem(
-          icon: Icon(CupertinoIcons.home),
-          activeIcon: Icon(CupertinoIcons.house_fill),
-          label: 'Dashboard',
+          icon: Icon(CupertinoIcons.calendar_today),
+          activeIcon: Icon(CupertinoIcons.calendar_today),
+          label: 'Today',
         ),
         BottomNavigationBarItem(
           icon: Icon(CupertinoIcons.chart_bar),
@@ -41,8 +41,8 @@ class AppShell extends ConsumerWidget {
           label: 'Progress',
         ),
         BottomNavigationBarItem(
-          icon: Icon(CupertinoIcons.calendar),
-          activeIcon: Icon(CupertinoIcons.calendar),
+          icon: Icon(CupertinoIcons.list_bullet),
+          activeIcon: Icon(CupertinoIcons.list_bullet),
           label: 'Daily Logs',
         ),
         BottomNavigationBarItem(

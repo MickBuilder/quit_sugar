@@ -1,11 +1,13 @@
 import 'package:flutter/cupertino.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:quit_suggar/features/tracking/presentation/providers/sugar_tracking_provider.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
 
-class CurrentMonthCalendar extends StatelessWidget {
+class CurrentMonthCalendar extends ConsumerWidget {
   const CurrentMonthCalendar({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final now = DateTime.now();
     final monthName = _getMonthName(now.month);
     final year = now.year;
@@ -24,7 +26,7 @@ class CurrentMonthCalendar extends StatelessWidget {
                 '$monthName $year',
                 style: AppTextStyles.title,
               ),
-              _buildStreakInfo(),
+              _buildStreakInfo(ref),
             ],
           ),
           
@@ -37,8 +39,9 @@ class CurrentMonthCalendar extends StatelessWidget {
     );
   }
 
-  Widget _buildStreakInfo() {
-    // Mock data - replace with real streak data
+  Widget _buildStreakInfo(WidgetRef ref) {
+    final dailySummary = ref.watch(sugarTrackingProvider.notifier).getDailySummary();
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
@@ -54,7 +57,7 @@ class CurrentMonthCalendar extends StatelessWidget {
         Row(
           children: [
             Text(
-              '14',
+              '${dailySummary.streak}',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w800,

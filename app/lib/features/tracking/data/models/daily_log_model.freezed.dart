@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'daily_summary_history_model.dart';
+part of 'daily_log_model.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -13,22 +13,22 @@ part of 'daily_summary_history_model.dart';
 T _$identity<T>(T value) => value;
 
 /// @nodoc
-mixin _$DailySummaryHistoryModel {
+mixin _$DailyLogModel {
 
  String get date; double get totalSugar; double get dailyLimit; double get remainingSugar; double get progressPercentage; bool get limitExceeded; bool get streakDay; int get streakCountAtEndOfDay; int get entryCount; List<String> get topFoods; String get timestamp;
-/// Create a copy of DailySummaryHistoryModel
+/// Create a copy of DailyLogModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-$DailySummaryHistoryModelCopyWith<DailySummaryHistoryModel> get copyWith => _$DailySummaryHistoryModelCopyWithImpl<DailySummaryHistoryModel>(this as DailySummaryHistoryModel, _$identity);
+$DailyLogModelCopyWith<DailyLogModel> get copyWith => _$DailyLogModelCopyWithImpl<DailyLogModel>(this as DailyLogModel, _$identity);
 
-  /// Serializes this DailySummaryHistoryModel to a JSON map.
+  /// Serializes this DailyLogModel to a JSON map.
   Map<String, dynamic> toJson();
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is DailySummaryHistoryModel&&(identical(other.date, date) || other.date == date)&&(identical(other.totalSugar, totalSugar) || other.totalSugar == totalSugar)&&(identical(other.dailyLimit, dailyLimit) || other.dailyLimit == dailyLimit)&&(identical(other.remainingSugar, remainingSugar) || other.remainingSugar == remainingSugar)&&(identical(other.progressPercentage, progressPercentage) || other.progressPercentage == progressPercentage)&&(identical(other.limitExceeded, limitExceeded) || other.limitExceeded == limitExceeded)&&(identical(other.streakDay, streakDay) || other.streakDay == streakDay)&&(identical(other.streakCountAtEndOfDay, streakCountAtEndOfDay) || other.streakCountAtEndOfDay == streakCountAtEndOfDay)&&(identical(other.entryCount, entryCount) || other.entryCount == entryCount)&&const DeepCollectionEquality().equals(other.topFoods, topFoods)&&(identical(other.timestamp, timestamp) || other.timestamp == timestamp));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DailyLogModel&&(identical(other.date, date) || other.date == date)&&(identical(other.totalSugar, totalSugar) || other.totalSugar == totalSugar)&&(identical(other.dailyLimit, dailyLimit) || other.dailyLimit == dailyLimit)&&(identical(other.remainingSugar, remainingSugar) || other.remainingSugar == remainingSugar)&&(identical(other.progressPercentage, progressPercentage) || other.progressPercentage == progressPercentage)&&(identical(other.limitExceeded, limitExceeded) || other.limitExceeded == limitExceeded)&&(identical(other.streakDay, streakDay) || other.streakDay == streakDay)&&(identical(other.streakCountAtEndOfDay, streakCountAtEndOfDay) || other.streakCountAtEndOfDay == streakCountAtEndOfDay)&&(identical(other.entryCount, entryCount) || other.entryCount == entryCount)&&const DeepCollectionEquality().equals(other.topFoods, topFoods)&&(identical(other.timestamp, timestamp) || other.timestamp == timestamp));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -37,15 +37,15 @@ int get hashCode => Object.hash(runtimeType,date,totalSugar,dailyLimit,remaining
 
 @override
 String toString() {
-  return 'DailySummaryHistoryModel(date: $date, totalSugar: $totalSugar, dailyLimit: $dailyLimit, remainingSugar: $remainingSugar, progressPercentage: $progressPercentage, limitExceeded: $limitExceeded, streakDay: $streakDay, streakCountAtEndOfDay: $streakCountAtEndOfDay, entryCount: $entryCount, topFoods: $topFoods, timestamp: $timestamp)';
+  return 'DailyLogModel(date: $date, totalSugar: $totalSugar, dailyLimit: $dailyLimit, remainingSugar: $remainingSugar, progressPercentage: $progressPercentage, limitExceeded: $limitExceeded, streakDay: $streakDay, streakCountAtEndOfDay: $streakCountAtEndOfDay, entryCount: $entryCount, topFoods: $topFoods, timestamp: $timestamp)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class $DailySummaryHistoryModelCopyWith<$Res>  {
-  factory $DailySummaryHistoryModelCopyWith(DailySummaryHistoryModel value, $Res Function(DailySummaryHistoryModel) _then) = _$DailySummaryHistoryModelCopyWithImpl;
+abstract mixin class $DailyLogModelCopyWith<$Res>  {
+  factory $DailyLogModelCopyWith(DailyLogModel value, $Res Function(DailyLogModel) _then) = _$DailyLogModelCopyWithImpl;
 @useResult
 $Res call({
  String date, double totalSugar, double dailyLimit, double remainingSugar, double progressPercentage, bool limitExceeded, bool streakDay, int streakCountAtEndOfDay, int entryCount, List<String> topFoods, String timestamp
@@ -56,14 +56,14 @@ $Res call({
 
 }
 /// @nodoc
-class _$DailySummaryHistoryModelCopyWithImpl<$Res>
-    implements $DailySummaryHistoryModelCopyWith<$Res> {
-  _$DailySummaryHistoryModelCopyWithImpl(this._self, this._then);
+class _$DailyLogModelCopyWithImpl<$Res>
+    implements $DailyLogModelCopyWith<$Res> {
+  _$DailyLogModelCopyWithImpl(this._self, this._then);
 
-  final DailySummaryHistoryModel _self;
-  final $Res Function(DailySummaryHistoryModel) _then;
+  final DailyLogModel _self;
+  final $Res Function(DailyLogModel) _then;
 
-/// Create a copy of DailySummaryHistoryModel
+/// Create a copy of DailyLogModel
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? date = null,Object? totalSugar = null,Object? dailyLimit = null,Object? remainingSugar = null,Object? progressPercentage = null,Object? limitExceeded = null,Object? streakDay = null,Object? streakCountAtEndOfDay = null,Object? entryCount = null,Object? topFoods = null,Object? timestamp = null,}) {
   return _then(_self.copyWith(
@@ -85,8 +85,8 @@ as String,
 }
 
 
-/// Adds pattern-matching-related methods to [DailySummaryHistoryModel].
-extension DailySummaryHistoryModelPatterns on DailySummaryHistoryModel {
+/// Adds pattern-matching-related methods to [DailyLogModel].
+extension DailyLogModelPatterns on DailyLogModel {
 /// A variant of `map` that fallback to returning `orElse`.
 ///
 /// It is equivalent to doing:
@@ -99,10 +99,10 @@ extension DailySummaryHistoryModelPatterns on DailySummaryHistoryModel {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _DailySummaryHistoryModel value)?  $default,{required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _DailyLogModel value)?  $default,{required TResult orElse(),}){
 final _that = this;
 switch (_that) {
-case _DailySummaryHistoryModel() when $default != null:
+case _DailyLogModel() when $default != null:
 return $default(_that);case _:
   return orElse();
 
@@ -121,10 +121,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _DailySummaryHistoryModel value)  $default,){
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _DailyLogModel value)  $default,){
 final _that = this;
 switch (_that) {
-case _DailySummaryHistoryModel():
+case _DailyLogModel():
 return $default(_that);case _:
   throw StateError('Unexpected subclass');
 
@@ -142,10 +142,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _DailySummaryHistoryModel value)?  $default,){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _DailyLogModel value)?  $default,){
 final _that = this;
 switch (_that) {
-case _DailySummaryHistoryModel() when $default != null:
+case _DailyLogModel() when $default != null:
 return $default(_that);case _:
   return null;
 
@@ -165,7 +165,7 @@ return $default(_that);case _:
 
 @optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String date,  double totalSugar,  double dailyLimit,  double remainingSugar,  double progressPercentage,  bool limitExceeded,  bool streakDay,  int streakCountAtEndOfDay,  int entryCount,  List<String> topFoods,  String timestamp)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
-case _DailySummaryHistoryModel() when $default != null:
+case _DailyLogModel() when $default != null:
 return $default(_that.date,_that.totalSugar,_that.dailyLimit,_that.remainingSugar,_that.progressPercentage,_that.limitExceeded,_that.streakDay,_that.streakCountAtEndOfDay,_that.entryCount,_that.topFoods,_that.timestamp);case _:
   return orElse();
 
@@ -186,7 +186,7 @@ return $default(_that.date,_that.totalSugar,_that.dailyLimit,_that.remainingSuga
 
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String date,  double totalSugar,  double dailyLimit,  double remainingSugar,  double progressPercentage,  bool limitExceeded,  bool streakDay,  int streakCountAtEndOfDay,  int entryCount,  List<String> topFoods,  String timestamp)  $default,) {final _that = this;
 switch (_that) {
-case _DailySummaryHistoryModel():
+case _DailyLogModel():
 return $default(_that.date,_that.totalSugar,_that.dailyLimit,_that.remainingSugar,_that.progressPercentage,_that.limitExceeded,_that.streakDay,_that.streakCountAtEndOfDay,_that.entryCount,_that.topFoods,_that.timestamp);case _:
   throw StateError('Unexpected subclass');
 
@@ -206,7 +206,7 @@ return $default(_that.date,_that.totalSugar,_that.dailyLimit,_that.remainingSuga
 
 @optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String date,  double totalSugar,  double dailyLimit,  double remainingSugar,  double progressPercentage,  bool limitExceeded,  bool streakDay,  int streakCountAtEndOfDay,  int entryCount,  List<String> topFoods,  String timestamp)?  $default,) {final _that = this;
 switch (_that) {
-case _DailySummaryHistoryModel() when $default != null:
+case _DailyLogModel() when $default != null:
 return $default(_that.date,_that.totalSugar,_that.dailyLimit,_that.remainingSugar,_that.progressPercentage,_that.limitExceeded,_that.streakDay,_that.streakCountAtEndOfDay,_that.entryCount,_that.topFoods,_that.timestamp);case _:
   return null;
 
@@ -218,9 +218,9 @@ return $default(_that.date,_that.totalSugar,_that.dailyLimit,_that.remainingSuga
 /// @nodoc
 @JsonSerializable()
 
-class _DailySummaryHistoryModel extends DailySummaryHistoryModel {
-  const _DailySummaryHistoryModel({required this.date, required this.totalSugar, required this.dailyLimit, required this.remainingSugar, required this.progressPercentage, required this.limitExceeded, required this.streakDay, required this.streakCountAtEndOfDay, required this.entryCount, required final  List<String> topFoods, required this.timestamp}): _topFoods = topFoods,super._();
-  factory _DailySummaryHistoryModel.fromJson(Map<String, dynamic> json) => _$DailySummaryHistoryModelFromJson(json);
+class _DailyLogModel extends DailyLogModel {
+  const _DailyLogModel({required this.date, required this.totalSugar, required this.dailyLimit, required this.remainingSugar, required this.progressPercentage, required this.limitExceeded, required this.streakDay, required this.streakCountAtEndOfDay, required this.entryCount, required final  List<String> topFoods, required this.timestamp}): _topFoods = topFoods,super._();
+  factory _DailyLogModel.fromJson(Map<String, dynamic> json) => _$DailyLogModelFromJson(json);
 
 @override final  String date;
 @override final  double totalSugar;
@@ -240,20 +240,20 @@ class _DailySummaryHistoryModel extends DailySummaryHistoryModel {
 
 @override final  String timestamp;
 
-/// Create a copy of DailySummaryHistoryModel
+/// Create a copy of DailyLogModel
 /// with the given fields replaced by the non-null parameter values.
 @override @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-_$DailySummaryHistoryModelCopyWith<_DailySummaryHistoryModel> get copyWith => __$DailySummaryHistoryModelCopyWithImpl<_DailySummaryHistoryModel>(this, _$identity);
+_$DailyLogModelCopyWith<_DailyLogModel> get copyWith => __$DailyLogModelCopyWithImpl<_DailyLogModel>(this, _$identity);
 
 @override
 Map<String, dynamic> toJson() {
-  return _$DailySummaryHistoryModelToJson(this, );
+  return _$DailyLogModelToJson(this, );
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DailySummaryHistoryModel&&(identical(other.date, date) || other.date == date)&&(identical(other.totalSugar, totalSugar) || other.totalSugar == totalSugar)&&(identical(other.dailyLimit, dailyLimit) || other.dailyLimit == dailyLimit)&&(identical(other.remainingSugar, remainingSugar) || other.remainingSugar == remainingSugar)&&(identical(other.progressPercentage, progressPercentage) || other.progressPercentage == progressPercentage)&&(identical(other.limitExceeded, limitExceeded) || other.limitExceeded == limitExceeded)&&(identical(other.streakDay, streakDay) || other.streakDay == streakDay)&&(identical(other.streakCountAtEndOfDay, streakCountAtEndOfDay) || other.streakCountAtEndOfDay == streakCountAtEndOfDay)&&(identical(other.entryCount, entryCount) || other.entryCount == entryCount)&&const DeepCollectionEquality().equals(other._topFoods, _topFoods)&&(identical(other.timestamp, timestamp) || other.timestamp == timestamp));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DailyLogModel&&(identical(other.date, date) || other.date == date)&&(identical(other.totalSugar, totalSugar) || other.totalSugar == totalSugar)&&(identical(other.dailyLimit, dailyLimit) || other.dailyLimit == dailyLimit)&&(identical(other.remainingSugar, remainingSugar) || other.remainingSugar == remainingSugar)&&(identical(other.progressPercentage, progressPercentage) || other.progressPercentage == progressPercentage)&&(identical(other.limitExceeded, limitExceeded) || other.limitExceeded == limitExceeded)&&(identical(other.streakDay, streakDay) || other.streakDay == streakDay)&&(identical(other.streakCountAtEndOfDay, streakCountAtEndOfDay) || other.streakCountAtEndOfDay == streakCountAtEndOfDay)&&(identical(other.entryCount, entryCount) || other.entryCount == entryCount)&&const DeepCollectionEquality().equals(other._topFoods, _topFoods)&&(identical(other.timestamp, timestamp) || other.timestamp == timestamp));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -262,15 +262,15 @@ int get hashCode => Object.hash(runtimeType,date,totalSugar,dailyLimit,remaining
 
 @override
 String toString() {
-  return 'DailySummaryHistoryModel(date: $date, totalSugar: $totalSugar, dailyLimit: $dailyLimit, remainingSugar: $remainingSugar, progressPercentage: $progressPercentage, limitExceeded: $limitExceeded, streakDay: $streakDay, streakCountAtEndOfDay: $streakCountAtEndOfDay, entryCount: $entryCount, topFoods: $topFoods, timestamp: $timestamp)';
+  return 'DailyLogModel(date: $date, totalSugar: $totalSugar, dailyLimit: $dailyLimit, remainingSugar: $remainingSugar, progressPercentage: $progressPercentage, limitExceeded: $limitExceeded, streakDay: $streakDay, streakCountAtEndOfDay: $streakCountAtEndOfDay, entryCount: $entryCount, topFoods: $topFoods, timestamp: $timestamp)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class _$DailySummaryHistoryModelCopyWith<$Res> implements $DailySummaryHistoryModelCopyWith<$Res> {
-  factory _$DailySummaryHistoryModelCopyWith(_DailySummaryHistoryModel value, $Res Function(_DailySummaryHistoryModel) _then) = __$DailySummaryHistoryModelCopyWithImpl;
+abstract mixin class _$DailyLogModelCopyWith<$Res> implements $DailyLogModelCopyWith<$Res> {
+  factory _$DailyLogModelCopyWith(_DailyLogModel value, $Res Function(_DailyLogModel) _then) = __$DailyLogModelCopyWithImpl;
 @override @useResult
 $Res call({
  String date, double totalSugar, double dailyLimit, double remainingSugar, double progressPercentage, bool limitExceeded, bool streakDay, int streakCountAtEndOfDay, int entryCount, List<String> topFoods, String timestamp
@@ -281,17 +281,17 @@ $Res call({
 
 }
 /// @nodoc
-class __$DailySummaryHistoryModelCopyWithImpl<$Res>
-    implements _$DailySummaryHistoryModelCopyWith<$Res> {
-  __$DailySummaryHistoryModelCopyWithImpl(this._self, this._then);
+class __$DailyLogModelCopyWithImpl<$Res>
+    implements _$DailyLogModelCopyWith<$Res> {
+  __$DailyLogModelCopyWithImpl(this._self, this._then);
 
-  final _DailySummaryHistoryModel _self;
-  final $Res Function(_DailySummaryHistoryModel) _then;
+  final _DailyLogModel _self;
+  final $Res Function(_DailyLogModel) _then;
 
-/// Create a copy of DailySummaryHistoryModel
+/// Create a copy of DailyLogModel
 /// with the given fields replaced by the non-null parameter values.
 @override @pragma('vm:prefer-inline') $Res call({Object? date = null,Object? totalSugar = null,Object? dailyLimit = null,Object? remainingSugar = null,Object? progressPercentage = null,Object? limitExceeded = null,Object? streakDay = null,Object? streakCountAtEndOfDay = null,Object? entryCount = null,Object? topFoods = null,Object? timestamp = null,}) {
-  return _then(_DailySummaryHistoryModel(
+  return _then(_DailyLogModel(
 date: null == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
 as String,totalSugar: null == totalSugar ? _self.totalSugar : totalSugar // ignore: cast_nullable_to_non_nullable
 as double,dailyLimit: null == dailyLimit ? _self.dailyLimit : dailyLimit // ignore: cast_nullable_to_non_nullable

@@ -74,10 +74,12 @@ class FoodEntryItem extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                 ],
-                Text(
-                  '${entry.portionGrams.toStringAsFixed(0)}g portion',
-                  style: AppTextStyles.body.copyWith(fontSize: 12),
-                ),
+                if (!_isManualEntry(entry)) ...[
+                  Text(
+                    '${entry.portionGrams.toStringAsFixed(0)}g portion',
+                    style: AppTextStyles.body.copyWith(fontSize: 12),
+                  ),
+                ],
               ],
             ),
           ),
@@ -106,10 +108,14 @@ class FoodEntryItem extends StatelessWidget {
         color: AppTheme.borderDefault,
       ),
       child: const Icon(
-        CupertinoIcons.cube_box,
-        color: AppTheme.textSecondary,
+        CupertinoIcons.cube,
+        color: AppTheme.surfaceBackground,
         size: 24,
       ),
     );
+  }
+
+  bool _isManualEntry(FoodEntry entry) {
+    return entry.product.barcode.startsWith('manual_');
   }
 }

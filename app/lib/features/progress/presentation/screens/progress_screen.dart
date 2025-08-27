@@ -3,7 +3,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:quit_suggar/features/tracking/presentation/providers/sugar_tracking_provider.dart';
 import 'package:quit_suggar/core/services/logger_service.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
-import 'package:quit_suggar/features/progress/presentation/widgets/weekly_summary_card.dart';
 import 'package:quit_suggar/features/progress/presentation/widgets/simple_progress_grid.dart';
 import 'package:quit_suggar/features/progress/presentation/widgets/sugar_consumption_graph.dart';
 import 'package:quit_suggar/features/progress/presentation/widgets/current_month_calendar.dart';
@@ -38,7 +37,7 @@ class ProgressScreen extends HookConsumerWidget {
       navigationBar: CupertinoNavigationBar(
         backgroundColor: AppTheme.background,
         border: const Border(bottom: BorderSide.none),
-        middle: Text('Progress', style: AppTextStyles.heading),
+        leading: Text('Progress', style: AppTextStyles.heading),
       ),
       child: SafeArea(
         child: Container(
@@ -55,11 +54,6 @@ class ProgressScreen extends HookConsumerWidget {
 
                 // Sugar Consumption Graph (main feature)
                 const SugarConsumptionGraph(),
-
-                const SizedBox(height: 24),
-
-                // Weekly summary
-                WeeklySummaryCard(),
 
                 const SizedBox(height: 24),
 
@@ -86,7 +80,7 @@ class ProgressScreen extends HookConsumerWidget {
       navigationBar: CupertinoNavigationBar(
         backgroundColor: AppTheme.background,
         border: const Border(bottom: BorderSide.none),
-        middle: Text('Progress', style: AppTextStyles.heading),
+        leading: Text('Progress', style: AppTextStyles.heading),
       ),
       child: const SafeArea(
         child: Center(
@@ -112,7 +106,7 @@ class ProgressScreen extends HookConsumerWidget {
       navigationBar: CupertinoNavigationBar(
         backgroundColor: AppTheme.background,
         border: const Border(bottom: BorderSide.none),
-        middle: Text('Progress', style: AppTextStyles.heading),
+        leading: Text('Progress', style: AppTextStyles.heading),
       ),
       child: SafeArea(
         child: Center(

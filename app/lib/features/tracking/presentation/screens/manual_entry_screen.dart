@@ -20,15 +20,20 @@ class ManualEntryScreen extends HookConsumerWidget {
       navigationBar: CupertinoNavigationBar(
         backgroundColor: AppTheme.background,
         border: const Border(bottom: BorderSide.none),
-        middle: Text(
-          'Manual Entry',
-          style: AppTextStyles.heading.copyWith(fontSize: 18),
-        ),
-        leading: CupertinoNavigationBarBackButton(
-          onPressed: () {
-            AppLogger.logNavigation('Manual entry screen closed by back button');
-            context.pop();
-          },
+        leading: Row(
+          children: [
+            CupertinoNavigationBarBackButton(
+              onPressed: () {
+                AppLogger.logNavigation('Manual entry screen closed by back button');
+                context.pop();
+              },
+            ),
+            const SizedBox(width: 8),
+            Text(
+              'Manual Entry',
+              style: AppTextStyles.heading.copyWith(fontSize: 18),
+            ),
+          ],
         ),
       ),
       child: SafeArea(
@@ -41,12 +46,12 @@ class ManualEntryScreen extends HookConsumerWidget {
 
               // Header
               Text(
-                'Add Sugar Intake',
+                'Add Manual Sugar Entry',
                 style: AppTextStyles.heading.copyWith(fontSize: 24),
               ),
               const SizedBox(height: 8),
               Text(
-                'Enter the details of your food or drink',
+                'For sugar intake not from scanned products or photos',
                 style: AppTextStyles.body.copyWith(
                   color: AppTheme.textMuted,
                 ),
@@ -57,8 +62,8 @@ class ManualEntryScreen extends HookConsumerWidget {
               // Food name input
               _buildInputField(
                 controller: foodNameController,
-                label: 'Food/Drink Name',
-                placeholder: 'e.g., Apple, Coca Cola, Chocolate Bar',
+                label: 'Description',
+                placeholder: 'e.g., Coffee with sugar, Birthday cake slice',
                 icon: CupertinoIcons.tag,
               ),
 
@@ -67,7 +72,7 @@ class ManualEntryScreen extends HookConsumerWidget {
               // Sugar amount input
               _buildInputField(
                 controller: sugarAmountController,
-                label: 'Sugar Amount (grams)',
+                label: 'Total Sugar (grams)',
                 placeholder: 'e.g., 12.5',
                 icon: CupertinoIcons.chart_bar,
                 keyboardType: TextInputType.number,
@@ -138,10 +143,11 @@ class ManualEntryScreen extends HookConsumerWidget {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      '• Check nutrition labels for sugar content\n'
-                      '• 1 teaspoon = ~4 grams of sugar\n'
-                      '• Natural sugars in fruits count too\n'
-                      '• Be honest with your tracking for best results',
+                      '• 1 teaspoon of sugar = ~4 grams\n'
+                      '• 1 tablespoon of sugar = ~12 grams\n'
+                      '• Check nutrition labels for total sugar\n'
+                      '• Include both added and natural sugars\n'
+                      '• Be honest for accurate tracking',
                       style: AppTextStyles.body.copyWith(
                         color: AppTheme.textMuted,
                         fontSize: 14,
@@ -226,6 +232,11 @@ class ManualEntryScreen extends HookConsumerWidget {
     final sugarAmount = double.tryParse(sugarAmountText);
     if (sugarAmount == null || sugarAmount <= 0) {
       _showError(context, 'Please enter a valid sugar amount');
+      return;
+    }
+    
+    if (sugarAmount > 200) {
+      _showError(context, 'Sugar amount seems too high. Please check and try again.');
       return;
     }
 

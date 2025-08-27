@@ -60,7 +60,7 @@ class WelcomeScreen extends HookConsumerWidget {
               
               // Subtitle
               Text(
-                'Break free from sugar addiction with our guided 45-day program',
+                'Break free from sugar addiction with our proven 60-day gradual reduction program',
                 style: AppTextStyles.body.copyWith(
                   color: AppTheme.textSecondary,
                   fontSize: 18,
@@ -91,10 +91,10 @@ class WelcomeScreen extends HookConsumerWidget {
 
   Widget _buildBenefitsList() {
     final benefits = [
-      '📊 Track daily sugar intake',
-      '🎯 Gradual 45-day reduction plan',
-      '🏆 Build healthy streaks',
-      '📱 Scan products for instant info',
+      '🎯 Scientifically-designed 60-day program',
+      '📊 Track daily sugar with smart limits',  
+      '🏆 Gamified journey with achievements',
+      '📱 Instant product scanning & analysis',
     ];
 
     return Column(

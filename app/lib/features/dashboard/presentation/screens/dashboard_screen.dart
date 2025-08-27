@@ -58,10 +58,28 @@ class DashboardScreen extends HookConsumerWidget {
         navigationBar: CupertinoNavigationBar(
           backgroundColor: AppTheme.background,
           border: const Border(bottom: BorderSide.none),
-          middle: Text(
-            'Today\'s Progress',
-            style: AppTextStyles.heading,
+          leading: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
+            children: [
+              Text(
+                'Today',
+                style: AppTextStyles.heading,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                _getFormattedDate(),
+                style: AppTextStyles.caption.copyWith(
+                  color: AppTheme.textMuted,
+                  fontSize: 16,
+                  fontStyle: FontStyle.italic,
+                  letterSpacing: 0.0
+                ),
+              ),
+            ],
           ),
+          trailing: _buildStreakCounter(dailySummary.streak),
         ),
         child: SafeArea(
           child: Container(
@@ -101,7 +119,7 @@ class DashboardScreen extends HookConsumerWidget {
         backgroundColor: AppTheme.background,
         border: const Border(bottom: BorderSide.none),
         middle: Text(
-          'Today\'s Progress',
+          'Today',
           style: AppTextStyles.heading,
         ),
       ),
@@ -130,7 +148,7 @@ class DashboardScreen extends HookConsumerWidget {
         backgroundColor: AppTheme.background,
         border: const Border(bottom: BorderSide.none),
         middle: Text(
-          'Today\'s Progress',
+          'Today',
           style: AppTextStyles.heading,
         ),
       ),
@@ -166,6 +184,36 @@ class DashboardScreen extends HookConsumerWidget {
           ),
         ),
       ),
+    );
+  }
+
+  String _getFormattedDate() {
+    final now = DateTime.now();
+    final months = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    return '${now.day} ${months[now.month - 1]}';
+  }
+
+  Widget _buildStreakCounter(int streak) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(
+          CupertinoIcons.flame_fill,
+          color: AppTheme.accentOrange,
+          size: 20,
+        ),
+        const SizedBox(width: 4),
+        Text(
+          '$streak',
+          style: AppTextStyles.heading.copyWith(
+            fontSize: 16,
+            color: AppTheme.accentOrange,
+          ),
+        ),
+      ],
     );
   }
 }

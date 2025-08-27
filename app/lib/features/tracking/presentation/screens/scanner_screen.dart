@@ -247,33 +247,29 @@ class ScannerScreen extends HookConsumerWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) => ProductDetailsSheet(
-          product: product,
-          selectedPortion: selectedPortion,
-          onPortionChanged: (value) {
-            setState(() {
-              selectedPortion = value;
-            });
-            AppLogger.logUserAction('Adjusted portion size', {
-              'portion_grams': value,
-            });
-          },
-          onAddToDailyLog: () async {
-            AppLogger.logUserAction('Confirmed adding product to daily log', {
-              'product_name': product.name,
-              'portion_grams': selectedPortion,
-            });
-            context.pop();
-            // Use parent context instead of bottom sheet context
-            await _addProductToDailyLog(
-              parentContext,
-              ref,
-              product,
-              selectedPortion,
-            );
-          },
-        ),
+      builder: (context) => ProductDetailsSheet(
+        product: product,
+        selectedPortion: selectedPortion,
+        onPortionChanged: (value) {
+          selectedPortion = value;
+          AppLogger.logUserAction('Adjusted portion size', {
+            'portion_grams': value,
+          });
+        },
+        onAddToDailyLog: () async {
+          AppLogger.logUserAction('Confirmed adding product to daily log', {
+            'product_name': product.name,
+            'portion_grams': selectedPortion,
+          });
+          context.pop();
+          // Use parent context instead of bottom sheet context
+          await _addProductToDailyLog(
+            parentContext,
+            ref,
+            product,
+            selectedPortion,
+          );
+        },
       ),
     );
 

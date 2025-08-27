@@ -7,7 +7,7 @@ part of 'onboarding_providers.dart';
 // **************************************************************************
 
 String _$onboardingRepositoryHash() =>
-    r'59d2f2a3b244a09c54c7641fe8ae90eb2b0eeae4';
+    r'57aaf8d5e5f9d5bb2bb4ee54a7aa6daabf3658e0';
 
 /// See also [onboardingRepository].
 @ProviderFor(onboardingRepository)
@@ -25,7 +25,7 @@ final onboardingRepositoryProvider = Provider<OnboardingRepository>.internal(
 // ignore: unused_element
 typedef OnboardingRepositoryRef = ProviderRef<OnboardingRepository>;
 String _$saveOnboardingDataUseCaseHash() =>
-    r'02a5a54beffa383dd4091c2f0d300dfb6dbf6a43';
+    r'5d0cf4d7cf13b2c5773bb668e8bed95bb69da182';
 
 /// See also [saveOnboardingDataUseCase].
 @ProviderFor(saveOnboardingDataUseCase)
@@ -44,7 +44,7 @@ final saveOnboardingDataUseCaseProvider =
 // ignore: unused_element
 typedef SaveOnboardingDataUseCaseRef = ProviderRef<SaveOnboardingDataUseCase>;
 String _$getCurrentDailyLimitUseCaseHash() =>
-    r'd9d7d47f6072217ec9b3fdde93e51b15b033b91a';
+    r'80a3af0d1481e255aa03bc7540c2a4d9b1a8216a';
 
 /// See also [getCurrentDailyLimitUseCase].
 @ProviderFor(getCurrentDailyLimitUseCase)
@@ -64,7 +64,7 @@ final getCurrentDailyLimitUseCaseProvider =
 typedef GetCurrentDailyLimitUseCaseRef =
     ProviderRef<GetCurrentDailyLimitUseCase>;
 String _$checkOnboardingStatusUseCaseHash() =>
-    r'8fd201bccf71e23d33f05d6bb75ed1d063671e00';
+    r'9e9c9603fb11cccfe1bbf8650f3a9b05647ff5d1';
 
 /// See also [checkOnboardingStatusUseCase].
 @ProviderFor(checkOnboardingStatusUseCase)
@@ -83,7 +83,7 @@ final checkOnboardingStatusUseCaseProvider =
 // ignore: unused_element
 typedef CheckOnboardingStatusUseCaseRef =
     ProviderRef<CheckOnboardingStatusUseCase>;
-String _$onboardingStatusHash() => r'3cc00de2aed9491ea99cccb3ea915ea71db95c88';
+String _$onboardingStatusHash() => r'42aafa5fbb735ae940e207d407641bc8af7ceff5';
 
 /// See also [onboardingStatus].
 @ProviderFor(onboardingStatus)
@@ -100,7 +100,7 @@ final onboardingStatusProvider = AutoDisposeFutureProvider<bool>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef OnboardingStatusRef = AutoDisposeFutureProviderRef<bool>;
-String _$currentDailyLimitHash() => r'f87f148d693ea48921bfe2f131b5d79b2f2d9c56';
+String _$currentDailyLimitHash() => r'12ef3e960aef8179f7b48c60341bf15a5df3e2b4';
 
 /// See also [currentDailyLimit].
 @ProviderFor(currentDailyLimit)
@@ -117,7 +117,7 @@ final currentDailyLimitProvider = AutoDisposeFutureProvider<double>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef CurrentDailyLimitRef = AutoDisposeFutureProviderRef<double>;
-String _$onboardingDataHash() => r'c24a080a7a957209c8a4248867fc1b0aaf22059e';
+String _$onboardingDataHash() => r'6530edc1b2f96518afcb5d8644fae9e291d5acd4';
 
 /// See also [onboardingData].
 @ProviderFor(onboardingData)
@@ -135,7 +135,7 @@ final onboardingDataProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef OnboardingDataRef = AutoDisposeFutureProviderRef<OnboardingData?>;
-String _$onboardingFlowHash() => r'89754f5ecf00aec902e5f291b3c8e8cb1e55d2c6';
+String _$onboardingFlowHash() => r'30ec636c265170ad2fb68a8ca725a3fdb63726cf';
 
 /// See also [OnboardingFlow].
 @ProviderFor(OnboardingFlow)

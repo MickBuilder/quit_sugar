@@ -8,11 +8,12 @@ import 'package:quit_suggar/features/tracking/domain/repositories/tracking_repos
 import 'package:quit_suggar/features/tracking/data/repositories/tracking_repository_impl.dart';
 import 'package:quit_suggar/features/tracking/data/datasources/tracking_storage_service.dart';
 import 'package:quit_suggar/features/tracking/data/datasources/openfoodfacts_api_service.dart';
-import 'package:quit_suggar/features/tracking/domain/entities/daily_summary_history.dart';
+import 'package:quit_suggar/features/tracking/domain/entities/daily_log.dart';
 import 'package:quit_suggar/features/tracking/domain/repositories/historical_data_repository.dart';
 import 'package:quit_suggar/features/tracking/data/repositories/historical_data_repository_impl.dart';
 import 'package:quit_suggar/features/tracking/data/datasources/historical_data_service.dart';
 import 'package:quit_suggar/core/services/logger_service.dart';
+import 'package:quit_suggar/features/onboarding/presentation/providers/onboarding_providers.dart';
 
 part 'sugar_tracking_provider.g.dart';
 
@@ -32,7 +33,8 @@ OpenFoodFactsApiService openFoodFactsApiService(Ref ref) {
 TrackingRepository trackingRepository(Ref ref) {
   final storageService = ref.watch(trackingStorageServiceProvider);
   final apiService = ref.watch(openFoodFactsApiServiceProvider);
-  return TrackingRepositoryImpl(storageService, apiService);
+  final onboardingRepository = ref.watch(onboardingRepositoryProvider);
+  return TrackingRepositoryImpl(storageService, apiService, onboardingRepository);
 }
 
 // Usecase provider
@@ -222,7 +224,7 @@ HistoricalDataRepository historicalDataRepository(Ref ref) {
 
 // Historical data queries
 @riverpod
-Future<List<DailySummaryHistory>> recentDailySummaries(
+  Future<List<DailyLog>> recentDailySummaries(
   Ref ref,
   int count,
 ) async {
@@ -231,7 +233,7 @@ Future<List<DailySummaryHistory>> recentDailySummaries(
 }
 
 @riverpod
-Future<List<DailySummaryHistory>> dailySummariesInRange(
+  Future<List<DailyLog>> dailySummariesInRange(
   Ref ref,
   String startDate,
   String endDate,

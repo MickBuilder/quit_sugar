@@ -5,9 +5,8 @@ import 'package:quit_suggar/features/subscription/domain/entities/subscription_t
 import 'package:quit_suggar/core/services/logger_service.dart';
 
 class RevenueCatApiService {
-  // TODO: Replace with your actual RevenueCat API keys from the dashboard
-  static const String _androidAPIKey = 'rc_android_YOUR_KEY_HERE';
-  static const String _iosAPIKey = 'rc_ios_YOUR_KEY_HERE';
+  static const String _androidAPIKey = 'goog_yaYvUumbjXbTqfhlZPLfaJZBMHm';
+  static const String _iosAPIKey = 'appl_MbUPJfIFvVXTScveynBeNzwbmHh';
 
   static bool _isConfigured = false;
 

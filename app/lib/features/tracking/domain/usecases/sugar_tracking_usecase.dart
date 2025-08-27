@@ -245,21 +245,22 @@ class SugarTrackingUsecase {
     double? portionGrams,
   }) async {
     try {
+      // For manual entries, we directly use the sugar amount provided by the user
+      // Create a product with the sugar amount as-is
       final product = ProductInfo(
         barcode: 'manual_${DateTime.now().millisecondsSinceEpoch}',
         name: foodName,
-        sugarPer100g: portionGrams != null
-            ? (sugarAmount * 100 / portionGrams)
-            : null,
+        sugarPer100g: sugarAmount, // Direct sugar amount for manual entries
       );
 
       AppLogger.logSugarTracking(
         'Adding manual entry: $foodName - ${sugarAmount.toStringAsFixed(1)}g sugar',
       );
 
+      // For manual entries, we use 100g as the portion so the sugar amount is exactly what the user entered
       return await addFoodEntry(
         product,
-        portionGrams ?? 100.0,
+        100.0, // Always use 100g for manual entries
         customName: foodName,
       );
     } catch (e, stackTrace) {
@@ -330,17 +331,7 @@ class SugarTrackingUsecase {
 
   /// Get sugar status (green/yellow/red zone)
   SugarStatus getSugarStatus() {
-    final percentage = progressPercentage;
-
-    if (percentage <= 0.7) {
-      return SugarStatus.green;
-    } else if (percentage <= 0.9) {
-      return SugarStatus.yellow;
-    } else if (percentage <= 1.0) {
-      return SugarStatus.red;
-    } else {
-      return SugarStatus.overLimit;
-    }
+    return SugarStatusCalculator.fromPercentage(progressPercentage);
   }
 
   /// Get motivational message based on current status

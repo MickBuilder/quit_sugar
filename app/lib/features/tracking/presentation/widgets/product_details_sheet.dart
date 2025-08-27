@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:quit_suggar/features/tracking/domain/entities/product_info.dart';
 import 'package:quit_suggar/features/tracking/presentation/widgets/sugar_swap_suggestions.dart';
+import 'package:quit_suggar/features/tracking/presentation/widgets/smart_portion_selector.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
 
 class ProductDetailsSheet extends HookWidget {
@@ -20,14 +21,11 @@ class ProductDetailsSheet extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final selectedPortionState = useState(selectedPortion);
     final showSuggestions = useState(true);
+    
     // Calculate sugar amount dynamically based on current portion size
-    final sugarAmount = product.calculateSugarForPortion(selectedPortion);
-
-    // Set max portion size based on product weight, with fallback to 500g
-    final maxPortion = product.weightGrams != null
-        ? (product.weightGrams!).clamp(50.0, 2000.0)
-        : 500.0;
+    final sugarAmount = product.calculateSugarForPortion(selectedPortionState.value);
 
     return Container(
       decoration: BoxDecoration(
@@ -82,74 +80,37 @@ class ProductDetailsSheet extends HookWidget {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              '${sugarAmount.toStringAsFixed(1)}g sugar',
-                              style: AppTextStyles.display.copyWith(
-                                fontSize: 24,
+                                              Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                '${sugarAmount.toStringAsFixed(1)}g sugar',
+                                style: AppTextStyles.display.copyWith(
+                                  fontSize: 24,
+                                ),
                               ),
                             ),
-                          ),
-                          if (product.sugarPer100g != null)
-                            Text(
-                              '(${product.sugarPer100g!.toStringAsFixed(1)}g per 100g)',
-                              style: AppTextStyles.subtitle,
-                            ),
-                        ],
-                      ),
+                            if (product.sugarPer100g != null)
+                              Text(
+                                '(${product.sugarPer100g!.toStringAsFixed(1)}g per 100g)',
+                                style: AppTextStyles.subtitle,
+                              ),
+                          ],
+                        ),
                     ],
                   ),
                 ),
 
                 const SizedBox(height: 16),
 
-                // Portion size selector
-                Container(
-                  decoration: AppCardStyles.primary,
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Portion Size',
-                        style: AppTextStyles.heading.copyWith(
-                          fontSize: 16,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: CupertinoSlider(
-                              value: selectedPortion,
-                              min: 10.0,
-                              max: maxPortion,
-                              divisions: ((maxPortion - 10.0) / 10.0).round(),
-                              activeColor: AppTheme.primaryBlack,
-                              thumbColor: AppTheme.primaryBlack,
-                              onChanged: onPortionChanged,
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Container(
-                            decoration: AppCardStyles.primary,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 8,
-                            ),
-                            child: Text(
-                              '${selectedPortion.round()}g',
-                              style: AppTextStyles.subtitle.copyWith(
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                // Smart portion selector
+                SmartPortionSelector(
+                  product: product,
+                  selectedPortion: selectedPortionState.value,
+                  onPortionChanged: (value) {
+                    selectedPortionState.value = value;
+                    onPortionChanged(value);
+                  },
                 ),
 
                 // Sugar swap suggestions (only show for high-sugar products)

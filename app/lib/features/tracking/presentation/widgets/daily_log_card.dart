@@ -169,11 +169,11 @@ class DailyLogCard extends StatelessWidget {
           ),
           
           // Entries count
-          if (log.entries.isNotEmpty)
+          if (log.entryCount > 0)
             Padding(
               padding: const EdgeInsets.only(top: 8.0),
               child: Text(
-                '${log.entries.length} food entries',
+                '${log.entryCount} food entries',
                 style: const TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w500,
@@ -189,7 +189,7 @@ class DailyLogCard extends StatelessWidget {
   BoxDecoration _getCardDecoration() {
     if (log.goalAchieved) {
       return AppCardStyles.success;
-    } else if (log.isOverLimit) {
+    } else if (log.limitExceeded) {
       return AppCardStyles.error;
     } else {
       return AppCardStyles.warning;
@@ -212,7 +212,7 @@ class DailyLogCard extends StatelessWidget {
   String _getStatusText() {
     if (log.goalAchieved) {
       return 'SUCCESS';
-    } else if (log.isOverLimit) {
+    } else if (log.limitExceeded) {
       return 'OVER LIMIT';
     } else {
       return 'PARTIAL';

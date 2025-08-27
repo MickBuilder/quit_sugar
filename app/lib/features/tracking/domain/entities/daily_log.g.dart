@@ -1,14 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'daily_summary_history_model.dart';
+part of 'daily_log.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-_DailySummaryHistoryModel _$DailySummaryHistoryModelFromJson(
-  Map<String, dynamic> json,
-) => _DailySummaryHistoryModel(
+_DailyLog _$DailyLogFromJson(Map<String, dynamic> json) => _DailyLog(
   date: json['date'] as String,
   totalSugar: (json['totalSugar'] as num).toDouble(),
   dailyLimit: (json['dailyLimit'] as num).toDouble(),
@@ -21,12 +19,10 @@ _DailySummaryHistoryModel _$DailySummaryHistoryModelFromJson(
   topFoods: (json['topFoods'] as List<dynamic>)
       .map((e) => e as String)
       .toList(),
-  timestamp: json['timestamp'] as String,
+  timestamp: DateTime.parse(json['timestamp'] as String),
 );
 
-Map<String, dynamic> _$DailySummaryHistoryModelToJson(
-  _DailySummaryHistoryModel instance,
-) => <String, dynamic>{
+Map<String, dynamic> _$DailyLogToJson(_DailyLog instance) => <String, dynamic>{
   'date': instance.date,
   'totalSugar': instance.totalSugar,
   'dailyLimit': instance.dailyLimit,
@@ -37,5 +33,5 @@ Map<String, dynamic> _$DailySummaryHistoryModelToJson(
   'streakCountAtEndOfDay': instance.streakCountAtEndOfDay,
   'entryCount': instance.entryCount,
   'topFoods': instance.topFoods,
-  'timestamp': instance.timestamp,
+  'timestamp': instance.timestamp.toIso8601String(),
 };
