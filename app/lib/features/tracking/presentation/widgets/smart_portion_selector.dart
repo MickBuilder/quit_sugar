@@ -29,7 +29,6 @@ class SmartPortionSelector extends ConsumerStatefulWidget {
 
 class _SmartPortionSelectorState extends ConsumerState<SmartPortionSelector> {
   PortionType _selectedType = PortionType.whole;
-  double _customAmount = 100.0;
 
   @override
   void initState() {
