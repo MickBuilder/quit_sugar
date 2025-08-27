@@ -114,7 +114,7 @@ class ProductDetailsSheet extends HookWidget {
                 ),
 
                 // Sugar swap suggestions (only show for high-sugar products)
-                if (showSuggestions.value && (product.sugarPer100g ?? 0.0) > 15.0) ...[
+                if (showSuggestions.value && (product.sugarPer100g ?? 0.0) > 10.0) ...[
                   const SizedBox(height: 16),
                   SugarSwapSuggestions(
                     scannedProduct: product,
