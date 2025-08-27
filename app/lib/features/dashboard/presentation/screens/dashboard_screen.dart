@@ -9,6 +9,7 @@ import 'package:quit_suggar/features/tracking/domain/entities/daily_summary.dart
 import 'package:quit_suggar/core/theme/app_theme.dart';
 import 'package:quit_suggar/features/dashboard/presentation/widgets/daily_progress_card.dart';
 import 'package:quit_suggar/features/dashboard/presentation/widgets/expandable_fab.dart';
+import 'package:quit_suggar/features/onboarding/presentation/providers/onboarding_providers.dart';
 
 // We now use HookConsumerWidget to use hooks with Riverpod
 class DashboardScreen extends HookConsumerWidget {
@@ -79,7 +80,7 @@ class DashboardScreen extends HookConsumerWidget {
               ),
             ],
           ),
-          trailing: _buildStreakCounter(dailySummary.streak),
+          trailing: _buildStreakCounter(dailySummary.streak, ref),
         ),
         child: SafeArea(
           child: Container(
@@ -196,10 +197,39 @@ class DashboardScreen extends HookConsumerWidget {
     return '${now.day} ${months[now.month - 1]}';
   }
 
-  Widget _buildStreakCounter(int streak) {
+  Widget _buildStreakCounter(int streak, WidgetRef ref) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
+        // Day counter
+        ref.watch(onboardingDataProvider).when(
+          data: (data) {
+            if (data == null) return const SizedBox.shrink();
+            
+            final now = DateTime.now();
+            final daysPassed = now.difference(data.startDate).inDays;
+            
+            return Container(
+              margin: const EdgeInsets.only(right: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: AppTheme.accentOrange.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppTheme.accentOrange, width: 1),
+              ),
+              child: Text(
+                'Day ${daysPassed + 1}/${data.targetDays}',
+                style: AppTextStyles.caption.copyWith(
+                  color: AppTheme.accentOrange,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            );
+          },
+          loading: () => const SizedBox.shrink(),
+          error: (_, __) => const SizedBox.shrink(),
+        ),
+        // Streak counter
         Icon(
           CupertinoIcons.flame_fill,
           color: AppTheme.accentOrange,

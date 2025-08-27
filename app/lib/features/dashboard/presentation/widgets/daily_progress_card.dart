@@ -24,18 +24,7 @@ class DailyProgressCard extends HookConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Sugar Budget', style: AppTextStyles.heading),
-              // Show program indicator if onboarding is completed
-              onboardingDataAsync.when(
-                data: (data) => _buildProgramIndicator(data),
-                loading: () => const SizedBox.shrink(),
-                error: (_, __) => const SizedBox.shrink(),
-              ),
-            ],
-          ),
+          Text('Sugar Budget', style: AppTextStyles.heading),
           const SizedBox(height: 16),
           Row(
             children: [
@@ -77,28 +66,6 @@ class DailyProgressCard extends HookConsumerWidget {
     );
   }
 
-  Widget _buildProgramIndicator(OnboardingData? data) {
-    if (data == null) return const SizedBox.shrink();
-    
-    final now = DateTime.now();
-    final daysPassed = now.difference(data.startDate).inDays;
-    
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: AppTheme.accentOrange.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppTheme.accentOrange, width: 1),
-      ),
-      child: Text(
-        'Day ${daysPassed + 1}/${data.targetDays}',
-        style: AppTextStyles.caption.copyWith(
-          color: AppTheme.accentOrange,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    );
-  }
 
   Widget _buildSugarCup(double budgetPercentage) {
     final cupFillLevel = budgetPercentage.clamp(0.0, 1.0);

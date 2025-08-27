@@ -4,7 +4,7 @@ import 'package:quit_suggar/features/tracking/presentation/providers/sugar_track
 import 'package:quit_suggar/core/services/logger_service.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
 import 'package:quit_suggar/features/progress/presentation/widgets/simple_progress_grid.dart';
-import 'package:quit_suggar/features/progress/presentation/widgets/sugar_consumption_graph.dart';
+import 'package:quit_suggar/features/progress/presentation/widgets/weekly_sugar_bar_chart.dart';
 import 'package:quit_suggar/features/progress/presentation/widgets/current_month_calendar.dart';
 
 class ProgressScreen extends HookConsumerWidget {
@@ -52,8 +52,8 @@ class ProgressScreen extends HookConsumerWidget {
               children: [
                 const SizedBox(height: 24),
 
-                // Sugar Consumption Graph (main feature)
-                const SugarConsumptionGraph(),
+                // Weekly Sugar Consumption Bar Chart
+                const WeeklySugarBarChart(),
 
                 const SizedBox(height: 24),
 
