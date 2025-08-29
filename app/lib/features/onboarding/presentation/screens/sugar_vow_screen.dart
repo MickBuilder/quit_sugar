@@ -14,9 +14,10 @@ class SugarVowScreen extends HookConsumerWidget {
 
     return CupertinoPageScaffold(
       backgroundColor: AppTheme.background,
-      navigationBar: CupertinoNavigationBar(
+      navigationBar: const CupertinoNavigationBar(
         backgroundColor: AppTheme.background,
-        border: const Border(bottom: BorderSide.none),
+        border: Border(bottom: BorderSide.none),
+        automaticallyImplyLeading: false,
       ),
       child: SafeArea(
         child: Column(

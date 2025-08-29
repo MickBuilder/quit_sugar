@@ -10,6 +10,11 @@ class WelcomeScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return CupertinoPageScaffold(
       backgroundColor: AppTheme.background,
+      navigationBar: const CupertinoNavigationBar(
+        backgroundColor: AppTheme.background,
+        border: Border(bottom: BorderSide.none),
+        automaticallyImplyLeading: false,
+      ),
       child: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24.0),

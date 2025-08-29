@@ -13,6 +13,11 @@ class CompletionScreen extends HookConsumerWidget {
     final onboardingData = ref.watch(onboardingFlowProvider);
     return CupertinoPageScaffold(
       backgroundColor: AppTheme.background,
+      navigationBar: const CupertinoNavigationBar(
+        backgroundColor: AppTheme.background,
+        border: Border(bottom: BorderSide.none),
+        automaticallyImplyLeading: false,
+      ),
       child: SafeArea(
         child: Column(
           children: [

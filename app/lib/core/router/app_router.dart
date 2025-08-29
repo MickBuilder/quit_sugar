@@ -20,11 +20,9 @@ import 'package:quit_suggar/features/onboarding/presentation/screens/sugar_vow_s
 import 'package:quit_suggar/features/onboarding/presentation/screens/addiction_indicators_screen.dart';
 import 'package:quit_suggar/features/onboarding/presentation/screens/lifestyle_motivation_screen.dart';
 import 'package:quit_suggar/features/onboarding/presentation/screens/gamification_preview_screen.dart';
-import 'package:quit_suggar/features/onboarding/presentation/screens/premium_features_screen.dart';
-import 'package:quit_suggar/features/onboarding/presentation/screens/limited_offer_screen.dart';
 import 'package:quit_suggar/features/onboarding/presentation/screens/goal_setting_screen.dart';
-import 'package:quit_suggar/features/onboarding/presentation/screens/completion_screen.dart';
 import 'package:quit_suggar/features/onboarding/presentation/providers/onboarding_providers.dart';
+import 'package:quit_suggar/features/subscription/presentation/screens/revenuecat_paywall_screen.dart';
 
 // Provider for the router
 final routerProvider = Provider<GoRouter>((ref) {
@@ -60,17 +58,17 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/welcome',
         pageBuilder: (context, state) =>
-            const MaterialPage(child: WelcomeScreen()),
+            const NoTransitionPage(child: WelcomeScreen()),
       ),
       GoRoute(
         path: '/onboarding/scientific-foundation',
         pageBuilder: (context, state) =>
-            const MaterialPage(child: ScientificFoundationScreen()),
+            const NoTransitionPage(child: ScientificFoundationScreen()),
       ),
       GoRoute(
         path: '/onboarding/assessment-intro',
         pageBuilder: (context, state) =>
-            const MaterialPage(child: AssessmentIntroScreen()),
+            const NoTransitionPage(child: AssessmentIntroScreen()),
       ),
       GoRoute(
         path: '/onboarding/personal-info',
@@ -95,42 +93,32 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/onboarding/motivation',
         pageBuilder: (context, state) =>
-            const MaterialPage(child: MotivationScreen()),
+            const NoTransitionPage(child: MotivationScreen()),
       ),
       GoRoute(
         path: '/onboarding/life-impact',
         pageBuilder: (context, state) =>
-            const MaterialPage(child: LifeImpactScreen()),
+            const NoTransitionPage(child: LifeImpactScreen()),
       ),
       GoRoute(
         path: '/onboarding/analysis-results',
         pageBuilder: (context, state) =>
-            const MaterialPage(child: AnalysisResultsScreen()),
+            const NoTransitionPage(child: AnalysisResultsScreen()),
       ),
       GoRoute(
         path: '/onboarding/recovery-plan',
         pageBuilder: (context, state) =>
-            const MaterialPage(child: RecoveryPlanScreen()),
+            const NoTransitionPage(child: RecoveryPlanScreen()),
       ),
       GoRoute(
         path: '/onboarding/sugar-vow',
         pageBuilder: (context, state) =>
-            const MaterialPage(child: SugarVowScreen()),
+            const NoTransitionPage(child: SugarVowScreen()),
       ),
       GoRoute(
         path: '/onboarding/gamification-preview',
         pageBuilder: (context, state) =>
-            const MaterialPage(child: GamificationPreviewScreen()),
-      ),
-      GoRoute(
-        path: '/onboarding/premium-features',
-        pageBuilder: (context, state) =>
-            const MaterialPage(child: PremiumFeaturesScreen()),
-      ),
-      GoRoute(
-        path: '/onboarding/limited-offer',
-        pageBuilder: (context, state) =>
-            const MaterialPage(child: LimitedOfferScreen()),
+            const NoTransitionPage(child: GamificationPreviewScreen()),
       ),
       // Legacy onboarding routes (for backward compatibility)
       GoRoute(
@@ -138,7 +126,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         pageBuilder: (context, state) {
           final dailySugarStr = state.uri.queryParameters['dailySugar'] ?? '25.0';
           final dailySugar = double.tryParse(dailySugarStr) ?? 25.0;
-          return MaterialPage(
+          return NoTransitionPage(
             child: GoalSettingScreen(currentDailySugar: dailySugar),
           );
         },
@@ -146,7 +134,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/onboarding/completion',
         pageBuilder: (context, state) =>
-            const MaterialPage(child: CompletionScreen()),
+            const NoTransitionPage(child: RevenueCatPaywallScreen(source: 'onboarding')),
       ),
       
       // Main app flow

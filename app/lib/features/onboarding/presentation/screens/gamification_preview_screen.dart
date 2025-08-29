@@ -10,9 +10,10 @@ class GamificationPreviewScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return CupertinoPageScaffold(
       backgroundColor: AppTheme.background,
-      navigationBar: CupertinoNavigationBar(
+      navigationBar: const CupertinoNavigationBar(
         backgroundColor: AppTheme.background,
-        border: const Border(bottom: BorderSide.none),
+        border: Border(bottom: BorderSide.none),
+        automaticallyImplyLeading: false,
       ),
       child: SafeArea(
         child: Column(
@@ -272,7 +273,7 @@ class GamificationPreviewScreen extends HookConsumerWidget {
   Widget _buildContinueButton(BuildContext context, WidgetRef ref) {
     return GestureDetector(
       onTap: () {
-        context.push('/onboarding/premium-features');
+        context.push('/onboarding/completion');
       },
       child: Container(
         width: double.infinity,

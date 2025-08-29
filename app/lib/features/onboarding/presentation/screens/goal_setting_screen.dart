@@ -45,20 +45,10 @@ class GoalSettingScreen extends HookConsumerWidget {
 
     return CupertinoPageScaffold(
       backgroundColor: AppTheme.background,
-      navigationBar: CupertinoNavigationBar(
+      navigationBar: const CupertinoNavigationBar(
         backgroundColor: AppTheme.background,
-        border: const Border(bottom: BorderSide.none),
-        leading: GestureDetector(
-          onTap: () => context.pop(),
-          child: const Icon(
-            CupertinoIcons.back,
-            color: AppTheme.textPrimary,
-          ),
-        ),
-        middle: Text(
-          'Set Your Goal',
-          style: AppTextStyles.heading,
-        ),
+        border: Border(bottom: BorderSide.none),
+        automaticallyImplyLeading: false,
       ),
       child: SafeArea(
         child: Column(
@@ -76,15 +66,6 @@ class GoalSettingScreen extends HookConsumerWidget {
                     
                     const SizedBox(height: 32),
                     
-                    // Title
-                    Text(
-                      'Choose Your Target',
-                      style: AppTextStyles.title.copyWith(
-                        fontSize: 24,
-                      ),
-                    ),
-                    
-                    const SizedBox(height: 8),
                     
                     Text(
                       'Based on your current intake of ${currentDailySugar.toStringAsFixed(1)}g per day',
