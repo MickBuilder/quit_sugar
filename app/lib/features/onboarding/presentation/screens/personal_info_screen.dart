@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
 import 'package:quit_suggar/features/onboarding/presentation/providers/onboarding_providers.dart';
+import 'package:quit_suggar/shared/widgets/onboarding_progress_bar.dart';
 
 class PersonalInfoScreen extends HookConsumerWidget {
   const PersonalInfoScreen({super.key});
@@ -25,10 +26,6 @@ class PersonalInfoScreen extends HookConsumerWidget {
             color: AppTheme.textPrimary,
           ),
         ),
-        middle: Text(
-          'Personal Info',
-          style: AppTextStyles.heading,
-        ),
       ),
       child: SafeArea(
         child: Column(
@@ -40,7 +37,10 @@ class PersonalInfoScreen extends HookConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Progress indicator
-                  _buildProgressIndicator(1, 5),
+                  OnboardingProgressBar(
+                    current: 4,
+                    total: 13,
+                  ),
                   
                   const SizedBox(height: 32),
                   
@@ -112,27 +112,6 @@ class PersonalInfoScreen extends HookConsumerWidget {
     );
   }
 
-  Widget _buildProgressIndicator(int current, int total) {
-    return Row(
-      children: List.generate(total, (index) {
-        final isActive = index < current;
-        final isCurrent = index == current - 1;
-        
-        return Expanded(
-          child: Container(
-            height: 4,
-            margin: EdgeInsets.only(right: index < total - 1 ? 8 : 0),
-            decoration: BoxDecoration(
-              color: isActive 
-                  ? (isCurrent ? AppTheme.accentOrange : AppTheme.progressGreen)
-                  : AppTheme.neutralLightGrey,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-        );
-      }),
-    );
-  }
 
   Widget _buildInputSection(
     String title,

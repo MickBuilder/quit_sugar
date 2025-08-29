@@ -10,6 +10,9 @@ import 'package:quit_suggar/core/theme/app_theme.dart';
 import 'package:quit_suggar/features/dashboard/presentation/widgets/daily_progress_card.dart';
 import 'package:quit_suggar/features/dashboard/presentation/widgets/expandable_fab.dart';
 import 'package:quit_suggar/features/onboarding/presentation/providers/onboarding_providers.dart';
+import 'package:quit_suggar/features/program/presentation/providers/celebration_provider.dart';
+import 'package:quit_suggar/features/program/presentation/widgets/celebration_modal.dart';
+import 'package:quit_suggar/features/program/domain/entities/celebration.dart';
 
 // We now use HookConsumerWidget to use hooks with Riverpod
 class DashboardScreen extends HookConsumerWidget {
@@ -27,9 +30,10 @@ class DashboardScreen extends HookConsumerWidget {
           'Dashboard screen built - Daily summary: ${dailySummary.totalSugar.toStringAsFixed(1)}g/${dailySummary.dailyLimit.toStringAsFixed(0)}g',
         );
 
-        // Check daily streak evaluation when dashboard loads
+        // Check daily streak evaluation and celebrations when dashboard loads
         WidgetsBinding.instance.addPostFrameCallback((_) {
           ref.read(sugarTrackingProvider.notifier).checkDailyStreakEvaluation();
+          _checkAndShowCelebration(context, ref);
         });
 
         return Stack(
@@ -245,5 +249,26 @@ class DashboardScreen extends HookConsumerWidget {
         ),
       ],
     );
+  }
+
+  void _checkAndShowCelebration(BuildContext context, WidgetRef ref) {
+    ref.read(todayCelebrationProvider.future).then((Celebration? celebration) {
+      if (celebration != null && context.mounted) {
+        final celebrationSeenNotifier = ref.read(celebrationSeenProvider.notifier);
+        
+        // Check if user has already seen today's celebration
+        if (!celebrationSeenNotifier.hasSeen(celebration.day)) {
+          // Show celebration modal
+          showCelebrationModal(context, celebration);
+          
+          // Mark as seen so it doesn't show again today
+          celebrationSeenNotifier.markSeen(celebration.day);
+          
+          AppLogger.logUserAction(
+            'Celebration shown: Day ${celebration.day} - ${celebration.type.name}',
+          );
+        }
+      }
+    });
   }
 }

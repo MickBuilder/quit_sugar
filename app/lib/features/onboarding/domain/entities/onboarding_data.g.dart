@@ -32,6 +32,13 @@ _OnboardingData _$OnboardingDataFromJson(Map<String, dynamic> json) =>
           .toList(),
       startDate: DateTime.parse(json['startDate'] as String),
       targetDate: DateTime.parse(json['targetDate'] as String),
+      motivation: json['motivation'] as String,
+      lifeImpacts: (json['lifeImpacts'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
+      analysisResults: json['analysisResults'] as Map<String, dynamic>,
+      vowSigned: json['vowSigned'] as bool,
+      gamificationEnabled: json['gamificationEnabled'] as bool,
     );
 
 Map<String, dynamic> _$OnboardingDataToJson(_OnboardingData instance) =>
@@ -53,6 +60,11 @@ Map<String, dynamic> _$OnboardingDataToJson(_OnboardingData instance) =>
       'dailyLimitsProgression': instance.dailyLimitsProgression,
       'startDate': instance.startDate.toIso8601String(),
       'targetDate': instance.targetDate.toIso8601String(),
+      'motivation': instance.motivation,
+      'lifeImpacts': instance.lifeImpacts,
+      'analysisResults': instance.analysisResults,
+      'vowSigned': instance.vowSigned,
+      'gamificationEnabled': instance.gamificationEnabled,
     };
 
 const _$HealthConditionEnumMap = {

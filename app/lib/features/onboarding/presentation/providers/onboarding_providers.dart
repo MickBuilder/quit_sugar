@@ -78,6 +78,11 @@ class OnboardingFlow extends _$OnboardingFlow {
       dailyLimitsProgression: [],
       startDate: DateTime.now(),
       targetDate: DateTime.now().add(const Duration(days: 60)),
+      motivation: '',
+      lifeImpacts: [],
+      analysisResults: {},
+      vowSigned: false,
+      gamificationEnabled: true,
     );
   }
   
@@ -137,6 +142,69 @@ class OnboardingFlow extends _$OnboardingFlow {
     state = state.copyWith(primaryMotivation: motivation);
   }
   
+  // Enhanced onboarding methods
+  void updateMotivationReason(String motivation) {
+    state = state.copyWith(motivation: motivation);
+  }
+  
+  void updateAddictionIndicators({
+    required int cravingIntensity,
+    required int energyImpact,
+    required int moodImpact,
+    required int physicalSymptoms,
+    required int stressEating,
+    required int previousAttempts,
+    required int totalScore,
+  }) {
+    // Store addiction indicators in analysis results
+    final analysisResults = Map<String, dynamic>.from(state.analysisResults);
+    analysisResults.addAll({
+      'cravingIntensity': cravingIntensity,
+      'energyImpact': energyImpact,
+      'moodImpact': moodImpact,
+      'physicalSymptoms': physicalSymptoms,
+      'stressEating': stressEating,
+      'previousAttempts': previousAttempts,
+      'addictionScore': totalScore,
+    });
+    
+    state = state.copyWith(analysisResults: analysisResults);
+  }
+  
+  void updateLifestyleFactors({
+    required int sleepQuality,
+    required int primaryMotivation,
+    required int socialEnvironment,
+    required int stressLevels,
+  }) {
+    // Store lifestyle factors in analysis results
+    final analysisResults = Map<String, dynamic>.from(state.analysisResults);
+    analysisResults.addAll({
+      'sleepQuality': sleepQuality,
+      'primaryMotivation': primaryMotivation,
+      'socialEnvironment': socialEnvironment,
+      'stressLevels': stressLevels,
+    });
+    
+    state = state.copyWith(analysisResults: analysisResults);
+  }
+  
+  void updateLifeImpacts(List<String> lifeImpacts) {
+    state = state.copyWith(lifeImpacts: lifeImpacts);
+  }
+  
+  void updateAnalysisResults(Map<String, dynamic> analysisResults) {
+    state = state.copyWith(analysisResults: analysisResults);
+  }
+  
+  void signVow() {
+    state = state.copyWith(vowSigned: true);
+  }
+  
+  void enableGamification(bool enabled) {
+    state = state.copyWith(gamificationEnabled: enabled);
+  }
+  
   Future<void> saveOnboardingData() async {
     final useCase = ref.read(saveOnboardingDataUseCaseProvider);
     await useCase(state);
@@ -171,6 +239,11 @@ class OnboardingFlow extends _$OnboardingFlow {
       dailyLimitsProgression: [],
       startDate: DateTime.now(),
       targetDate: DateTime.now().add(const Duration(days: 60)),
+      motivation: '',
+      lifeImpacts: [],
+      analysisResults: {},
+      vowSigned: false,
+      gamificationEnabled: true,
     );
   }
 }

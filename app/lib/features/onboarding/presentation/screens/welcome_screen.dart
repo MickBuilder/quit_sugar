@@ -17,56 +17,68 @@ class WelcomeScreen extends HookConsumerWidget {
             children: [
               const Spacer(flex: 2),
               
-              // App logo/icon area
+              const SizedBox(height: 40),
+              
+              // SugAddict app logo
               Container(
                 width: 120,
                 height: 120,
                 decoration: BoxDecoration(
-                  color: AppTheme.accentOrange,
+                  color: AppTheme.primaryWhite,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: AppTheme.borderDefault,
+                    color: AppTheme.primaryBlack,
                     width: 3,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: AppTheme.primaryBlack.withValues(alpha: 0.3),
+                      color: AppTheme.primaryBlack.withValues(alpha: 0.8),
                       blurRadius: 0,
-                      offset: const Offset(4, 4),
+                      offset: const Offset(6, 6),
                     ),
                   ],
                 ),
-                child: const Center(
-                  child: Text(
-                    '🍭',
-                    style: TextStyle(fontSize: 48),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(13),
+                  child: Image.asset(
+                    'assets/icon/app-icon.png',
+                    width: 120,
+                    height: 120,
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),
               
               const SizedBox(height: 32),
               
-              // Welcome title
+              // Main title with proper SugAddict branding
               Text(
-                'Welcome to\nQuit Suggar',
+                'Welcome to\nSugAddict',
                 style: AppTextStyles.display.copyWith(
-                  fontSize: 36,
+                  fontSize: 32,
                   color: AppTheme.textPrimary,
+                  fontWeight: FontWeight.w900,
                 ),
                 textAlign: TextAlign.center,
               ),
               
               const SizedBox(height: 16),
               
-              // Subtitle
+              // Compelling subtitle focused on sugar addiction recovery
               Text(
-                'Break free from sugar addiction with our proven 60-day gradual reduction program',
+                'Break Free from Sugar Addiction\nin 60 Days',
                 style: AppTextStyles.body.copyWith(
                   color: AppTheme.textSecondary,
                   fontSize: 18,
+                  fontWeight: FontWeight.w600,
                 ),
                 textAlign: TextAlign.center,
               ),
+              
+              const SizedBox(height: 24),
+              
+              // Social proof stats
+              _buildSocialProof(),
               
               const Spacer(flex: 2),
               
@@ -89,12 +101,49 @@ class WelcomeScreen extends HookConsumerWidget {
     );
   }
 
+
+  Widget _buildSocialProof() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: AppCardStyles.primary,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _buildStatItem('500K+', 'Users'),
+          _buildStatItem('4.8★', 'Rating'),
+          _buildStatItem('60', 'Days'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatItem(String value, String label) {
+    return Column(
+      children: [
+        Text(
+          value,
+          style: AppTextStyles.heading.copyWith(
+            fontSize: 20,
+            fontWeight: FontWeight.w900,
+            color: AppTheme.accentOrange,
+          ),
+        ),
+        Text(
+          label,
+          style: AppTextStyles.caption.copyWith(
+            color: AppTheme.textSecondary,
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildBenefitsList() {
     final benefits = [
-      '🎯 Scientifically-designed 60-day program',
-      '📊 Track daily sugar with smart limits',  
-      '🏆 Gamified journey with achievements',
-      '📱 Instant product scanning & analysis',
+      '🧠 Science-backed sugar addiction recovery',
+      '📊 Personalized 60-day step-down program', 
+      '💪 Withdrawal support & coping strategies',
+      '🏆 Track progress with celebration milestones',
     ];
 
     return Column(
@@ -117,7 +166,7 @@ class WelcomeScreen extends HookConsumerWidget {
   Widget _buildStartButton(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        context.push('/onboarding/personal-info');
+        context.push('/onboarding/scientific-foundation');
       },
       child: Container(
         width: double.infinity,
@@ -139,7 +188,7 @@ class WelcomeScreen extends HookConsumerWidget {
         ),
         child: const Center(
           child: Text(
-            'Start Your Journey',
+            'Begin Recovery',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w700,

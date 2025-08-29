@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
 import 'package:quit_suggar/features/onboarding/presentation/providers/onboarding_providers.dart';
+import 'package:quit_suggar/shared/widgets/onboarding_progress_bar.dart';
 
 class SugarAssessmentScreen extends HookConsumerWidget {
   const SugarAssessmentScreen({super.key});
@@ -28,10 +29,6 @@ class SugarAssessmentScreen extends HookConsumerWidget {
             color: AppTheme.textPrimary,
           ),
         ),
-        middle: Text(
-          'Sugar Assessment',
-          style: AppTextStyles.heading,
-        ),
       ),
       child: SafeArea(
         child: Column(
@@ -45,7 +42,10 @@ class SugarAssessmentScreen extends HookConsumerWidget {
                     const SizedBox(height: 20),
                     
                     // Progress indicator
-                    _buildProgressIndicator(2, 5),
+                    OnboardingProgressBar(
+                      current: 5,
+                      total: 13,
+                    ),
                     
                     const SizedBox(height: 32),
                     
@@ -146,27 +146,6 @@ class SugarAssessmentScreen extends HookConsumerWidget {
     );
   }
 
-  Widget _buildProgressIndicator(int current, int total) {
-    return Row(
-      children: List.generate(total, (index) {
-        final isActive = index < current;
-        final isCurrent = index == current - 1;
-        
-        return Expanded(
-          child: Container(
-            height: 4,
-            margin: EdgeInsets.only(right: index < total - 1 ? 8 : 0),
-            decoration: BoxDecoration(
-              color: isActive 
-                  ? (isCurrent ? AppTheme.accentOrange : AppTheme.progressGreen)
-                  : AppTheme.neutralLightGrey,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-        );
-      }),
-    );
-  }
 
   Widget _buildSugarSourceItem(
     String title,
@@ -415,7 +394,7 @@ class SugarAssessmentScreen extends HookConsumerWidget {
           juiceDrinks: juice,
           currentDailySugar: dailySugar,
         );
-        context.push('/onboarding/health-questionnaire?dailySugar=${dailySugar.toStringAsFixed(1)}');
+        context.push('/onboarding/addiction-indicators');
       },
       child: Container(
         width: double.infinity,

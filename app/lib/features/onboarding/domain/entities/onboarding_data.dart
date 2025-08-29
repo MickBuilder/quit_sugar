@@ -30,6 +30,13 @@ abstract class OnboardingData with _$OnboardingData {
     required List<double> dailyLimitsProgression,
     required DateTime startDate,
     required DateTime targetDate,
+    
+    // Enhanced onboarding fields
+    required String motivation,
+    required List<String> lifeImpacts,
+    required Map<String, dynamic> analysisResults,
+    required bool vowSigned,
+    required bool gamificationEnabled,
   }) = _OnboardingData;
 
   const OnboardingData._();

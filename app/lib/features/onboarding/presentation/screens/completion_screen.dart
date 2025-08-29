@@ -367,10 +367,6 @@ class CompletionScreen extends HookConsumerWidget {
         onPurchaseComplete: () {
           context.go('/dashboard');
         },
-        onTrialSelected: () {
-          // Allow limited trial access
-          context.go('/dashboard');
-        },
       ),
     );
   }
@@ -378,11 +374,9 @@ class CompletionScreen extends HookConsumerWidget {
 
 class _HardPaywallModal extends HookConsumerWidget {
   final VoidCallback onPurchaseComplete;
-  final VoidCallback onTrialSelected;
 
   const _HardPaywallModal({
     required this.onPurchaseComplete,
-    required this.onTrialSelected,
   });
 
   @override
@@ -431,7 +425,7 @@ class _HardPaywallModal extends HookConsumerWidget {
                     
                     // Title
                     Text(
-                      'Unlock Your Full\n60-Day Journey',
+                      'Complete Your\nSugAddict Journey',
                       style: AppTextStyles.display.copyWith(
                         fontSize: 32,
                         color: AppTheme.textPrimary,
@@ -443,7 +437,7 @@ class _HardPaywallModal extends HookConsumerWidget {
                     
                     // Subtitle
                     Text(
-                      'Join thousands who successfully broke their sugar addiction with our premium features',
+                      'Unlock the full SugAddict experience and complete your personalized recovery program',
                       style: AppTextStyles.body.copyWith(
                         color: AppTheme.textSecondary,
                         fontSize: 18,
@@ -475,12 +469,7 @@ class _HardPaywallModal extends HookConsumerWidget {
                   // Subscription plans (will be populated from RevenueCat)
                   _buildSubscriptionPlans(context, ref),
                   
-                  const SizedBox(height: 16),
-                  
-                  // Trial option
-                  _buildTrialOption(context, ref),
-                  
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 24),
                   
                   // Terms
                   _buildTermsText(),
@@ -715,25 +704,6 @@ class _HardPaywallModal extends HookConsumerWidget {
     );
   }
 
-  Widget _buildTrialOption(BuildContext context, WidgetRef ref) {
-    return GestureDetector(
-      onTap: () => _handleTrial(context, ref),
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        child: Text(
-          'Try 3-day free trial',
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: AppTheme.textMuted,
-            decoration: TextDecoration.underline,
-          ),
-          textAlign: TextAlign.center,
-        ),
-      ),
-    );
-  }
 
   Widget _buildTermsText() {
     return Text(
@@ -778,22 +748,6 @@ class _HardPaywallModal extends HookConsumerWidget {
     }
   }
 
-  Future<void> _handleTrial(BuildContext context, WidgetRef ref) async {
-    try {
-      final success = await ref.read(subscriptionProvider.notifier).startTrial();
-      
-      if (success && context.mounted) {
-        onTrialSelected();
-        _showTrialSuccessMessage(context);
-      } else if (context.mounted) {
-        _showTrialFailedMessage(context);
-      }
-    } catch (e) {
-      if (context.mounted) {
-        _showPurchaseErrorMessage(context, e.toString());
-      }
-    }
-  }
 
   void _showSuccessMessage(BuildContext context) {
     showCupertinoDialog(
@@ -813,23 +767,6 @@ class _HardPaywallModal extends HookConsumerWidget {
     );
   }
 
-  void _showTrialSuccessMessage(BuildContext context) {
-    showCupertinoDialog(
-      context: context,
-      builder: (context) => CupertinoAlertDialog(
-        title: const Text('Trial Started! ⏰'),
-        content: const Text(
-          'Your 3-day free trial has begun. Experience all premium features and cancel anytime.',
-        ),
-        actions: [
-          CupertinoDialogAction(
-            child: const Text('Start Journey'),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-        ],
-      ),
-    );
-  }
 
   void _showPurchaseFailedMessage(BuildContext context) {
     showCupertinoDialog(
@@ -837,11 +774,11 @@ class _HardPaywallModal extends HookConsumerWidget {
       builder: (context) => CupertinoAlertDialog(
         title: const Text('Purchase Cancelled'),
         content: const Text(
-          'No worries! You can always upgrade later from the settings menu.',
+          'You need a premium subscription to continue. The app requires premium access to provide your personalized recovery program.',
         ),
         actions: [
           CupertinoDialogAction(
-            child: const Text('Continue'),
+            child: const Text('Try Again'),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ],
@@ -849,23 +786,6 @@ class _HardPaywallModal extends HookConsumerWidget {
     );
   }
 
-  void _showTrialFailedMessage(BuildContext context) {
-    showCupertinoDialog(
-      context: context,
-      builder: (context) => CupertinoAlertDialog(
-        title: const Text('Trial Unavailable'),
-        content: const Text(
-          'The free trial is not available. Please choose a subscription plan to continue.',
-        ),
-        actions: [
-          CupertinoDialogAction(
-            child: const Text('OK'),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-        ],
-      ),
-    );
-  }
 
   void _showPurchaseErrorMessage(BuildContext context, String error) {
     showCupertinoDialog(
@@ -877,7 +797,7 @@ class _HardPaywallModal extends HookConsumerWidget {
         ),
         actions: [
           CupertinoDialogAction(
-            child: const Text('Retry'),
+            child: const Text('Try Again'),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ],

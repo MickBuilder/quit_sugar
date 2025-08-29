@@ -1,20 +1,30 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:quit_suggar/core/router/app_shell.dart';
 import 'package:quit_suggar/features/dashboard/presentation/screens/dashboard_screen.dart';
-import 'package:quit_suggar/features/progress/presentation/screens/progress_screen.dart';
+import 'package:quit_suggar/features/program/presentation/screens/progress_screen.dart';
+import 'package:quit_suggar/features/support/presentation/screens/support_screen.dart';
 import 'package:quit_suggar/features/tracking/presentation/screens/scanner_screen.dart';
 import 'package:quit_suggar/features/tracking/presentation/screens/manual_entry_screen.dart';
-import 'package:quit_suggar/features/tracking/presentation/screens/daily_logs_screen.dart';
 import 'package:quit_suggar/features/onboarding/presentation/screens/welcome_screen.dart';
+import 'package:quit_suggar/features/onboarding/presentation/screens/scientific_foundation_screen.dart';
+import 'package:quit_suggar/features/onboarding/presentation/screens/assessment_intro_screen.dart';
 import 'package:quit_suggar/features/onboarding/presentation/screens/personal_info_screen.dart';
 import 'package:quit_suggar/features/onboarding/presentation/screens/sugar_assessment_screen.dart';
+import 'package:quit_suggar/features/onboarding/presentation/screens/motivation_screen.dart';
+import 'package:quit_suggar/features/onboarding/presentation/screens/life_impact_screen.dart';
+import 'package:quit_suggar/features/onboarding/presentation/screens/analysis_results_screen.dart';
+import 'package:quit_suggar/features/onboarding/presentation/screens/recovery_plan_screen.dart';
+import 'package:quit_suggar/features/onboarding/presentation/screens/sugar_vow_screen.dart';
+import 'package:quit_suggar/features/onboarding/presentation/screens/addiction_indicators_screen.dart';
+import 'package:quit_suggar/features/onboarding/presentation/screens/lifestyle_motivation_screen.dart';
+import 'package:quit_suggar/features/onboarding/presentation/screens/gamification_preview_screen.dart';
+import 'package:quit_suggar/features/onboarding/presentation/screens/premium_features_screen.dart';
+import 'package:quit_suggar/features/onboarding/presentation/screens/limited_offer_screen.dart';
 import 'package:quit_suggar/features/onboarding/presentation/screens/goal_setting_screen.dart';
 import 'package:quit_suggar/features/onboarding/presentation/screens/completion_screen.dart';
 import 'package:quit_suggar/features/onboarding/presentation/providers/onboarding_providers.dart';
-import 'package:quit_suggar/core/theme/app_theme.dart';
 
 // Provider for the router
 final routerProvider = Provider<GoRouter>((ref) {
@@ -46,11 +56,21 @@ final routerProvider = Provider<GoRouter>((ref) {
         redirect: (context, state) => '/dashboard',
       ),
       
-      // Onboarding flow
+      // Enhanced Onboarding flow
       GoRoute(
         path: '/welcome',
         pageBuilder: (context, state) =>
             const MaterialPage(child: WelcomeScreen()),
+      ),
+      GoRoute(
+        path: '/onboarding/scientific-foundation',
+        pageBuilder: (context, state) =>
+            const MaterialPage(child: ScientificFoundationScreen()),
+      ),
+      GoRoute(
+        path: '/onboarding/assessment-intro',
+        pageBuilder: (context, state) =>
+            const MaterialPage(child: AssessmentIntroScreen()),
       ),
       GoRoute(
         path: '/onboarding/personal-info',
@@ -62,6 +82,57 @@ final routerProvider = Provider<GoRouter>((ref) {
         pageBuilder: (context, state) =>
             const MaterialPage(child: SugarAssessmentScreen()),
       ),
+      GoRoute(
+        path: '/onboarding/addiction-indicators',
+        pageBuilder: (context, state) =>
+            const MaterialPage(child: AddictionIndicatorsScreen()),
+      ),
+      GoRoute(
+        path: '/onboarding/lifestyle-motivation',
+        pageBuilder: (context, state) =>
+            const MaterialPage(child: LifestyleMotivationScreen()),
+      ),
+      GoRoute(
+        path: '/onboarding/motivation',
+        pageBuilder: (context, state) =>
+            const MaterialPage(child: MotivationScreen()),
+      ),
+      GoRoute(
+        path: '/onboarding/life-impact',
+        pageBuilder: (context, state) =>
+            const MaterialPage(child: LifeImpactScreen()),
+      ),
+      GoRoute(
+        path: '/onboarding/analysis-results',
+        pageBuilder: (context, state) =>
+            const MaterialPage(child: AnalysisResultsScreen()),
+      ),
+      GoRoute(
+        path: '/onboarding/recovery-plan',
+        pageBuilder: (context, state) =>
+            const MaterialPage(child: RecoveryPlanScreen()),
+      ),
+      GoRoute(
+        path: '/onboarding/sugar-vow',
+        pageBuilder: (context, state) =>
+            const MaterialPage(child: SugarVowScreen()),
+      ),
+      GoRoute(
+        path: '/onboarding/gamification-preview',
+        pageBuilder: (context, state) =>
+            const MaterialPage(child: GamificationPreviewScreen()),
+      ),
+      GoRoute(
+        path: '/onboarding/premium-features',
+        pageBuilder: (context, state) =>
+            const MaterialPage(child: PremiumFeaturesScreen()),
+      ),
+      GoRoute(
+        path: '/onboarding/limited-offer',
+        pageBuilder: (context, state) =>
+            const MaterialPage(child: LimitedOfferScreen()),
+      ),
+      // Legacy onboarding routes (for backward compatibility)
       GoRoute(
         path: '/onboarding/health-questionnaire',
         pageBuilder: (context, state) {
@@ -88,19 +159,14 @@ final routerProvider = Provider<GoRouter>((ref) {
                 const NoTransitionPage(child: DashboardScreen()),
           ),
           GoRoute(
-            path: '/progress',
+            path: '/support',
+            pageBuilder: (context, state) =>
+                const NoTransitionPage(child: SupportScreen()),
+          ),
+          GoRoute(
+            path: '/program',
             pageBuilder: (context, state) =>
                 const NoTransitionPage(child: ProgressScreen()),
-          ),
-          GoRoute(
-            path: '/daily-logs',
-            pageBuilder: (context, state) =>
-                const NoTransitionPage(child: DailyLogsScreen()),
-          ),
-          GoRoute(
-            path: '/profile',
-            pageBuilder: (context, state) =>
-                NoTransitionPage(child: _buildProfileScreen()),
           ),
         ],
       ),
@@ -118,26 +184,5 @@ final routerProvider = Provider<GoRouter>((ref) {
   );
 });
 
-Widget _buildProfileScreen() {
-  return CupertinoPageScaffold(
-    backgroundColor: AppTheme.background,
-    navigationBar: CupertinoNavigationBar(
-      backgroundColor: AppTheme.background,
-      border: const Border(bottom: BorderSide.none),
-      middle: Text('Profile', style: TextStyle(color: AppTheme.textPrimary)),
-    ),
-    child: SafeArea(
-      child: Container(
-        color: AppTheme.background,
-        child: const Center(
-          child: Text(
-            'Profile Screen - Coming Soon',
-            style: TextStyle(color: AppTheme.textPrimary),
-          ),
-        ),
-      ),
-    ),
-  );
-}
 
 final appRouter = routerProvider;

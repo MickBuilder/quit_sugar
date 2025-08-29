@@ -84,7 +84,7 @@ final subscriptionUsecaseProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef SubscriptionUsecaseRef = AutoDisposeProviderRef<SubscriptionUsecase>;
-String _$subscriptionHash() => r'e92f46953c650c1abf3e2655ad4d256d6a854298';
+String _$subscriptionHash() => r'a4de070f164a3c36974b9d6ea6afe43a6112dfc3';
 
 /// See also [Subscription].
 @ProviderFor(Subscription)

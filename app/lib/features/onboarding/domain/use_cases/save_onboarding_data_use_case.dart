@@ -29,31 +29,41 @@ class SaveOnboardingDataUseCase {
   ) {
     final progression = <double>[];
     
-    // Handle edge case: if current is already at or below target
-    if (currentDailySugar <= targetDailySugar) {
-      // Stay at current level throughout the program
-      for (int day = 0; day < targetDays; day++) {
-        progression.add(double.parse(currentDailySugar.toStringAsFixed(1)));
-      }
-      return progression;
-    }
+    // Define weekly step-down schedule
+    // Week 1: Personal baseline (currentDailySugar * 0.8)
+    // Week 2-9: Fixed weekly limits
+    final weeklyLimits = <double>[
+      currentDailySugar * 0.8, // Week 1: Personal baseline
+      25.0, // Week 2
+      18.0, // Week 3: WHO level
+      15.0, // Week 4
+      12.0, // Week 5
+      8.0,  // Week 6
+      5.0,  // Week 7
+      2.0,  // Week 8
+      0.0,  // Week 9: Final push
+    ];
     
-    final totalReduction = currentDailySugar - targetDailySugar;
-    
+    // Generate daily progression based on weekly limits
     for (int day = 0; day < targetDays; day++) {
-      // Calculate the reduction progress for this day (0.0 to 1.0)
-      final progress = day / (targetDays - 1);
+      // Calculate which week we're in (0-based)
+      final weekIndex = (day ~/ 7).clamp(0, weeklyLimits.length - 1);
+      final weeklyLimit = weeklyLimits[weekIndex];
       
-      // Use a smooth curve for reduction (quadratic easing)
-      final easedProgress = progress * progress;
+      // For Week 1, ensure we don't go above the user's baseline
+      // For other weeks, use fixed limits but don't go above previous week
+      double dailyLimit = weeklyLimit;
       
-      // Calculate the daily limit for this day
-      final dailyLimit = currentDailySugar - (totalReduction * easedProgress);
+      // Ensure we never increase limits from previous day
+      if (day > 0) {
+        final previousLimit = progression[day - 1];
+        dailyLimit = dailyLimit.clamp(0.0, previousLimit);
+      }
       
-      // Clamp with correct bounds (min = target, max = current)
-      final clampedLimit = dailyLimit.clamp(targetDailySugar, currentDailySugar);
+      // Ensure we don't go below target (0g for eliminate goal)
+      dailyLimit = dailyLimit.clamp(targetDailySugar, currentDailySugar);
       
-      progression.add(double.parse(clampedLimit.toStringAsFixed(1)));
+      progression.add(double.parse(dailyLimit.toStringAsFixed(1)));
     }
     
     return progression;

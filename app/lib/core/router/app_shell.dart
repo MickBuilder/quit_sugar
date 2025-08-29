@@ -36,19 +36,14 @@ class AppShell extends ConsumerWidget {
           label: 'Today',
         ),
         BottomNavigationBarItem(
+          icon: Icon(CupertinoIcons.heart_fill),
+          activeIcon: Icon(CupertinoIcons.heart_fill),
+          label: 'Support',
+        ),
+        BottomNavigationBarItem(
           icon: Icon(CupertinoIcons.chart_bar),
           activeIcon: Icon(CupertinoIcons.chart_bar_fill),
-          label: 'Progress',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(CupertinoIcons.list_bullet),
-          activeIcon: Icon(CupertinoIcons.list_bullet),
-          label: 'Daily Logs',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(CupertinoIcons.person),
-          activeIcon: Icon(CupertinoIcons.person_fill),
-          label: 'Profile',
+          label: 'Program',
         ),
       ],
       currentIndex: currentIndex,
@@ -60,12 +55,10 @@ class AppShell extends ConsumerWidget {
     switch (location) {
       case '/dashboard':
         return 0;
-      case '/progress':
+      case '/support':
         return 1;
-      case '/daily-logs':
+      case '/program':
         return 2;
-      case '/profile':
-        return 3;
       default:
         return 0;
     }
@@ -85,13 +78,10 @@ class AppShell extends ConsumerWidget {
         context.go('/dashboard');
         break;
       case 1:
-        context.go('/progress');
+        context.go('/support');
         break;
       case 2:
-        context.go('/daily-logs');
-        break;
-      case 3:
-        context.go('/profile');
+        context.go('/program');
         break;
     }
   }
