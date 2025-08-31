@@ -36,9 +36,9 @@ final routerProvider = Provider<GoRouter>((ref) {
           state.fullPath?.startsWith('/onboarding') == true;
       
       // If onboarding not completed and not on onboarding route, redirect to welcome
-      if (!onboardingCompleted && !isOnboardingRoute) {
-        return '/welcome';
-      }
+      // if (!onboardingCompleted && !isOnboardingRoute) {
+      //   return '/welcome';
+      // }
       
       // If onboarding completed and on onboarding route, redirect to dashboard
       if (onboardingCompleted && isOnboardingRoute) {

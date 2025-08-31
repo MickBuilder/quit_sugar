@@ -36,13 +36,13 @@ class AppShell extends ConsumerWidget {
           label: 'Today',
         ),
         BottomNavigationBarItem(
-          icon: Icon(CupertinoIcons.heart_fill),
-          activeIcon: Icon(CupertinoIcons.heart_fill),
+          icon: Icon(Icons.support_outlined),
+          activeIcon: Icon(Icons.support),
           label: 'Support',
         ),
         BottomNavigationBarItem(
-          icon: Icon(CupertinoIcons.chart_bar),
-          activeIcon: Icon(CupertinoIcons.chart_bar_fill),
+          icon: Icon(Icons.bar_chart_outlined),
+          activeIcon: Icon(Icons.bar_chart),
           label: 'Program',
         ),
       ],
