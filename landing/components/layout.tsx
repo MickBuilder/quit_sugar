@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -52,7 +51,7 @@ export default function Layout({ children, currentPage = 'home' }: LayoutProps) 
         <div className="container mx-auto px-3 lg:px-4">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="flex items-center space-x-2">
-              <span className="text-muted-foreground">©2025 SugAddict</span>
+              <span className="text-muted-foreground">© 2025 Mike B. Apps</span>
             </div>
             
             <div className="flex items-center space-x-6">
