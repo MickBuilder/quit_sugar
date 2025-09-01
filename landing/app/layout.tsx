@@ -13,13 +13,18 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Quit Sugar - Break Free from Sugar Addiction",
-  description: "#1 Life reset app to get your health back on track. Track your sugar intake, scan products, and build lasting healthy habits.",
+  title: "SugAddict - Break Free from Sugar Addiction",
+  description: "#1 app to really break from sugar addiction. Track your sugar intake, scan products, and build lasting healthy habits.",
   keywords: "sugar tracking, health app, addiction recovery, nutrition, barcode scanner",
-  authors: [{ name: "Quit Sugar Team" }],
+  authors: [{ name: "SugAddict Team" }],
+  icons: {
+    icon: '/app-icon.svg',
+    shortcut: '/app-icon.svg',
+    apple: '/app-icon.svg',
+  },
   openGraph: {
-    title: "Quit Sugar - Break Free from Sugar Addiction",
-    description: "#1 Life reset app to get your health back on track",
+    title: "SugAddict - Break Free from Sugar Addiction",
+    description: "#1 app to really break from sugar addiction",
     type: "website",
   },
 };
