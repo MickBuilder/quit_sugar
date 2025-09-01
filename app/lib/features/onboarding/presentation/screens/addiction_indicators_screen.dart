@@ -115,23 +115,17 @@ class AddictionIndicatorsScreen extends HookConsumerWidget {
                   ),
                 ),
               ),
-        trailing: Text(
-          '${currentQuestionIndex.value + 1}/${questions.length}',
-          style: AppTextStyles.body.copyWith(
-            color: AppTheme.textMuted,
-            fontSize: 14,
-          ),
-        ),
       ),
       child: SafeArea(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Progress bar
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
               child: OnboardingProgressBar(
-                current: 6 + currentQuestionIndex.value,
-                total: 13,
+                current: 3 + currentQuestionIndex.value,
+                total: 8,
               ),
             ),
 
@@ -321,7 +315,7 @@ class AddictionIndicatorsScreen extends HookConsumerWidget {
                     if (isLastQuestion) {
                       // Store answers and navigate to lifestyle quiz
                       _storeAddictionAnswers(ref, answers.value);
-                      context.push('/onboarding/lifestyle-motivation');
+                      context.push('/onboarding/scientific-foundation');
                     } else {
                       currentQuestionIndex.value++;
                     }

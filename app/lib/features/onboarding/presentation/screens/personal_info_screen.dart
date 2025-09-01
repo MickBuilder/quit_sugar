@@ -38,8 +38,8 @@ class PersonalInfoScreen extends HookConsumerWidget {
                 children: [
                   // Progress indicator
                   OnboardingProgressBar(
-                    current: 4,
-                    total: 13,
+                    current: 1,
+                    total: 8,
                   ),
                   
                   const SizedBox(height: 32),

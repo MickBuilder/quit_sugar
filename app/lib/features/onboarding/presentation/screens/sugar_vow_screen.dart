@@ -28,8 +28,6 @@ class SugarVowScreen extends HookConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 40),
-                    
                     // Title
                     Text(
                       'Make Your\nSugaddict Vow',
@@ -287,7 +285,7 @@ class SugarVowScreen extends HookConsumerWidget {
       onTap: isEnabled ? () {
         // Save vow signature and navigate to next screen
         ref.read(onboardingFlowProvider.notifier).signVow();
-        context.push('/onboarding/gamification-preview');
+        context.push('/onboarding/completion');
       } : null,
       child: Container(
         width: double.infinity,

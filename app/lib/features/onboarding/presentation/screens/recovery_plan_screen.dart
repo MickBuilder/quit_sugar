@@ -25,8 +25,6 @@ class RecoveryPlanScreen extends HookConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 40),
-                    
                     // Title
                     Text(
                       'Your 60-Day\nSugar Recovery Plan',

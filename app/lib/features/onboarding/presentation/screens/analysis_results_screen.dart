@@ -28,8 +28,6 @@ class AnalysisResultsScreen extends HookConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 40),
-                    
                     // Title
                     Text(
                       'Your Sugar Addiction\nProfile',
@@ -58,11 +56,6 @@ class AnalysisResultsScreen extends HookConsumerWidget {
                     
                     // WHO comparison card
                     _buildWHOComparisonCard(analysisResults),
-                    
-                    const SizedBox(height: 24),
-                    
-                    // Key insights
-                    _buildKeyInsights(analysisResults),
                     
                     const SizedBox(height: 24),
                     

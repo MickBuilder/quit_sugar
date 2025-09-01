@@ -39,12 +39,10 @@ class SugarAssessmentScreen extends HookConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 20),
-                    
                     // Progress indicator
                     OnboardingProgressBar(
-                      current: 5,
-                      total: 13,
+                      current: 2,
+                      total: 8,
                     ),
                     
                     const SizedBox(height: 32),

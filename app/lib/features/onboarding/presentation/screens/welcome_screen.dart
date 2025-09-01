@@ -20,55 +20,50 @@ class WelcomeScreen extends HookConsumerWidget {
           padding: const EdgeInsets.all(24.0),
           child: Column(
             children: [
-              const Spacer(flex: 2),
-              
-              const SizedBox(height: 40),
-              
-              // SugAddict app logo
+              const SizedBox(height: 20),
+
+              // SugAddict app logo - smaller and at top
               Container(
-                width: 120,
-                height: 120,
+                width: 60,
+                height: 60,
                 decoration: BoxDecoration(
                   color: AppTheme.primaryWhite,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: AppTheme.primaryBlack,
-                    width: 3,
-                  ),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: AppTheme.primaryBlack, width: 2),
                   boxShadow: [
                     BoxShadow(
                       color: AppTheme.primaryBlack.withValues(alpha: 0.8),
                       blurRadius: 0,
-                      offset: const Offset(6, 6),
+                      offset: const Offset(3, 3),
                     ),
                   ],
                 ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(13),
+                  borderRadius: BorderRadius.circular(8),
                   child: Image.asset(
                     'assets/icon/app-icon.png',
-                    width: 120,
-                    height: 120,
+                    width: 60,
+                    height: 60,
                     fit: BoxFit.cover,
                   ),
                 ),
               ),
-              
-              const SizedBox(height: 32),
-              
-              // Main title with proper SugAddict branding
+
+              const SizedBox(height: 24),
+
+              // Main title on one line
               Text(
-                'Welcome to\nSugAddict',
+                'Welcome to SugAddict',
                 style: AppTextStyles.display.copyWith(
-                  fontSize: 32,
+                  fontSize: 28,
                   color: AppTheme.textPrimary,
                   fontWeight: FontWeight.w900,
                 ),
                 textAlign: TextAlign.center,
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // Compelling subtitle focused on sugar addiction recovery
               Text(
                 'Break Free from Sugar Addiction\nin 60 Days',
@@ -79,33 +74,27 @@ class WelcomeScreen extends HookConsumerWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              
-              const SizedBox(height: 24),
-              
-              // Social proof stats
-              _buildSocialProof(),
-              
-              const Spacer(flex: 2),
-              
+
+              const Spacer(),
+
               // Key benefits
               _buildBenefitsList(),
-              
-              const Spacer(flex: 3),
-              
+
+              const SizedBox(height: 24),
+
+              // Social proof stats
+              _buildSocialProof(),
+
+              const SizedBox(height: 24),
+
               // Start button
               _buildStartButton(context),
-              
-              const SizedBox(height: 16),
-              
-              // Skip onboarding option
-              _buildSkipButton(context),
             ],
           ),
         ),
       ),
     );
   }
-
 
   Widget _buildSocialProof() {
     return Container(
@@ -114,8 +103,8 @@ class WelcomeScreen extends HookConsumerWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildStatItem('500K+', 'Users'),
-          _buildStatItem('4.8★', 'Rating'),
+          _buildStatItem('10K+', 'Users'),
+          _buildStatItem('95%', 'Success'),
           _buildStatItem('60', 'Days'),
         ],
       ),
@@ -135,9 +124,7 @@ class WelcomeScreen extends HookConsumerWidget {
         ),
         Text(
           label,
-          style: AppTextStyles.caption.copyWith(
-            color: AppTheme.textSecondary,
-          ),
+          style: AppTextStyles.caption.copyWith(color: AppTheme.textSecondary),
         ),
       ],
     );
@@ -146,32 +133,41 @@ class WelcomeScreen extends HookConsumerWidget {
   Widget _buildBenefitsList() {
     final benefits = [
       '🧠 Science-backed sugar addiction recovery',
-      '📊 Personalized 60-day step-down program', 
+      '📊 Personalized 60-day step-down program',
       '💪 Withdrawal support & coping strategies',
       '🏆 Track progress with celebration milestones',
     ];
 
     return Column(
-      children: benefits.map((benefit) => Padding(
-        padding: const EdgeInsets.only(bottom: 12),
-        child: Row(
-          children: [
-            Text(
-              benefit,
-              style: AppTextStyles.body.copyWith(
-                color: AppTheme.textPrimary,
+      children: benefits
+          .map(
+            (benefit) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Text(
+                      benefit,
+                      style: AppTextStyles.body.copyWith(
+                        color: AppTheme.textPrimary,
+                      ),
+                      softWrap: true,
+                      overflow: TextOverflow.visible,
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-      )).toList(),
+          )
+          .toList(),
     );
   }
 
   Widget _buildStartButton(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        context.push('/onboarding/scientific-foundation');
+        context.push('/onboarding/assessment-intro');
       },
       child: Container(
         width: double.infinity,
@@ -179,10 +175,7 @@ class WelcomeScreen extends HookConsumerWidget {
         decoration: BoxDecoration(
           color: AppTheme.accentOrange,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: AppTheme.borderDefault,
-            width: 2,
-          ),
+          border: Border.all(color: AppTheme.borderDefault, width: 2),
           boxShadow: [
             BoxShadow(
               color: AppTheme.primaryBlack.withValues(alpha: 0.7),
@@ -199,27 +192,6 @@ class WelcomeScreen extends HookConsumerWidget {
               fontWeight: FontWeight.w700,
               color: AppTheme.primaryWhite,
             ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSkipButton(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        // Skip to dashboard with default settings
-        context.go('/dashboard');
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        child: Text(
-          'Skip for now',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: AppTheme.textMuted,
-            decoration: TextDecoration.underline,
           ),
         ),
       ),

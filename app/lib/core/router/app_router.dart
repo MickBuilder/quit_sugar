@@ -19,7 +19,6 @@ import 'package:quit_suggar/features/onboarding/presentation/screens/recovery_pl
 import 'package:quit_suggar/features/onboarding/presentation/screens/sugar_vow_screen.dart';
 import 'package:quit_suggar/features/onboarding/presentation/screens/addiction_indicators_screen.dart';
 import 'package:quit_suggar/features/onboarding/presentation/screens/lifestyle_motivation_screen.dart';
-import 'package:quit_suggar/features/onboarding/presentation/screens/gamification_preview_screen.dart';
 import 'package:quit_suggar/features/onboarding/presentation/screens/goal_setting_screen.dart';
 import 'package:quit_suggar/features/onboarding/presentation/providers/onboarding_providers.dart';
 import 'package:quit_suggar/features/subscription/presentation/screens/revenuecat_paywall_screen.dart';
@@ -114,11 +113,6 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/onboarding/sugar-vow',
         pageBuilder: (context, state) =>
             const NoTransitionPage(child: SugarVowScreen()),
-      ),
-      GoRoute(
-        path: '/onboarding/gamification-preview',
-        pageBuilder: (context, state) =>
-            const NoTransitionPage(child: GamificationPreviewScreen()),
       ),
       // Legacy onboarding routes (for backward compatibility)
       GoRoute(

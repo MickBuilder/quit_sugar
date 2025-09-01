@@ -16,75 +16,83 @@ class ScientificFoundationScreen extends HookConsumerWidget {
         automaticallyImplyLeading: false,
       ),
       child: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 40),
-                    
-                    // Title
-                    Text(
-                      'Backed by\nScience',
-                      style: AppTextStyles.title.copyWith(
-                        fontSize: 32,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                    
-                    const SizedBox(height: 16),
-                    
-                    Text(
-                      'Sugar addiction is real. Here\'s what the research says.',
-                      style: AppTextStyles.body.copyWith(
-                        color: AppTheme.textSecondary,
-                        fontSize: 18,
-                      ),
-                    ),
-                    
-                    const SizedBox(height: 40),
-                    
-                    // WHO Official Statement
-                    _buildResearchQuote(
-                      quote: '"Reduce daily sugar intake to less than 25 grams for additional health benefits."',
-                      source: 'World Health Organization',
-                      logoPath: 'assets/image/who-logo.png',
-                      isWHO: true,
-                    ),
-                    
-                    const SizedBox(height: 24),
-                    
-                    // Princeton Research
-                    _buildResearchQuote(
-                      quote: '"Sugar provokes dopamine surges in the brain similar to addictive drugs."',
-                      source: 'Princeton University Psychology',
-                      logoPath: 'assets/image/princeton-uni-logo.png',
-                      isWHO: false,
-                    ),
-                    
-                    const SizedBox(height: 24),
-                    
-                    // Neuroscience Research
-                    _buildResearchQuote(
-                      quote: '"Sugar affects brain chemistry like psychostimulants and opiates."',
-                      source: 'Neuroscience Research',
-                      logoPath: null,
-                      isWHO: false,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          child: Column(
+            children: [
+              // App icon at the top
+              Container(
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryWhite,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: AppTheme.primaryBlack, width: 2),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppTheme.primaryBlack.withValues(alpha: 0.8),
+                      blurRadius: 0,
+                      offset: const Offset(3, 3),
                     ),
                   ],
                 ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.asset(
+                    'assets/icon/app-icon.png',
+                    width: 60,
+                    height: 60,
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
-            ),
-            
-            // Continue button
-            Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: _buildContinueButton(context),
-            ),
-          ],
+              
+              const SizedBox(height: 16),
+              
+              // Title
+              Text(
+                'SugAddict\'s\nScience-Backed Plan',
+                style: AppTextStyles.display.copyWith(
+                  fontSize: 24,
+                  color: AppTheme.textPrimary,
+                  fontWeight: FontWeight.w900,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              
+              const Spacer(),
+              
+              // WHO Official Statement
+              _buildResearchQuote(
+                quote: 'Reduce daily sugar intake to less than 25 grams for additional health benefits.',
+                source: 'World Health Organization',
+                logoPath: 'assets/image/who-logo.png'
+              ),
+              
+              const SizedBox(height: 16),
+              
+              // Princeton Research
+              _buildResearchQuote(
+                quote: 'Sugar provokes dopamine surges in the brain similar to addictive drugs.',
+                source: 'Princeton University Psychology',
+                logoPath: 'assets/image/princeton-uni-logo.png'
+              ),
+              
+              const SizedBox(height: 16),
+              
+              // Neuroscience Research
+              _buildResearchQuote(
+                quote: 'Sugar affects brain chemistry like psychostimulants and opiates.',
+                source: 'Neuroscience Research',
+                logoPath: null
+              ),
+              
+              const Spacer(),
+              
+              // Next button
+              _buildContinueButton(context),
+            ],
+          ),
         ),
       ),
     );
@@ -95,7 +103,6 @@ class ScientificFoundationScreen extends HookConsumerWidget {
     required String quote,
     required String source,
     required String? logoPath,
-    required bool isWHO,
   }) {
     return Container(
       padding: const EdgeInsets.all(20),
@@ -120,12 +127,10 @@ class ScientificFoundationScreen extends HookConsumerWidget {
           // Left side - Logo or badge
           if (logoPath != null) ...[
             Container(
-              width: 60,
-              height: 60,
+              width: 50,
+              height: 50,
               decoration: BoxDecoration(
                 color: AppTheme.primaryWhite,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: AppTheme.primaryBlack, width: 1),
               ),
               child: Padding(
                 padding: const EdgeInsets.all(8),
@@ -138,8 +143,8 @@ class ScientificFoundationScreen extends HookConsumerWidget {
           ] else ...[
             // For neuroscience research without logo
             Container(
-              width: 60,
-              height: 60,
+              width: 50,
+              height: 50,
               decoration: BoxDecoration(
                 color: AppTheme.accentBlue,
                 borderRadius: BorderRadius.circular(8),
@@ -165,8 +170,6 @@ class ScientificFoundationScreen extends HookConsumerWidget {
                   quote,
                   style: AppTextStyles.body.copyWith(
                     fontSize: 16,
-                    fontStyle: FontStyle.italic,
-                    fontWeight: FontWeight.w600,
                     height: 1.3,
                     color: AppTheme.textPrimary,
                   ),
@@ -194,13 +197,13 @@ class ScientificFoundationScreen extends HookConsumerWidget {
   Widget _buildContinueButton(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        context.push('/onboarding/assessment-intro');
+        context.push('/onboarding/lifestyle-motivation');
       },
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 18),
         decoration: BoxDecoration(
-          color: AppTheme.primaryBlack,
+          color: AppTheme.accentOrange,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: AppTheme.borderDefault,
@@ -215,13 +218,24 @@ class ScientificFoundationScreen extends HookConsumerWidget {
           ],
         ),
         child: const Center(
-          child: Text(
-            'Start Assessment',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-              color: AppTheme.primaryWhite,
-            ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                CupertinoIcons.chevron_right,
+                color: AppTheme.primaryWhite,
+                size: 18,
+              ),
+              SizedBox(width: 8),
+              Text(
+                'Next',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: AppTheme.primaryWhite,
+                ),
+              ),
+            ],
           ),
         ),
       ),

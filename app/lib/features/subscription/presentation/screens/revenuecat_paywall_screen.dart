@@ -4,14 +4,78 @@ import 'package:quit_suggar/features/subscription/presentation/providers/subscri
 import 'package:quit_suggar/core/services/logger_service.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
 import 'package:go_router/go_router.dart';
+import 'package:quit_suggar/features/subscription/data/datasources/revenuecat_api_service.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 
-class RevenueCatPaywallScreen extends ConsumerWidget {
+class RevenueCatPaywallScreen extends ConsumerStatefulWidget {
   final String? source;
 
   const RevenueCatPaywallScreen({super.key, this.source});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<RevenueCatPaywallScreen> createState() => _RevenueCatPaywallScreenState();
+}
+
+class _RevenueCatPaywallScreenState extends ConsumerState<RevenueCatPaywallScreen> {
+  List<StoreProduct>? _products;
+  bool _isLoading = true;
+  String? _error;
+  late final RevenueCatApiService _revenueCatService;
+
+  @override
+  void initState() {
+    super.initState();
+    _revenueCatService = RevenueCatApiService();
+    _loadProducts();
+  }
+
+  Future<void> _loadProducts() async {
+    try {
+      setState(() {
+        _isLoading = true;
+        _error = null;
+      });
+
+      // Initialize RevenueCat first
+      final initialized = await _revenueCatService.initialize();
+      if (!initialized) {
+        setState(() {
+          _error = 'Failed to initialize RevenueCat';
+          _isLoading = false;
+        });
+        return;
+      }
+
+      // Get available products from RevenueCat
+      final offerings = await Purchases.getOfferings();
+      final currentOffering = offerings.current;
+      
+      if (currentOffering != null && currentOffering.availablePackages.isNotEmpty) {
+        setState(() {
+          _products = currentOffering.availablePackages
+              .map((package) => package.storeProduct)
+              .toList();
+          _isLoading = false;
+        });
+        
+        AppLogger.logState('Loaded ${_products!.length} products from RevenueCat');
+      } else {
+        setState(() {
+          _error = 'No products available';
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _error = 'Failed to load products: $e';
+        _isLoading = false;
+      });
+      AppLogger.logSugarTrackingError('Failed to load RevenueCat products', e);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       backgroundColor: AppTheme.background,
       child: SafeArea(
@@ -43,7 +107,7 @@ class RevenueCatPaywallScreen extends ConsumerWidget {
                     ),
                     onPressed: () {
                       AppLogger.logUserAction('RevenueCat paywall closed', {
-                        'source': source,
+                        'source': widget.source,
                       });
                       context.pop(false);
                     },
@@ -168,145 +232,47 @@ class RevenueCatPaywallScreen extends ConsumerWidget {
                       
                       const SizedBox(height: 40),
                       
-                      // Pricing cards
-                      Row(
-                        children: [
-                          // Monthly option
-                          Expanded(
-                            child: Container(
-                              padding: const EdgeInsets.all(20),
-                              decoration: BoxDecoration(
-                                color: AppTheme.surfaceBackground,
-                                borderRadius: BorderRadius.circular(16),
-                                border: Border.all(
-                                  color: AppTheme.primaryBlack,
-                                  width: 2,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: AppTheme.primaryBlack.withValues(alpha: 0.1),
-                                    blurRadius: 0,
-                                    offset: const Offset(2, 2),
-                                  ),
-                                ],
-                              ),
-                              child: Column(
-                                children: [
-                                  Text(
-                                    'MONTHLY',
-                                    style: AppTextStyles.body.copyWith(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                      color: AppTheme.textMuted,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    '€9.99',
-                                    style: AppTextStyles.title.copyWith(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppTheme.textPrimary,
-                                    ),
-                                  ),
-                                  Text(
-                                    '€/mo',
-                                    style: AppTextStyles.body.copyWith(
-                                      fontSize: 14,
-                                      color: AppTheme.textMuted,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    'Basic plan',
-                                    style: AppTextStyles.body.copyWith(
-                                      fontSize: 12,
-                                      color: AppTheme.textMuted,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                      // Pricing cards - Dynamic from RevenueCat
+                      if (_isLoading)
+                        const Center(
+                          child: CupertinoActivityIndicator(radius: 20),
+                        )
+                      else if (_error != null)
+                        Container(
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: AppTheme.errorRed.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: AppTheme.errorRed, width: 2),
                           ),
-                          
-                          const SizedBox(width: 16),
-                          
-                          // Yearly option (highlighted)
-                          Expanded(
-                            child: Container(
-                              padding: const EdgeInsets.all(20),
-                              decoration: BoxDecoration(
-                                color: AppTheme.accentOrange,
-                                borderRadius: BorderRadius.circular(16),
-                                border: Border.all(
-                                  color: AppTheme.primaryBlack,
-                                  width: 2,
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: AppTheme.primaryBlack.withValues(alpha: 0.3),
-                                    blurRadius: 0,
-                                    offset: const Offset(4, 4),
-                                  ),
-                                ],
-                              ),
-                              child: Column(
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                                    decoration: BoxDecoration(
-                                      color: AppTheme.primaryBlack,
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Text(
-                                      'SAVE 70%',
-                                      style: AppTextStyles.body.copyWith(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                        color: AppTheme.primaryWhite,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    'YEARLY',
-                                    style: AppTextStyles.body.copyWith(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                      color: AppTheme.primaryWhite,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    '€35.99',
-                                    style: AppTextStyles.title.copyWith(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppTheme.primaryWhite,
-                                    ),
-                                  ),
-                                  Text(
-                                    '€/yr',
-                                    style: AppTextStyles.body.copyWith(
-                                      fontSize: 14,
-                                      color: AppTheme.primaryWhite,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    'Just €2.99 per month!',
-                                    style: AppTextStyles.body.copyWith(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                      color: AppTheme.primaryWhite,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                          child: Text(
+                            'Error loading pricing: $_error',
+                            style: AppTextStyles.body.copyWith(
+                              color: AppTheme.errorRed,
+                              fontSize: 14,
                             ),
+                            textAlign: TextAlign.center,
                           ),
-                        ],
-                      ),
+                        )
+                      else if (_products != null && _products!.isNotEmpty)
+                        _buildPricingCards()
+                      else
+                        Container(
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: AppTheme.textMuted.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: AppTheme.textMuted, width: 2),
+                          ),
+                          child: Text(
+                            'No pricing options available',
+                            style: AppTextStyles.body.copyWith(
+                              color: AppTheme.textMuted,
+                              fontSize: 14,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
                       
                       const SizedBox(height: 32),
                       
@@ -403,6 +369,175 @@ class RevenueCatPaywallScreen extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildPricingCards() {
+    if (_products == null || _products!.isEmpty) {
+      return Container();
+    }
+
+    // Sort products by price (lowest first)
+    final sortedProducts = List<StoreProduct>.from(_products!);
+    sortedProducts.sort((a, b) => a.price.compareTo(b.price));
+
+    // If we have multiple products, show them in a row
+    if (sortedProducts.length >= 2) {
+      return Row(
+        children: [
+          // First product (usually monthly)
+          Expanded(
+            child: _buildProductCard(sortedProducts[0], false),
+          ),
+          const SizedBox(width: 16),
+          // Second product (usually yearly) - highlighted
+          Expanded(
+            child: _buildProductCard(sortedProducts[1], true),
+          ),
+        ],
+      );
+    } else {
+      // Single product
+      return _buildProductCard(sortedProducts[0], true);
+    }
+  }
+
+  Widget _buildProductCard(StoreProduct product, bool isHighlighted) {
+    final isYearly = product.identifier.toLowerCase().contains('year') ||
+                     product.identifier.toLowerCase().contains('annual');
+    
+    final backgroundColor = isHighlighted ? AppTheme.accentOrange : AppTheme.surfaceBackground;
+    final textColor = isHighlighted ? AppTheme.primaryWhite : AppTheme.textPrimary;
+    final mutedTextColor = isHighlighted ? AppTheme.primaryWhite.withValues(alpha: 0.8) : AppTheme.textMuted;
+
+    return GestureDetector(
+      onTap: () => _purchaseProduct(product),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: AppTheme.primaryBlack,
+            width: 2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: AppTheme.primaryBlack.withValues(alpha: isHighlighted ? 0.3 : 0.1),
+              blurRadius: 0,
+              offset: Offset(isHighlighted ? 4 : 2, isHighlighted ? 4 : 2),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            if (isHighlighted && isYearly) ...[
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryBlack,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  'BEST VALUE',
+                  style: AppTextStyles.body.copyWith(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: AppTheme.primaryWhite,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+            ],
+            Text(
+              isYearly ? 'YEARLY' : 'MONTHLY',
+              style: AppTextStyles.body.copyWith(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: mutedTextColor,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              product.priceString,
+              style: AppTextStyles.title.copyWith(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: textColor,
+              ),
+            ),
+            Text(
+              isYearly ? '/year' : '/month',
+              style: AppTextStyles.body.copyWith(
+                fontSize: 14,
+                color: mutedTextColor,
+              ),
+            ),
+            if (isYearly) ...[
+              const SizedBox(height: 8),
+              Text(
+                'Just ${(product.price / 12).toStringAsFixed(2)} per month!',
+                style: AppTextStyles.body.copyWith(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: textColor,
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _purchaseProduct(StoreProduct product) async {
+    try {
+      AppLogger.logUserAction('Attempting to purchase product: ${product.identifier}');
+      
+      // Ensure RevenueCat is initialized
+      final initialized = await _revenueCatService.initialize();
+      if (!initialized) {
+        throw Exception('RevenueCat not initialized');
+      }
+      
+      // Use RevenueCat to purchase the product
+      final offerings = await Purchases.getOfferings();
+      final currentOffering = offerings.current;
+      
+      if (currentOffering != null) {
+        final package = currentOffering.availablePackages.firstWhere(
+          (pkg) => pkg.storeProduct.identifier == product.identifier,
+          orElse: () => currentOffering.availablePackages.first,
+        );
+        
+        final purchaseResult = await Purchases.purchasePackage(package);
+        
+        if (purchaseResult.customerInfo.entitlements.all['premium']?.isActive == true) {
+          AppLogger.logUserAction('Purchase successful');
+          if (mounted) {
+            context.go('/dashboard');
+          }
+        } else {
+          AppLogger.logUserAction('Purchase completed but no active entitlement');
+        }
+      }
+    } catch (e) {
+      AppLogger.logSugarTrackingError('Purchase failed', e);
+      if (mounted) {
+        showCupertinoDialog(
+          context: context,
+          builder: (context) => CupertinoAlertDialog(
+            title: const Text('Purchase Error'),
+            content: Text('Failed to complete purchase: $e'),
+            actions: [
+              CupertinoDialogAction(
+                child: const Text('OK'),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          ),
+        );
+      }
+    }
   }
 
   Future<void> _showRevenueCatPaywall(

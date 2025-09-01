@@ -93,23 +93,17 @@ class LifestyleMotivationScreen extends HookConsumerWidget {
                   ),
                 ),
               ),
-        trailing: Text(
-          '${currentQuestionIndex.value + 1}/${questions.length}',
-          style: AppTextStyles.body.copyWith(
-            color: AppTheme.textMuted,
-            fontSize: 14,
-          ),
-        ),
       ),
       child: SafeArea(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Progress bar
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
               child: OnboardingProgressBar(
-                current: 7 + currentQuestionIndex.value,
-                total: 13,
+                current: 1 + currentQuestionIndex.value,
+                total: 4,
               ),
             ),
 
@@ -119,8 +113,6 @@ class LifestyleMotivationScreen extends HookConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 20),
-
                     // Question emoji and title
                     Center(
                       child: Container(
