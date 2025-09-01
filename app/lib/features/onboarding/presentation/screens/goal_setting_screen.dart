@@ -9,8 +9,9 @@ import 'package:quit_suggar/features/onboarding/presentation/widgets/onboarding_
 import 'package:quit_suggar/features/onboarding/presentation/widgets/goal_option_card.dart';
 import 'package:quit_suggar/features/onboarding/presentation/widgets/reduction_plan_preview.dart';
 import 'package:quit_suggar/features/onboarding/presentation/widgets/onboarding_continue_button.dart';
+import 'package:quit_suggar/core/widgets/standardized_widgets.dart';
 
-class GoalSettingScreen extends HookConsumerWidget {
+class GoalSettingScreen extends AppScreen {
   final double currentDailySugar;
 
   const GoalSettingScreen({
@@ -62,7 +63,7 @@ class GoalSettingScreen extends HookConsumerWidget {
                     const SizedBox(height: 20),
                     
                     // Progress indicator
-                    OnboardingProgressIndicator(current: 4, total: 5),
+                    OnboardingProgressIndicator(current: 5, total: 7),
                     
                     const SizedBox(height: 32),
                     

@@ -5,8 +5,9 @@ import 'package:go_router/go_router.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
 import 'package:quit_suggar/features/onboarding/presentation/providers/onboarding_providers.dart';
 import 'package:quit_suggar/shared/widgets/onboarding_progress_bar.dart';
+import 'package:quit_suggar/core/widgets/standardized_widgets.dart';
 
-class SugarAssessmentScreen extends HookConsumerWidget {
+class SugarAssessmentScreen extends AppScreen {
   const SugarAssessmentScreen({super.key});
 
   @override
@@ -42,7 +43,7 @@ class SugarAssessmentScreen extends HookConsumerWidget {
                     // Progress indicator
                     OnboardingProgressBar(
                       current: 2,
-                      total: 8,
+                      total: 7,
                     ),
                     
                     const SizedBox(height: 32),

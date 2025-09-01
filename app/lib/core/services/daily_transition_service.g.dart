@@ -6,48 +6,8 @@ part of 'daily_transition_service.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$historicalDataServiceHash() =>
-    r'34d11cb5f6512a2d832efb9c7e4d4e514b5f2957';
-
-/// See also [historicalDataService].
-@ProviderFor(historicalDataService)
-final historicalDataServiceProvider =
-    AutoDisposeProvider<HistoricalDataService>.internal(
-      historicalDataService,
-      name: r'historicalDataServiceProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$historicalDataServiceHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef HistoricalDataServiceRef =
-    AutoDisposeProviderRef<HistoricalDataService>;
-String _$historicalDataRepositoryHash() =>
-    r'677ac5f4a339be619535e635c9434de00dc9fc5f';
-
-/// See also [historicalDataRepository].
-@ProviderFor(historicalDataRepository)
-final historicalDataRepositoryProvider =
-    AutoDisposeProvider<HistoricalDataRepository>.internal(
-      historicalDataRepository,
-      name: r'historicalDataRepositoryProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$historicalDataRepositoryHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef HistoricalDataRepositoryRef =
-    AutoDisposeProviderRef<HistoricalDataRepository>;
 String _$dailyTransitionServiceHash() =>
-    r'd154dd68dd54e5b79631222f25d343cdd75611b1';
+    r'f7f2d46cbaf0835f26a2d8662b8744a0a18c2d8d';
 
 /// See also [dailyTransitionService].
 @ProviderFor(dailyTransitionService)

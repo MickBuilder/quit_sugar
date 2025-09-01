@@ -9,34 +9,21 @@ abstract class OnboardingData with _$OnboardingData {
     // Personal info
     required String name,
     required int age,
-    required String gender,
     
     // Current sugar habits
     required double currentDailySugar,
     required SugarSourcesProfile sugarSources,
     
-    // Health conditions
-    required List<HealthCondition> healthConditions,
-    required bool hasSpecialDiet,
-    required String? dietType,
-    
-    // Goals and motivation
+    // Goals and plan
     required SugarReductionGoal reductionGoal,
-    required String primaryMotivation,
     required int targetDays, // Usually 60 days
-    
-    // Calculated plan
     required double targetDailySugar,
-    required List<double> dailyLimitsProgression,
-    required DateTime startDate,
-    required DateTime targetDate,
     
-    // Enhanced onboarding fields
+    // Motivation and analysis
     required String motivation,
     required List<String> lifeImpacts,
     required Map<String, dynamic> analysisResults,
     required bool vowSigned,
-    required bool gamificationEnabled,
   }) = _OnboardingData;
 
   const OnboardingData._();

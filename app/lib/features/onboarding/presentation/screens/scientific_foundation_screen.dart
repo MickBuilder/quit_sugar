@@ -2,8 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
+import 'package:quit_suggar/core/widgets/standardized_widgets.dart';
 
-class ScientificFoundationScreen extends HookConsumerWidget {
+class ScientificFoundationScreen extends AppScreen {
   const ScientificFoundationScreen({super.key});
 
   @override

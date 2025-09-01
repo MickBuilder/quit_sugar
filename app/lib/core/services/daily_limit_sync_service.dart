@@ -1,26 +1,19 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:quit_suggar/features/onboarding/presentation/providers/onboarding_providers.dart';
-import 'package:quit_suggar/features/tracking/presentation/providers/sugar_tracking_provider.dart';
 import 'package:quit_suggar/core/services/logger_service.dart';
 
 part 'daily_limit_sync_service.g.dart';
 
 /// Service to sync daily limit from onboarding progression to tracking system
 class DailyLimitSyncService {
-  final Ref _ref;
-  
-  DailyLimitSyncService(this._ref);
-  
   /// Sync the current daily limit from onboarding data to tracking system
-  Future<void> syncDailyLimit() async {
+  Future<void> syncDailyLimit({
+    required double currentLimit,
+    required Future<void> Function(double) setDailyLimit,
+  }) async {
     try {
-      // Get current daily limit from onboarding progression
-      final currentLimit = await _ref.read(currentDailyLimitProvider.future);
-      
-      // Update tracking system with this limit
-      final sugarTrackingNotifier = _ref.read(sugarTrackingProvider.notifier);
-      await sugarTrackingNotifier.setDailyLimit(currentLimit);
+      // Update tracking system with the provided limit
+      await setDailyLimit(currentLimit);
       
       AppLogger.logState(
         'Daily limit synced: ${currentLimit.toStringAsFixed(1)}g',
@@ -36,12 +29,17 @@ class DailyLimitSyncService {
   }
   
   /// Check if onboarding is completed and sync limit if needed
-  Future<void> syncLimitIfOnboardingCompleted() async {
+  Future<void> syncLimitIfOnboardingCompleted({
+    required bool isOnboardingCompleted,
+    required double currentDailyLimit,
+    required Future<void> Function(double) setDailyLimit,
+  }) async {
     try {
-      final isCompleted = await _ref.read(onboardingStatusProvider.future);
-      
-      if (isCompleted) {
-        await syncDailyLimit();
+      if (isOnboardingCompleted) {
+        await syncDailyLimit(
+          currentLimit: currentDailyLimit,
+          setDailyLimit: setDailyLimit,
+        );
       } else {
         AppLogger.logState(
           'Skipping daily limit sync - onboarding not completed',
@@ -59,5 +57,5 @@ class DailyLimitSyncService {
 
 @riverpod
 DailyLimitSyncService dailyLimitSyncService(Ref ref) {
-  return DailyLimitSyncService(ref);
+  return DailyLimitSyncService();
 }

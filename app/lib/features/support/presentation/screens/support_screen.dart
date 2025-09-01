@@ -6,8 +6,9 @@ import 'package:quit_suggar/core/theme/app_theme.dart';
 import 'package:quit_suggar/features/support/domain/entities/withdrawal_symptom.dart';
 import 'package:quit_suggar/features/support/presentation/widgets/symptom_intensity_selector.dart';
 import 'package:quit_suggar/features/support/presentation/widgets/sos_modal.dart';
+import 'package:quit_suggar/core/widgets/standardized_widgets.dart';
 
-class SupportScreen extends HookConsumerWidget {
+class SupportScreen extends AppScreen {
   const SupportScreen({super.key});
 
   @override

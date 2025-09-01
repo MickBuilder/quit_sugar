@@ -7,8 +7,6 @@ abstract class OnboardingRepository {
   Future<OnboardingData?> getOnboardingData();
   Future<void> clearOnboardingData();
   
-  // Daily limits progression management
-  Future<List<double>> getDailyLimitsProgression();
+  // Current daily limit calculation
   Future<double> getCurrentDailyLimit();
-  Future<void> updateDailyLimitsProgression(List<double> progression);
 }

@@ -6,7 +6,7 @@ import 'package:quit_suggar/features/onboarding/domain/repositories/onboarding_r
 class OnboardingRepositoryImpl implements OnboardingRepository {
   static const String _onboardingCompletedKey = 'onboarding_completed';
   static const String _onboardingDataKey = 'onboarding_data';
-  static const String _dailyLimitsProgressionKey = 'daily_limits_progression';
+
   
   @override
   Future<bool> isOnboardingCompleted() async {
@@ -25,9 +25,6 @@ class OnboardingRepositoryImpl implements OnboardingRepository {
     final prefs = await SharedPreferences.getInstance();
     final jsonString = json.encode(data.toJson());
     await prefs.setString(_onboardingDataKey, jsonString);
-    
-    // Also save the daily limits progression
-    await updateDailyLimitsProgression(data.dailyLimitsProgression);
   }
   
   @override
@@ -50,23 +47,9 @@ class OnboardingRepositoryImpl implements OnboardingRepository {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_onboardingCompletedKey);
     await prefs.remove(_onboardingDataKey);
-    await prefs.remove(_dailyLimitsProgressionKey);
   }
   
-  @override
-  Future<List<double>> getDailyLimitsProgression() async {
-    final prefs = await SharedPreferences.getInstance();
-    final jsonString = prefs.getString(_dailyLimitsProgressionKey);
-    
-    if (jsonString == null) return [];
-    
-    try {
-      final List<dynamic> jsonList = json.decode(jsonString);
-      return jsonList.cast<double>();
-    } catch (e) {
-      return [];
-    }
-  }
+
   
   @override
   Future<double> getCurrentDailyLimit() async {
@@ -75,28 +58,24 @@ class OnboardingRepositoryImpl implements OnboardingRepository {
       return 25.0; // Default WHO recommendation
     }
     
-    final startDate = onboardingData.startDate;
+    // Since we don't have startDate and dailyLimitsProgression anymore,
+    // we'll use a simple approach: gradually reduce from current to target
     final now = DateTime.now();
-    final daysPassed = now.difference(startDate).inDays;
+    final dayOfYear = now.difference(DateTime(now.year, 1, 1)).inDays;
+    final daysIntoProgram = dayOfYear % 365; // Assume program restarts yearly
     
-    if (daysPassed < 0) {
-      // Haven't started yet, use current daily sugar
-      return onboardingData.currentDailySugar;
-    }
-    
-    if (daysPassed >= onboardingData.dailyLimitsProgression.length) {
+    if (daysIntoProgram >= onboardingData.targetDays) {
       // Past the target date, use target daily sugar
       return onboardingData.targetDailySugar;
     }
     
-    // Return the appropriate daily limit for today
-    return onboardingData.dailyLimitsProgression[daysPassed];
+    // Calculate a simple linear reduction
+    final progress = daysIntoProgram / onboardingData.targetDays;
+    final currentLimit = onboardingData.currentDailySugar - 
+        (onboardingData.currentDailySugar - onboardingData.targetDailySugar) * progress;
+    
+    return currentLimit.clamp(onboardingData.targetDailySugar, onboardingData.currentDailySugar);
   }
   
-  @override
-  Future<void> updateDailyLimitsProgression(List<double> progression) async {
-    final prefs = await SharedPreferences.getInstance();
-    final jsonString = json.encode(progression);
-    await prefs.setString(_dailyLimitsProgressionKey, jsonString);
-  }
+
 }

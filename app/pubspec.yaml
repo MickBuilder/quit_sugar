@@ -3,7 +3,7 @@ description: "A gamified mobile app to help users break free from sugar addictio
 publish_to: 'none' 
 
 
-version: 1.0.0+1
+version: 1.0.1
 
 environment:
   sdk: ^3.8.1

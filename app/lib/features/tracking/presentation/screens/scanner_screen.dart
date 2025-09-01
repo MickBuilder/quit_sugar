@@ -5,7 +5,8 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:quit_suggar/features/tracking/presentation/providers/sugar_tracking_provider.dart';
+import 'package:quit_suggar/features/tracking/presentation/providers/tracking_operations_provider.dart';
+import 'package:quit_suggar/features/tracking/presentation/providers/product_providers.dart';
 import 'package:quit_suggar/features/subscription/presentation/providers/subscription_provider.dart';
 import 'package:quit_suggar/features/tracking/domain/entities/product_info.dart';
 import 'package:quit_suggar/core/services/logger_service.dart';
@@ -13,8 +14,9 @@ import 'package:quit_suggar/core/theme/app_theme.dart';
 import 'package:quit_suggar/features/tracking/presentation/widgets/product_details_sheet.dart';
 import 'package:quit_suggar/features/tracking/presentation/widgets/custom_dialog.dart';
 import 'package:quit_suggar/features/subscription/presentation/screens/revenuecat_paywall_screen.dart';
+import 'package:quit_suggar/core/widgets/standardized_widgets.dart';
 
-class ScannerScreen extends HookConsumerWidget {
+class ScannerScreen extends AppScreen {
   const ScannerScreen({super.key});
 
   @override

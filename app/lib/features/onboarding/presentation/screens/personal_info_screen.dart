@@ -5,8 +5,9 @@ import 'package:go_router/go_router.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
 import 'package:quit_suggar/features/onboarding/presentation/providers/onboarding_providers.dart';
 import 'package:quit_suggar/shared/widgets/onboarding_progress_bar.dart';
+import 'package:quit_suggar/core/widgets/standardized_widgets.dart';
 
-class PersonalInfoScreen extends HookConsumerWidget {
+class PersonalInfoScreen extends AppScreen {
   const PersonalInfoScreen({super.key});
 
   @override
@@ -39,7 +40,7 @@ class PersonalInfoScreen extends HookConsumerWidget {
                   // Progress indicator
                   OnboardingProgressBar(
                     current: 1,
-                    total: 8,
+                    total: 7,
                   ),
                   
                   const SizedBox(height: 32),
@@ -73,7 +74,7 @@ class PersonalInfoScreen extends HookConsumerWidget {
                   children: [
                     const SizedBox(height: 20),
                     
-                    // Name input
+                                        // Name input
                     _buildInputSection(
                       'What\'s your name?',
                       'Enter your first name',
@@ -99,7 +100,7 @@ class PersonalInfoScreen extends HookConsumerWidget {
             // Fixed continue button at bottom
             Padding(
               padding: const EdgeInsets.all(24.0),
-              child: _buildContinueButton(
+              child:               _buildContinueButton(
                 context,
                 ref,
                 nameController,
@@ -187,7 +188,6 @@ class PersonalInfoScreen extends HookConsumerWidget {
         ref.read(onboardingFlowProvider.notifier).updatePersonalInfo(
           name: nameController.text.trim(),
           age: age,
-          gender: 'not_specified', // Default value since gender is no longer collected
         );
         context.push('/onboarding/sugar-assessment');
       },

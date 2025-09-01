@@ -5,8 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:quit_suggar/core/router/app_router.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
 import 'package:quit_suggar/core/services/logger_service.dart';
-import 'package:quit_suggar/core/services/daily_limit_sync_service.dart';
-import 'package:quit_suggar/core/services/daily_transition_service.dart';
+
 
 import 'package:shadcn_ui/shadcn_ui.dart';
 
@@ -28,15 +27,8 @@ class MyApp extends ConsumerWidget {
     AppLogger.info('Building MyApp widget');
 
     // Initialize app services on startup
-    ref.listen(dailyLimitSyncServiceProvider, (prev, next) {
-      // Sync daily limit when app starts
-      next.syncLimitIfOnboardingCompleted();
-    });
-    
-    ref.listen(dailyTransitionServiceProvider, (prev, next) {
-      // Check for day transition when app starts
-      next.checkAndHandleDayTransition();
-    });
+    // Note: Services now use dependency injection and are called from specific providers
+    // instead of being initialized here to avoid circular dependencies
 
     final router = ref.watch(appRouter);
 

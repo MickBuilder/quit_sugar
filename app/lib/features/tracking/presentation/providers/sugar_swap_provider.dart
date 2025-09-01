@@ -3,7 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:quit_suggar/features/tracking/domain/services/sugar_swap_service.dart';
 import 'package:quit_suggar/features/tracking/domain/entities/sugar_alternative.dart';
 import 'package:quit_suggar/features/tracking/domain/entities/product_info.dart';
-import 'package:quit_suggar/features/tracking/presentation/providers/sugar_tracking_provider.dart';
+import 'package:quit_suggar/features/tracking/presentation/providers/tracking_operations_provider.dart';
 
 part 'sugar_swap_provider.g.dart';
 

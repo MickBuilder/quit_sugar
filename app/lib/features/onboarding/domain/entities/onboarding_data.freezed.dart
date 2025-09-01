@@ -16,13 +16,11 @@ T _$identity<T>(T value) => value;
 mixin _$OnboardingData {
 
 // Personal info
- String get name; int get age; String get gender;// Current sugar habits
- double get currentDailySugar; SugarSourcesProfile get sugarSources;// Health conditions
- List<HealthCondition> get healthConditions; bool get hasSpecialDiet; String? get dietType;// Goals and motivation
- SugarReductionGoal get reductionGoal; String get primaryMotivation; int get targetDays;// Usually 60 days
-// Calculated plan
- double get targetDailySugar; List<double> get dailyLimitsProgression; DateTime get startDate; DateTime get targetDate;// Enhanced onboarding fields
- String get motivation; List<String> get lifeImpacts; Map<String, dynamic> get analysisResults; bool get vowSigned; bool get gamificationEnabled;
+ String get name; int get age;// Current sugar habits
+ double get currentDailySugar; SugarSourcesProfile get sugarSources;// Goals and plan
+ SugarReductionGoal get reductionGoal; int get targetDays;// Usually 60 days
+ double get targetDailySugar;// Motivation and analysis
+ String get motivation; List<String> get lifeImpacts; Map<String, dynamic> get analysisResults; bool get vowSigned;
 /// Create a copy of OnboardingData
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -35,16 +33,16 @@ $OnboardingDataCopyWith<OnboardingData> get copyWith => _$OnboardingDataCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is OnboardingData&&(identical(other.name, name) || other.name == name)&&(identical(other.age, age) || other.age == age)&&(identical(other.gender, gender) || other.gender == gender)&&(identical(other.currentDailySugar, currentDailySugar) || other.currentDailySugar == currentDailySugar)&&(identical(other.sugarSources, sugarSources) || other.sugarSources == sugarSources)&&const DeepCollectionEquality().equals(other.healthConditions, healthConditions)&&(identical(other.hasSpecialDiet, hasSpecialDiet) || other.hasSpecialDiet == hasSpecialDiet)&&(identical(other.dietType, dietType) || other.dietType == dietType)&&(identical(other.reductionGoal, reductionGoal) || other.reductionGoal == reductionGoal)&&(identical(other.primaryMotivation, primaryMotivation) || other.primaryMotivation == primaryMotivation)&&(identical(other.targetDays, targetDays) || other.targetDays == targetDays)&&(identical(other.targetDailySugar, targetDailySugar) || other.targetDailySugar == targetDailySugar)&&const DeepCollectionEquality().equals(other.dailyLimitsProgression, dailyLimitsProgression)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.targetDate, targetDate) || other.targetDate == targetDate)&&(identical(other.motivation, motivation) || other.motivation == motivation)&&const DeepCollectionEquality().equals(other.lifeImpacts, lifeImpacts)&&const DeepCollectionEquality().equals(other.analysisResults, analysisResults)&&(identical(other.vowSigned, vowSigned) || other.vowSigned == vowSigned)&&(identical(other.gamificationEnabled, gamificationEnabled) || other.gamificationEnabled == gamificationEnabled));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is OnboardingData&&(identical(other.name, name) || other.name == name)&&(identical(other.age, age) || other.age == age)&&(identical(other.currentDailySugar, currentDailySugar) || other.currentDailySugar == currentDailySugar)&&(identical(other.sugarSources, sugarSources) || other.sugarSources == sugarSources)&&(identical(other.reductionGoal, reductionGoal) || other.reductionGoal == reductionGoal)&&(identical(other.targetDays, targetDays) || other.targetDays == targetDays)&&(identical(other.targetDailySugar, targetDailySugar) || other.targetDailySugar == targetDailySugar)&&(identical(other.motivation, motivation) || other.motivation == motivation)&&const DeepCollectionEquality().equals(other.lifeImpacts, lifeImpacts)&&const DeepCollectionEquality().equals(other.analysisResults, analysisResults)&&(identical(other.vowSigned, vowSigned) || other.vowSigned == vowSigned));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,name,age,gender,currentDailySugar,sugarSources,const DeepCollectionEquality().hash(healthConditions),hasSpecialDiet,dietType,reductionGoal,primaryMotivation,targetDays,targetDailySugar,const DeepCollectionEquality().hash(dailyLimitsProgression),startDate,targetDate,motivation,const DeepCollectionEquality().hash(lifeImpacts),const DeepCollectionEquality().hash(analysisResults),vowSigned,gamificationEnabled]);
+int get hashCode => Object.hash(runtimeType,name,age,currentDailySugar,sugarSources,reductionGoal,targetDays,targetDailySugar,motivation,const DeepCollectionEquality().hash(lifeImpacts),const DeepCollectionEquality().hash(analysisResults),vowSigned);
 
 @override
 String toString() {
-  return 'OnboardingData(name: $name, age: $age, gender: $gender, currentDailySugar: $currentDailySugar, sugarSources: $sugarSources, healthConditions: $healthConditions, hasSpecialDiet: $hasSpecialDiet, dietType: $dietType, reductionGoal: $reductionGoal, primaryMotivation: $primaryMotivation, targetDays: $targetDays, targetDailySugar: $targetDailySugar, dailyLimitsProgression: $dailyLimitsProgression, startDate: $startDate, targetDate: $targetDate, motivation: $motivation, lifeImpacts: $lifeImpacts, analysisResults: $analysisResults, vowSigned: $vowSigned, gamificationEnabled: $gamificationEnabled)';
+  return 'OnboardingData(name: $name, age: $age, currentDailySugar: $currentDailySugar, sugarSources: $sugarSources, reductionGoal: $reductionGoal, targetDays: $targetDays, targetDailySugar: $targetDailySugar, motivation: $motivation, lifeImpacts: $lifeImpacts, analysisResults: $analysisResults, vowSigned: $vowSigned)';
 }
 
 
@@ -55,7 +53,7 @@ abstract mixin class $OnboardingDataCopyWith<$Res>  {
   factory $OnboardingDataCopyWith(OnboardingData value, $Res Function(OnboardingData) _then) = _$OnboardingDataCopyWithImpl;
 @useResult
 $Res call({
- String name, int age, String gender, double currentDailySugar, SugarSourcesProfile sugarSources, List<HealthCondition> healthConditions, bool hasSpecialDiet, String? dietType, SugarReductionGoal reductionGoal, String primaryMotivation, int targetDays, double targetDailySugar, List<double> dailyLimitsProgression, DateTime startDate, DateTime targetDate, String motivation, List<String> lifeImpacts, Map<String, dynamic> analysisResults, bool vowSigned, bool gamificationEnabled
+ String name, int age, double currentDailySugar, SugarSourcesProfile sugarSources, SugarReductionGoal reductionGoal, int targetDays, double targetDailySugar, String motivation, List<String> lifeImpacts, Map<String, dynamic> analysisResults, bool vowSigned
 });
 
 
@@ -72,28 +70,19 @@ class _$OnboardingDataCopyWithImpl<$Res>
 
 /// Create a copy of OnboardingData
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? name = null,Object? age = null,Object? gender = null,Object? currentDailySugar = null,Object? sugarSources = null,Object? healthConditions = null,Object? hasSpecialDiet = null,Object? dietType = freezed,Object? reductionGoal = null,Object? primaryMotivation = null,Object? targetDays = null,Object? targetDailySugar = null,Object? dailyLimitsProgression = null,Object? startDate = null,Object? targetDate = null,Object? motivation = null,Object? lifeImpacts = null,Object? analysisResults = null,Object? vowSigned = null,Object? gamificationEnabled = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? name = null,Object? age = null,Object? currentDailySugar = null,Object? sugarSources = null,Object? reductionGoal = null,Object? targetDays = null,Object? targetDailySugar = null,Object? motivation = null,Object? lifeImpacts = null,Object? analysisResults = null,Object? vowSigned = null,}) {
   return _then(_self.copyWith(
 name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,age: null == age ? _self.age : age // ignore: cast_nullable_to_non_nullable
-as int,gender: null == gender ? _self.gender : gender // ignore: cast_nullable_to_non_nullable
-as String,currentDailySugar: null == currentDailySugar ? _self.currentDailySugar : currentDailySugar // ignore: cast_nullable_to_non_nullable
+as int,currentDailySugar: null == currentDailySugar ? _self.currentDailySugar : currentDailySugar // ignore: cast_nullable_to_non_nullable
 as double,sugarSources: null == sugarSources ? _self.sugarSources : sugarSources // ignore: cast_nullable_to_non_nullable
-as SugarSourcesProfile,healthConditions: null == healthConditions ? _self.healthConditions : healthConditions // ignore: cast_nullable_to_non_nullable
-as List<HealthCondition>,hasSpecialDiet: null == hasSpecialDiet ? _self.hasSpecialDiet : hasSpecialDiet // ignore: cast_nullable_to_non_nullable
-as bool,dietType: freezed == dietType ? _self.dietType : dietType // ignore: cast_nullable_to_non_nullable
-as String?,reductionGoal: null == reductionGoal ? _self.reductionGoal : reductionGoal // ignore: cast_nullable_to_non_nullable
-as SugarReductionGoal,primaryMotivation: null == primaryMotivation ? _self.primaryMotivation : primaryMotivation // ignore: cast_nullable_to_non_nullable
-as String,targetDays: null == targetDays ? _self.targetDays : targetDays // ignore: cast_nullable_to_non_nullable
+as SugarSourcesProfile,reductionGoal: null == reductionGoal ? _self.reductionGoal : reductionGoal // ignore: cast_nullable_to_non_nullable
+as SugarReductionGoal,targetDays: null == targetDays ? _self.targetDays : targetDays // ignore: cast_nullable_to_non_nullable
 as int,targetDailySugar: null == targetDailySugar ? _self.targetDailySugar : targetDailySugar // ignore: cast_nullable_to_non_nullable
-as double,dailyLimitsProgression: null == dailyLimitsProgression ? _self.dailyLimitsProgression : dailyLimitsProgression // ignore: cast_nullable_to_non_nullable
-as List<double>,startDate: null == startDate ? _self.startDate : startDate // ignore: cast_nullable_to_non_nullable
-as DateTime,targetDate: null == targetDate ? _self.targetDate : targetDate // ignore: cast_nullable_to_non_nullable
-as DateTime,motivation: null == motivation ? _self.motivation : motivation // ignore: cast_nullable_to_non_nullable
+as double,motivation: null == motivation ? _self.motivation : motivation // ignore: cast_nullable_to_non_nullable
 as String,lifeImpacts: null == lifeImpacts ? _self.lifeImpacts : lifeImpacts // ignore: cast_nullable_to_non_nullable
 as List<String>,analysisResults: null == analysisResults ? _self.analysisResults : analysisResults // ignore: cast_nullable_to_non_nullable
 as Map<String, dynamic>,vowSigned: null == vowSigned ? _self.vowSigned : vowSigned // ignore: cast_nullable_to_non_nullable
-as bool,gamificationEnabled: null == gamificationEnabled ? _self.gamificationEnabled : gamificationEnabled // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }
@@ -188,10 +177,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String name,  int age,  String gender,  double currentDailySugar,  SugarSourcesProfile sugarSources,  List<HealthCondition> healthConditions,  bool hasSpecialDiet,  String? dietType,  SugarReductionGoal reductionGoal,  String primaryMotivation,  int targetDays,  double targetDailySugar,  List<double> dailyLimitsProgression,  DateTime startDate,  DateTime targetDate,  String motivation,  List<String> lifeImpacts,  Map<String, dynamic> analysisResults,  bool vowSigned,  bool gamificationEnabled)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String name,  int age,  double currentDailySugar,  SugarSourcesProfile sugarSources,  SugarReductionGoal reductionGoal,  int targetDays,  double targetDailySugar,  String motivation,  List<String> lifeImpacts,  Map<String, dynamic> analysisResults,  bool vowSigned)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _OnboardingData() when $default != null:
-return $default(_that.name,_that.age,_that.gender,_that.currentDailySugar,_that.sugarSources,_that.healthConditions,_that.hasSpecialDiet,_that.dietType,_that.reductionGoal,_that.primaryMotivation,_that.targetDays,_that.targetDailySugar,_that.dailyLimitsProgression,_that.startDate,_that.targetDate,_that.motivation,_that.lifeImpacts,_that.analysisResults,_that.vowSigned,_that.gamificationEnabled);case _:
+return $default(_that.name,_that.age,_that.currentDailySugar,_that.sugarSources,_that.reductionGoal,_that.targetDays,_that.targetDailySugar,_that.motivation,_that.lifeImpacts,_that.analysisResults,_that.vowSigned);case _:
   return orElse();
 
 }
@@ -209,10 +198,10 @@ return $default(_that.name,_that.age,_that.gender,_that.currentDailySugar,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String name,  int age,  String gender,  double currentDailySugar,  SugarSourcesProfile sugarSources,  List<HealthCondition> healthConditions,  bool hasSpecialDiet,  String? dietType,  SugarReductionGoal reductionGoal,  String primaryMotivation,  int targetDays,  double targetDailySugar,  List<double> dailyLimitsProgression,  DateTime startDate,  DateTime targetDate,  String motivation,  List<String> lifeImpacts,  Map<String, dynamic> analysisResults,  bool vowSigned,  bool gamificationEnabled)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String name,  int age,  double currentDailySugar,  SugarSourcesProfile sugarSources,  SugarReductionGoal reductionGoal,  int targetDays,  double targetDailySugar,  String motivation,  List<String> lifeImpacts,  Map<String, dynamic> analysisResults,  bool vowSigned)  $default,) {final _that = this;
 switch (_that) {
 case _OnboardingData():
-return $default(_that.name,_that.age,_that.gender,_that.currentDailySugar,_that.sugarSources,_that.healthConditions,_that.hasSpecialDiet,_that.dietType,_that.reductionGoal,_that.primaryMotivation,_that.targetDays,_that.targetDailySugar,_that.dailyLimitsProgression,_that.startDate,_that.targetDate,_that.motivation,_that.lifeImpacts,_that.analysisResults,_that.vowSigned,_that.gamificationEnabled);case _:
+return $default(_that.name,_that.age,_that.currentDailySugar,_that.sugarSources,_that.reductionGoal,_that.targetDays,_that.targetDailySugar,_that.motivation,_that.lifeImpacts,_that.analysisResults,_that.vowSigned);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -229,10 +218,10 @@ return $default(_that.name,_that.age,_that.gender,_that.currentDailySugar,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String name,  int age,  String gender,  double currentDailySugar,  SugarSourcesProfile sugarSources,  List<HealthCondition> healthConditions,  bool hasSpecialDiet,  String? dietType,  SugarReductionGoal reductionGoal,  String primaryMotivation,  int targetDays,  double targetDailySugar,  List<double> dailyLimitsProgression,  DateTime startDate,  DateTime targetDate,  String motivation,  List<String> lifeImpacts,  Map<String, dynamic> analysisResults,  bool vowSigned,  bool gamificationEnabled)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String name,  int age,  double currentDailySugar,  SugarSourcesProfile sugarSources,  SugarReductionGoal reductionGoal,  int targetDays,  double targetDailySugar,  String motivation,  List<String> lifeImpacts,  Map<String, dynamic> analysisResults,  bool vowSigned)?  $default,) {final _that = this;
 switch (_that) {
 case _OnboardingData() when $default != null:
-return $default(_that.name,_that.age,_that.gender,_that.currentDailySugar,_that.sugarSources,_that.healthConditions,_that.hasSpecialDiet,_that.dietType,_that.reductionGoal,_that.primaryMotivation,_that.targetDays,_that.targetDailySugar,_that.dailyLimitsProgression,_that.startDate,_that.targetDate,_that.motivation,_that.lifeImpacts,_that.analysisResults,_that.vowSigned,_that.gamificationEnabled);case _:
+return $default(_that.name,_that.age,_that.currentDailySugar,_that.sugarSources,_that.reductionGoal,_that.targetDays,_that.targetDailySugar,_that.motivation,_that.lifeImpacts,_that.analysisResults,_that.vowSigned);case _:
   return null;
 
 }
@@ -244,44 +233,21 @@ return $default(_that.name,_that.age,_that.gender,_that.currentDailySugar,_that.
 @JsonSerializable()
 
 class _OnboardingData extends OnboardingData {
-  const _OnboardingData({required this.name, required this.age, required this.gender, required this.currentDailySugar, required this.sugarSources, required final  List<HealthCondition> healthConditions, required this.hasSpecialDiet, required this.dietType, required this.reductionGoal, required this.primaryMotivation, required this.targetDays, required this.targetDailySugar, required final  List<double> dailyLimitsProgression, required this.startDate, required this.targetDate, required this.motivation, required final  List<String> lifeImpacts, required final  Map<String, dynamic> analysisResults, required this.vowSigned, required this.gamificationEnabled}): _healthConditions = healthConditions,_dailyLimitsProgression = dailyLimitsProgression,_lifeImpacts = lifeImpacts,_analysisResults = analysisResults,super._();
+  const _OnboardingData({required this.name, required this.age, required this.currentDailySugar, required this.sugarSources, required this.reductionGoal, required this.targetDays, required this.targetDailySugar, required this.motivation, required final  List<String> lifeImpacts, required final  Map<String, dynamic> analysisResults, required this.vowSigned}): _lifeImpacts = lifeImpacts,_analysisResults = analysisResults,super._();
   factory _OnboardingData.fromJson(Map<String, dynamic> json) => _$OnboardingDataFromJson(json);
 
 // Personal info
 @override final  String name;
 @override final  int age;
-@override final  String gender;
 // Current sugar habits
 @override final  double currentDailySugar;
 @override final  SugarSourcesProfile sugarSources;
-// Health conditions
- final  List<HealthCondition> _healthConditions;
-// Health conditions
-@override List<HealthCondition> get healthConditions {
-  if (_healthConditions is EqualUnmodifiableListView) return _healthConditions;
-  // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_healthConditions);
-}
-
-@override final  bool hasSpecialDiet;
-@override final  String? dietType;
-// Goals and motivation
+// Goals and plan
 @override final  SugarReductionGoal reductionGoal;
-@override final  String primaryMotivation;
 @override final  int targetDays;
 // Usually 60 days
-// Calculated plan
 @override final  double targetDailySugar;
- final  List<double> _dailyLimitsProgression;
-@override List<double> get dailyLimitsProgression {
-  if (_dailyLimitsProgression is EqualUnmodifiableListView) return _dailyLimitsProgression;
-  // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_dailyLimitsProgression);
-}
-
-@override final  DateTime startDate;
-@override final  DateTime targetDate;
-// Enhanced onboarding fields
+// Motivation and analysis
 @override final  String motivation;
  final  List<String> _lifeImpacts;
 @override List<String> get lifeImpacts {
@@ -298,7 +264,6 @@ class _OnboardingData extends OnboardingData {
 }
 
 @override final  bool vowSigned;
-@override final  bool gamificationEnabled;
 
 /// Create a copy of OnboardingData
 /// with the given fields replaced by the non-null parameter values.
@@ -313,16 +278,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _OnboardingData&&(identical(other.name, name) || other.name == name)&&(identical(other.age, age) || other.age == age)&&(identical(other.gender, gender) || other.gender == gender)&&(identical(other.currentDailySugar, currentDailySugar) || other.currentDailySugar == currentDailySugar)&&(identical(other.sugarSources, sugarSources) || other.sugarSources == sugarSources)&&const DeepCollectionEquality().equals(other._healthConditions, _healthConditions)&&(identical(other.hasSpecialDiet, hasSpecialDiet) || other.hasSpecialDiet == hasSpecialDiet)&&(identical(other.dietType, dietType) || other.dietType == dietType)&&(identical(other.reductionGoal, reductionGoal) || other.reductionGoal == reductionGoal)&&(identical(other.primaryMotivation, primaryMotivation) || other.primaryMotivation == primaryMotivation)&&(identical(other.targetDays, targetDays) || other.targetDays == targetDays)&&(identical(other.targetDailySugar, targetDailySugar) || other.targetDailySugar == targetDailySugar)&&const DeepCollectionEquality().equals(other._dailyLimitsProgression, _dailyLimitsProgression)&&(identical(other.startDate, startDate) || other.startDate == startDate)&&(identical(other.targetDate, targetDate) || other.targetDate == targetDate)&&(identical(other.motivation, motivation) || other.motivation == motivation)&&const DeepCollectionEquality().equals(other._lifeImpacts, _lifeImpacts)&&const DeepCollectionEquality().equals(other._analysisResults, _analysisResults)&&(identical(other.vowSigned, vowSigned) || other.vowSigned == vowSigned)&&(identical(other.gamificationEnabled, gamificationEnabled) || other.gamificationEnabled == gamificationEnabled));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _OnboardingData&&(identical(other.name, name) || other.name == name)&&(identical(other.age, age) || other.age == age)&&(identical(other.currentDailySugar, currentDailySugar) || other.currentDailySugar == currentDailySugar)&&(identical(other.sugarSources, sugarSources) || other.sugarSources == sugarSources)&&(identical(other.reductionGoal, reductionGoal) || other.reductionGoal == reductionGoal)&&(identical(other.targetDays, targetDays) || other.targetDays == targetDays)&&(identical(other.targetDailySugar, targetDailySugar) || other.targetDailySugar == targetDailySugar)&&(identical(other.motivation, motivation) || other.motivation == motivation)&&const DeepCollectionEquality().equals(other._lifeImpacts, _lifeImpacts)&&const DeepCollectionEquality().equals(other._analysisResults, _analysisResults)&&(identical(other.vowSigned, vowSigned) || other.vowSigned == vowSigned));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,name,age,gender,currentDailySugar,sugarSources,const DeepCollectionEquality().hash(_healthConditions),hasSpecialDiet,dietType,reductionGoal,primaryMotivation,targetDays,targetDailySugar,const DeepCollectionEquality().hash(_dailyLimitsProgression),startDate,targetDate,motivation,const DeepCollectionEquality().hash(_lifeImpacts),const DeepCollectionEquality().hash(_analysisResults),vowSigned,gamificationEnabled]);
+int get hashCode => Object.hash(runtimeType,name,age,currentDailySugar,sugarSources,reductionGoal,targetDays,targetDailySugar,motivation,const DeepCollectionEquality().hash(_lifeImpacts),const DeepCollectionEquality().hash(_analysisResults),vowSigned);
 
 @override
 String toString() {
-  return 'OnboardingData(name: $name, age: $age, gender: $gender, currentDailySugar: $currentDailySugar, sugarSources: $sugarSources, healthConditions: $healthConditions, hasSpecialDiet: $hasSpecialDiet, dietType: $dietType, reductionGoal: $reductionGoal, primaryMotivation: $primaryMotivation, targetDays: $targetDays, targetDailySugar: $targetDailySugar, dailyLimitsProgression: $dailyLimitsProgression, startDate: $startDate, targetDate: $targetDate, motivation: $motivation, lifeImpacts: $lifeImpacts, analysisResults: $analysisResults, vowSigned: $vowSigned, gamificationEnabled: $gamificationEnabled)';
+  return 'OnboardingData(name: $name, age: $age, currentDailySugar: $currentDailySugar, sugarSources: $sugarSources, reductionGoal: $reductionGoal, targetDays: $targetDays, targetDailySugar: $targetDailySugar, motivation: $motivation, lifeImpacts: $lifeImpacts, analysisResults: $analysisResults, vowSigned: $vowSigned)';
 }
 
 
@@ -333,7 +298,7 @@ abstract mixin class _$OnboardingDataCopyWith<$Res> implements $OnboardingDataCo
   factory _$OnboardingDataCopyWith(_OnboardingData value, $Res Function(_OnboardingData) _then) = __$OnboardingDataCopyWithImpl;
 @override @useResult
 $Res call({
- String name, int age, String gender, double currentDailySugar, SugarSourcesProfile sugarSources, List<HealthCondition> healthConditions, bool hasSpecialDiet, String? dietType, SugarReductionGoal reductionGoal, String primaryMotivation, int targetDays, double targetDailySugar, List<double> dailyLimitsProgression, DateTime startDate, DateTime targetDate, String motivation, List<String> lifeImpacts, Map<String, dynamic> analysisResults, bool vowSigned, bool gamificationEnabled
+ String name, int age, double currentDailySugar, SugarSourcesProfile sugarSources, SugarReductionGoal reductionGoal, int targetDays, double targetDailySugar, String motivation, List<String> lifeImpacts, Map<String, dynamic> analysisResults, bool vowSigned
 });
 
 
@@ -350,28 +315,19 @@ class __$OnboardingDataCopyWithImpl<$Res>
 
 /// Create a copy of OnboardingData
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? name = null,Object? age = null,Object? gender = null,Object? currentDailySugar = null,Object? sugarSources = null,Object? healthConditions = null,Object? hasSpecialDiet = null,Object? dietType = freezed,Object? reductionGoal = null,Object? primaryMotivation = null,Object? targetDays = null,Object? targetDailySugar = null,Object? dailyLimitsProgression = null,Object? startDate = null,Object? targetDate = null,Object? motivation = null,Object? lifeImpacts = null,Object? analysisResults = null,Object? vowSigned = null,Object? gamificationEnabled = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? name = null,Object? age = null,Object? currentDailySugar = null,Object? sugarSources = null,Object? reductionGoal = null,Object? targetDays = null,Object? targetDailySugar = null,Object? motivation = null,Object? lifeImpacts = null,Object? analysisResults = null,Object? vowSigned = null,}) {
   return _then(_OnboardingData(
 name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,age: null == age ? _self.age : age // ignore: cast_nullable_to_non_nullable
-as int,gender: null == gender ? _self.gender : gender // ignore: cast_nullable_to_non_nullable
-as String,currentDailySugar: null == currentDailySugar ? _self.currentDailySugar : currentDailySugar // ignore: cast_nullable_to_non_nullable
+as int,currentDailySugar: null == currentDailySugar ? _self.currentDailySugar : currentDailySugar // ignore: cast_nullable_to_non_nullable
 as double,sugarSources: null == sugarSources ? _self.sugarSources : sugarSources // ignore: cast_nullable_to_non_nullable
-as SugarSourcesProfile,healthConditions: null == healthConditions ? _self._healthConditions : healthConditions // ignore: cast_nullable_to_non_nullable
-as List<HealthCondition>,hasSpecialDiet: null == hasSpecialDiet ? _self.hasSpecialDiet : hasSpecialDiet // ignore: cast_nullable_to_non_nullable
-as bool,dietType: freezed == dietType ? _self.dietType : dietType // ignore: cast_nullable_to_non_nullable
-as String?,reductionGoal: null == reductionGoal ? _self.reductionGoal : reductionGoal // ignore: cast_nullable_to_non_nullable
-as SugarReductionGoal,primaryMotivation: null == primaryMotivation ? _self.primaryMotivation : primaryMotivation // ignore: cast_nullable_to_non_nullable
-as String,targetDays: null == targetDays ? _self.targetDays : targetDays // ignore: cast_nullable_to_non_nullable
+as SugarSourcesProfile,reductionGoal: null == reductionGoal ? _self.reductionGoal : reductionGoal // ignore: cast_nullable_to_non_nullable
+as SugarReductionGoal,targetDays: null == targetDays ? _self.targetDays : targetDays // ignore: cast_nullable_to_non_nullable
 as int,targetDailySugar: null == targetDailySugar ? _self.targetDailySugar : targetDailySugar // ignore: cast_nullable_to_non_nullable
-as double,dailyLimitsProgression: null == dailyLimitsProgression ? _self._dailyLimitsProgression : dailyLimitsProgression // ignore: cast_nullable_to_non_nullable
-as List<double>,startDate: null == startDate ? _self.startDate : startDate // ignore: cast_nullable_to_non_nullable
-as DateTime,targetDate: null == targetDate ? _self.targetDate : targetDate // ignore: cast_nullable_to_non_nullable
-as DateTime,motivation: null == motivation ? _self.motivation : motivation // ignore: cast_nullable_to_non_nullable
+as double,motivation: null == motivation ? _self.motivation : motivation // ignore: cast_nullable_to_non_nullable
 as String,lifeImpacts: null == lifeImpacts ? _self._lifeImpacts : lifeImpacts // ignore: cast_nullable_to_non_nullable
 as List<String>,analysisResults: null == analysisResults ? _self._analysisResults : analysisResults // ignore: cast_nullable_to_non_nullable
 as Map<String, dynamic>,vowSigned: null == vowSigned ? _self.vowSigned : vowSigned // ignore: cast_nullable_to_non_nullable
-as bool,gamificationEnabled: null == gamificationEnabled ? _self.gamificationEnabled : gamificationEnabled // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }

@@ -7,7 +7,7 @@ part of 'daily_limit_sync_service.dart';
 // **************************************************************************
 
 String _$dailyLimitSyncServiceHash() =>
-    r'3eb0fb7b1c44ef55eab74d6f9c04c4f683687eb4';
+    r'01e8e5641f46feae624c2fd9bd4ed5a88557c3a1';
 
 /// See also [dailyLimitSyncService].
 @ProviderFor(dailyLimitSyncService)

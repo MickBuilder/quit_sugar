@@ -2,9 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
-import 'package:quit_suggar/features/tracking/presentation/providers/sugar_tracking_provider.dart';
+import 'package:quit_suggar/features/tracking/presentation/providers/tracking_operations_provider.dart';
 import 'package:quit_suggar/features/tracking/domain/entities/daily_log.dart';
 import 'package:quit_suggar/features/tracking/domain/usecases/sugar_tracking_usecase.dart';
+import 'package:quit_suggar/features/tracking/presentation/providers/historical_data_providers.dart';
 
 class WeeklySugarBarChart extends HookConsumerWidget {
   const WeeklySugarBarChart({super.key});

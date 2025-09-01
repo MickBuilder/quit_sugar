@@ -4,8 +4,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
 import 'package:quit_suggar/features/subscription/presentation/screens/revenuecat_paywall_screen.dart';
+import 'package:quit_suggar/core/widgets/standardized_widgets.dart';
 
-class LimitedOfferScreen extends HookConsumerWidget {
+class LimitedOfferScreen extends AppScreen {
   const LimitedOfferScreen({super.key});
 
   @override

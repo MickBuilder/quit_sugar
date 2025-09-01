@@ -58,7 +58,6 @@ class OnboardingFlow extends _$OnboardingFlow {
     return OnboardingData(
       name: '',
       age: 18,
-      gender: 'prefer_not_to_say',
       currentDailySugar: 0.0,
       sugarSources: const SugarSourcesProfile(
         sodaDrinks: 0,
@@ -68,33 +67,23 @@ class OnboardingFlow extends _$OnboardingFlow {
         juiceDrinks: 0,
         commonFoods: [],
       ),
-      healthConditions: [],
-      hasSpecialDiet: false,
-      dietType: null,
       reductionGoal: SugarReductionGoal.healthy,
-      primaryMotivation: '',
       targetDays: 60,
       targetDailySugar: SugarReductionGoal.healthy.targetAmount,
-      dailyLimitsProgression: [],
-      startDate: DateTime.now(),
-      targetDate: DateTime.now().add(const Duration(days: 60)),
       motivation: '',
       lifeImpacts: [],
       analysisResults: {},
       vowSigned: false,
-      gamificationEnabled: true,
     );
   }
   
   void updatePersonalInfo({
     required String name,
     required int age,
-    required String gender,
   }) {
     state = state.copyWith(
       name: name,
       age: age,
-      gender: gender,
     );
   }
   
@@ -124,22 +113,11 @@ class OnboardingFlow extends _$OnboardingFlow {
     required SugarReductionGoal reductionGoal,
     required int targetDays,
   }) {
-    final targetDate = state.startDate.add(Duration(days: targetDays));
-    
     state = state.copyWith(
       reductionGoal: reductionGoal,
       targetDays: targetDays,
       targetDailySugar: reductionGoal.targetAmount,
-      targetDate: targetDate,
     );
-  }
-  
-  void updateHealthConditions(List<HealthCondition> healthConditions) {
-    state = state.copyWith(healthConditions: healthConditions);
-  }
-  
-  void updateMotivation(String motivation) {
-    state = state.copyWith(primaryMotivation: motivation);
   }
   
   // Enhanced onboarding methods
@@ -201,9 +179,7 @@ class OnboardingFlow extends _$OnboardingFlow {
     state = state.copyWith(vowSigned: true);
   }
   
-  void enableGamification(bool enabled) {
-    state = state.copyWith(gamificationEnabled: enabled);
-  }
+
   
   Future<void> saveOnboardingData() async {
     final useCase = ref.read(saveOnboardingDataUseCaseProvider);
@@ -219,7 +195,6 @@ class OnboardingFlow extends _$OnboardingFlow {
     state = OnboardingData(
       name: '',
       age: 18,
-      gender: 'prefer_not_to_say',
       currentDailySugar: 0.0,
       sugarSources: const SugarSourcesProfile(
         sodaDrinks: 0,
@@ -229,21 +204,13 @@ class OnboardingFlow extends _$OnboardingFlow {
         juiceDrinks: 0,
         commonFoods: [],
       ),
-      healthConditions: [],
-      hasSpecialDiet: false,
-      dietType: null,
       reductionGoal: SugarReductionGoal.healthy,
-      primaryMotivation: '',
       targetDays: 60,
       targetDailySugar: SugarReductionGoal.healthy.targetAmount,
-      dailyLimitsProgression: [],
-      startDate: DateTime.now(),
-      targetDate: DateTime.now().add(const Duration(days: 60)),
       motivation: '',
       lifeImpacts: [],
       analysisResults: {},
       vowSigned: false,
-      gamificationEnabled: true,
     );
   }
 }

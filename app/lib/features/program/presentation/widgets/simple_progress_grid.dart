@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:quit_suggar/features/tracking/presentation/providers/sugar_tracking_provider.dart';
+import 'package:quit_suggar/features/tracking/presentation/providers/tracking_operations_provider.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
 
 class SimpleProgressGrid extends ConsumerWidget {

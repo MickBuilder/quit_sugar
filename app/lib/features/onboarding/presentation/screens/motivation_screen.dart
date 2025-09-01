@@ -4,8 +4,9 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
 import 'package:quit_suggar/features/onboarding/presentation/providers/onboarding_providers.dart';
+import 'package:quit_suggar/core/widgets/standardized_widgets.dart';
 
-class MotivationScreen extends HookConsumerWidget {
+class MotivationScreen extends AppScreen {
   const MotivationScreen({super.key});
 
   @override

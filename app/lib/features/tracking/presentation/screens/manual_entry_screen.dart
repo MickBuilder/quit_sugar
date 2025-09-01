@@ -2,11 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:quit_suggar/features/tracking/presentation/providers/sugar_tracking_provider.dart';
+import 'package:quit_suggar/features/tracking/presentation/providers/tracking_operations_provider.dart';
 import 'package:quit_suggar/core/services/logger_service.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
+import 'package:quit_suggar/core/widgets/standardized_widgets.dart';
 
-class ManualEntryScreen extends HookConsumerWidget {
+class ManualEntryScreen extends AppScreen {
   const ManualEntryScreen({super.key});
 
   @override

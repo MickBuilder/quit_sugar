@@ -135,7 +135,7 @@ final onboardingDataProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef OnboardingDataRef = AutoDisposeFutureProviderRef<OnboardingData?>;
-String _$onboardingFlowHash() => r'7f27b451a741bef30af01cf4cc901901d0865b09';
+String _$onboardingFlowHash() => r'3d6dc1263b7c3880c3591fb47273b19440c34f79';
 
 /// See also [OnboardingFlow].
 @ProviderFor(OnboardingFlow)

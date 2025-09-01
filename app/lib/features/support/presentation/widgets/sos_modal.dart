@@ -32,18 +32,20 @@ class SOSModal extends HookConsumerWidget {
         ),
       ),
       child: SafeArea(
-        child: selectedStrategy.value != null
-            ? _buildStrategyDetail(context, selectedStrategy.value!, () {
-                selectedStrategy.value = null;
-                selectedType.value = null;
-              })
-            : selectedType.value != null
-                ? _buildStrategyList(selectedType.value!, (strategy) {
-                    selectedStrategy.value = strategy;
-                  })
-                : _buildTypeSelector((type) {
-                    selectedType.value = type;
-                  }),
+        child: SingleChildScrollView(
+          child: selectedStrategy.value != null
+              ? _buildStrategyDetail(context, selectedStrategy.value!, () {
+                  selectedStrategy.value = null;
+                  selectedType.value = null;
+                })
+              : selectedType.value != null
+                  ? _buildStrategyList(selectedType.value!, (strategy) {
+                      selectedStrategy.value = strategy;
+                    })
+                  : _buildTypeSelector((type) {
+                      selectedType.value = type;
+                    }),
+        ),
       ),
     );
   }
@@ -203,81 +205,75 @@ class SOSModal extends HookConsumerWidget {
           
           const SizedBox(height: 24),
           
-          Expanded(
-            child: ListView.builder(
-              itemCount: strategies.length,
-              itemBuilder: (context, index) {
-                final strategy = strategies[index];
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: GestureDetector(
-                    onTap: () => onStrategySelected(strategy),
-                    child: Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: AppTheme.surfaceBackground,
-                        border: Border.all(color: AppTheme.primaryBlack, width: 2),
-                        borderRadius: BorderRadius.circular(8),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppTheme.primaryBlack.withValues(alpha: 0.7),
-                            blurRadius: 0,
-                            offset: const Offset(2, 2),
-                          ),
-                        ],
+          ...strategies.map((strategy) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: GestureDetector(
+                onTap: () => onStrategySelected(strategy),
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: AppTheme.surfaceBackground,
+                    border: Border.all(color: AppTheme.primaryBlack, width: 2),
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppTheme.primaryBlack.withValues(alpha: 0.7),
+                        blurRadius: 0,
+                        offset: const Offset(2, 2),
                       ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  strategy.title,
-                                  style: AppTextStyles.title,
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  strategy.description,
-                                  style: AppTextStyles.body.copyWith(
-                                    color: AppTheme.textMuted,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: AppTheme.accentBlue,
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  child: Text(
-                                    '${strategy.durationMinutes} min',
-                                    style: AppTextStyles.caption.copyWith(
-                                      color: AppTheme.primaryWhite,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const Icon(
-                            CupertinoIcons.chevron_right,
-                            color: AppTheme.textMuted,
-                            size: 20,
-                          ),
-                        ],
-                      ),
-                    ),
+                    ],
                   ),
-                );
-              },
-            ),
-          ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              strategy.title,
+                              style: AppTextStyles.title,
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              strategy.description,
+                              style: AppTextStyles.body.copyWith(
+                                color: AppTheme.textMuted,
+                                fontSize: 14,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppTheme.accentBlue,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                '${strategy.durationMinutes} min',
+                                style: AppTextStyles.caption.copyWith(
+                                  color: AppTheme.primaryWhite,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Icon(
+                        CupertinoIcons.chevron_right,
+                        color: AppTheme.textMuted,
+                        size: 20,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }),
         ],
       ),
     );
@@ -416,7 +412,7 @@ class SOSModal extends HookConsumerWidget {
             ),
           ),
           
-          const Spacer(),
+          const SizedBox(height: 24),
           
           // Done button
           Container(

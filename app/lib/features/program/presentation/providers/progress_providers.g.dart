@@ -6,26 +6,6 @@ part of 'progress_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$historicalDataRepositoryHash() =>
-    r'677ac5f4a339be619535e635c9434de00dc9fc5f';
-
-/// See also [historicalDataRepository].
-@ProviderFor(historicalDataRepository)
-final historicalDataRepositoryProvider =
-    AutoDisposeProvider<HistoricalDataRepository>.internal(
-      historicalDataRepository,
-      name: r'historicalDataRepositoryProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$historicalDataRepositoryHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef HistoricalDataRepositoryRef =
-    AutoDisposeProviderRef<HistoricalDataRepository>;
 String _$progressRepositoryHash() =>
     r'440fd0d7290aeb304d53833079eba9667d72623e';
 

@@ -3,32 +3,22 @@ import 'package:quit_suggar/features/tracking/domain/entities/product_info.dart'
 import 'package:quit_suggar/features/tracking/domain/repositories/tracking_repository.dart';
 import 'package:quit_suggar/features/tracking/data/datasources/tracking_storage_service.dart';
 import 'package:quit_suggar/features/tracking/data/datasources/openfoodfacts_api_service.dart';
-import 'package:quit_suggar/features/onboarding/domain/repositories/onboarding_repository.dart';
 
 class TrackingRepositoryImpl implements TrackingRepository {
   final TrackingStorageService _storageService;
   final OpenFoodFactsApiService _apiService;
-  final OnboardingRepository _onboardingRepository;
 
   TrackingRepositoryImpl(
     this._storageService, 
     this._apiService,
-    this._onboardingRepository,
   );
 
   // Storage operations
   @override
   Future<double> getDailyLimit() async {
-    // Check if onboarding is completed first
-    final isOnboardingCompleted = await _onboardingRepository.isOnboardingCompleted();
-    
-    if (isOnboardingCompleted) {
-      // Use the dynamic daily limit from onboarding progression
-      return await _onboardingRepository.getCurrentDailyLimit();
-    } else {
-      // Fallback to stored limit if onboarding not completed
-      return await _storageService.loadDailyLimit(25.0);
-    }
+    // Get the stored daily limit from tracking storage
+    // The daily limit sync service will handle updating this value
+    return await _storageService.loadDailyLimit(25.0);
   }
 
   @override

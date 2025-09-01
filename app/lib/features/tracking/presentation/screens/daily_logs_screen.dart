@@ -2,10 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
 
-import 'package:quit_suggar/features/tracking/presentation/providers/sugar_tracking_provider.dart';
+import 'package:quit_suggar/features/tracking/presentation/providers/tracking_operations_provider.dart';
+import 'package:quit_suggar/features/tracking/presentation/providers/historical_data_providers.dart';
 import 'package:quit_suggar/features/tracking/presentation/widgets/daily_log_card.dart';
+import 'package:quit_suggar/core/widgets/standardized_widgets.dart';
 
-class DailyLogsScreen extends HookConsumerWidget {
+class DailyLogsScreen extends AppScreen {
   const DailyLogsScreen({super.key});
 
   @override

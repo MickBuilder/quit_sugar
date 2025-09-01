@@ -3,8 +3,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
 import 'package:quit_suggar/features/onboarding/presentation/providers/onboarding_providers.dart';
+import 'package:quit_suggar/core/widgets/standardized_widgets.dart';
 
-class AnalysisResultsScreen extends HookConsumerWidget {
+class AnalysisResultsScreen extends AppScreen {
   const AnalysisResultsScreen({super.key});
 
   @override
@@ -401,77 +402,9 @@ class AnalysisResultsScreen extends HookConsumerWidget {
     );
   }
 
-  Widget _buildKeyInsights(Map<String, dynamic> results) {
-    final analysisData = results['analysisData'] as Map<String, dynamic>;
-    
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: AppTheme.surfaceBackground,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppTheme.primaryBlack, width: 2),
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.primaryBlack.withValues(alpha: 0.7),
-            blurRadius: 0,
-            offset: const Offset(4, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Key Insights',
-            style: AppTextStyles.title.copyWith(
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          
-          const SizedBox(height: 16),
-          
-          _buildInsightItem(
-            '🧠',
-            'Craving Level: ${_getCravingLevel(analysisData['cravingIntensity'] ?? 0)}',
-          ),
-          
-          _buildInsightItem(
-            '⚡',
-            'Energy Impact: ${_getEnergyImpact(analysisData['energyImpact'] ?? 0)}',
-          ),
-          
-          _buildInsightItem(
-            '😊',
-            'Mood Dependency: ${_getMoodImpact(analysisData['moodImpact'] ?? 0)}',
-          ),
-          
-          _buildInsightItem(
-            '😰',
-            'Stress Response: ${_getStressResponse(analysisData['stressEating'] ?? 0)}',
-          ),
-        ],
-      ),
-    );
-  }
 
-  Widget _buildInsightItem(String icon, String text) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
-        children: [
-          Text(icon, style: const TextStyle(fontSize: 20)),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              text,
-              style: AppTextStyles.body.copyWith(fontSize: 15),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+
+
 
   Widget _buildRecoveryMessage(Map<String, dynamic> results) {
     final addictionLevel = results['addictionLevel'] as String;
@@ -524,49 +457,7 @@ class AnalysisResultsScreen extends HookConsumerWidget {
     );
   }
 
-  String _getCravingLevel(int level) {
-    switch (level) {
-      case 0: return 'Minimal';
-      case 1: return 'Low';
-      case 2: return 'Moderate';
-      case 3: return 'High';
-      case 4: return 'Severe';
-      default: return 'Unknown';
-    }
-  }
 
-  String _getEnergyImpact(int level) {
-    switch (level) {
-      case 0: return 'Stable';
-      case 1: return 'Minor fluctuations';
-      case 2: return 'Noticeable crashes';
-      case 3: return 'Major swings';
-      case 4: return 'Severe dependency';
-      default: return 'Unknown';
-    }
-  }
-
-  String _getMoodImpact(int level) {
-    switch (level) {
-      case 0: return 'No impact';
-      case 1: return 'Slight boost';
-      case 2: return 'Mood swings';
-      case 3: return 'Anxiety triggers';
-      case 4: return 'Severe impact';
-      default: return 'Unknown';
-    }
-  }
-
-  String _getStressResponse(int level) {
-    switch (level) {
-      case 0: return 'Never';
-      case 1: return 'Rarely';
-      case 2: return 'Sometimes';
-      case 3: return 'Often';
-      case 4: return 'Primary coping';
-      default: return 'Unknown';
-    }
-  }
 
   Widget _buildContinueButton(BuildContext context, WidgetRef ref, Map<String, dynamic> analysisResults) {
     return GestureDetector(

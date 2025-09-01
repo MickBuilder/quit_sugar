@@ -4,8 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
 import 'package:quit_suggar/features/onboarding/presentation/providers/onboarding_providers.dart';
 import 'package:quit_suggar/features/subscription/presentation/providers/subscription_provider.dart';
+import 'package:quit_suggar/core/widgets/standardized_widgets.dart';
 
-class CompletionScreen extends HookConsumerWidget {
+class CompletionScreen extends AppScreen {
   const CompletionScreen({super.key});
 
   @override

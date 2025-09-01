@@ -164,48 +164,13 @@ class DailyProgressCard extends HookConsumerWidget {
   Widget _buildDynamicLimitIndicator(OnboardingData? data) {
     if (data == null) return const SizedBox.shrink();
     
-    final now = DateTime.now();
-    final daysPassed = now.difference(data.startDate).inDays;
-    
-    if (daysPassed < 0) {
-      // Haven't started yet
-      return Text(
-        'Program starts ${data.startDate.day}/${data.startDate.month}',
-        style: AppTextStyles.caption.copyWith(
-          color: AppTheme.textMuted,
-          fontSize: 12,
-        ),
-      );
-    } else if (daysPassed >= data.targetDays) {
-      // Program completed
-      return Text(
-        'Program completed! 🎉',
-        style: AppTextStyles.caption.copyWith(
-          color: AppTheme.accentGreen,
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-        ),
-      );
-    } else {
-      // Program in progress - only show if budget decreases tomorrow
-      final nextLimit = daysPassed + 1 < data.dailyLimitsProgression.length 
-          ? data.dailyLimitsProgression[daysPassed + 1] 
-          : data.targetDailySugar;
-      final limitChange = nextLimit - summary.dailyLimit;
-      
-      if (limitChange < 0) {
-        return Text(
-          'Budget decreases to ${nextLimit.toStringAsFixed(0)}g tomorrow',
-          style: AppTextStyles.caption.copyWith(
-            color: AppTheme.accentOrange,
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-          ),
-        );
-      } else {
-        // Budget stays the same or at target - no need to show anything
-        return const SizedBox.shrink();
-      }
-    }
+    // Since we don't have startDate anymore, we'll show a simplified progress indicator
+    return Text(
+      'Target: ${data.targetDailySugar.toStringAsFixed(0)}g in ${data.targetDays} days',
+      style: AppTextStyles.caption.copyWith(
+        color: AppTheme.textMuted,
+        fontSize: 12,
+      ),
+    );
   }
 }
