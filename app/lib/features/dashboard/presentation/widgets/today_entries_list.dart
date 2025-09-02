@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:quit_suggar/features/tracking/domain/entities/food_entry.dart';
 import 'package:quit_suggar/core/services/logger_service.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
 import 'package:quit_suggar/features/dashboard/presentation/widgets/food_entry_item.dart';
-import 'package:quit_suggar/features/dashboard/presentation/widgets/edit_food_entry_dialog.dart';
 import 'package:quit_suggar/features/dashboard/presentation/widgets/delete_confirmation_dialog.dart';
 import 'package:quit_suggar/features/tracking/presentation/providers/tracking_operations_provider.dart';
+import 'package:quit_suggar/features/tracking/domain/entities/food_entry.dart';
 
 class TodayEntriesList extends ConsumerWidget {
   final List<FoodEntry> entries;
@@ -63,35 +63,21 @@ class TodayEntriesList extends ConsumerWidget {
   }
 
   void _handleEdit(BuildContext context, WidgetRef ref, FoodEntry entry) {
-    showCupertinoDialog(
-      context: context,
-      builder: (context) => EditFoodEntryDialog(
-        entry: entry,
-        onSave: (portionGrams, sugarAmount) async {
-          final success = await ref.read(sugarTrackingProvider.notifier).editEntry(
-            entry.id,
-            portionGrams: portionGrams,
-            sugarAmount: sugarAmount,
-          );
-          
-          if (success && context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Entry updated successfully!'),
-                backgroundColor: Colors.green,
-              ),
-            );
-          } else if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Failed to update entry'),
-                backgroundColor: Colors.red,
-              ),
-            );
-          }
-        },
-      ),
-    );
+    if (_isManualEntry(entry)) {
+      // For manual entries, navigate to manual entry screen with pre-filled data
+      context.push('/manual-entry', extra: {
+        'foodName': entry.displayName,
+        'sugarAmount': entry.sugarAmount,
+        'entryId': entry.id,
+      });
+    } else {
+      // For scanned products, navigate to edit scanned product screen
+      context.push('/edit-scanned-product', extra: entry);
+    }
+  }
+
+  bool _isManualEntry(FoodEntry entry) {
+    return entry.product.barcode.startsWith('manual_');
   }
 
   void _handleDelete(BuildContext context, WidgetRef ref, FoodEntry entry) {

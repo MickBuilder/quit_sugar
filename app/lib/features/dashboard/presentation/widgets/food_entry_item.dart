@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:quit_suggar/features/tracking/domain/entities/food_entry.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
@@ -28,8 +27,8 @@ class FoodEntryItem extends StatelessWidget {
           if (onEdit != null)
             SlidableAction(
               onPressed: (_) => onEdit!(),
-              backgroundColor: const Color(0xFF21B7CA),
-              foregroundColor: Colors.white,
+              backgroundColor: AppTheme.accentTeal,
+              foregroundColor: AppTheme.primaryWhite,
               icon: CupertinoIcons.pencil,
               label: 'Edit',
             ),
@@ -37,8 +36,8 @@ class FoodEntryItem extends StatelessWidget {
           if (onDelete != null)
             SlidableAction(
               onPressed: (_) => onDelete!(),
-              backgroundColor: const Color(0xFFFE4A49),
-              foregroundColor: Colors.white,
+              backgroundColor: AppTheme.accentRed,
+              foregroundColor: AppTheme.primaryWhite,
               icon: CupertinoIcons.delete,
               label: 'Delete',
             ),

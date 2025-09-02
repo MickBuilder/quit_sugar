@@ -7,6 +7,8 @@ import 'package:quit_suggar/features/program/presentation/screens/progress_scree
 import 'package:quit_suggar/features/support/presentation/screens/support_screen.dart';
 import 'package:quit_suggar/features/tracking/presentation/screens/scanner_screen.dart';
 import 'package:quit_suggar/features/tracking/presentation/screens/manual_entry_screen.dart';
+import 'package:quit_suggar/features/tracking/presentation/screens/edit_scanned_product_screen.dart';
+import 'package:quit_suggar/features/tracking/domain/entities/food_entry.dart';
 import 'package:quit_suggar/features/onboarding/presentation/screens/welcome_screen.dart';
 import 'package:quit_suggar/features/onboarding/presentation/screens/scientific_foundation_screen.dart';
 import 'package:quit_suggar/features/onboarding/presentation/screens/assessment_intro_screen.dart';
@@ -159,8 +161,27 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/manual-entry',
-        pageBuilder: (context, state) =>
-            const MaterialPage(child: ManualEntryScreen()),
+        pageBuilder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          final initialFoodName = extra?['foodName'] as String?;
+          final initialSugarAmount = extra?['sugarAmount'] as double?;
+          final editingEntryId = extra?['entryId'] as String?;
+          
+          return MaterialPage(
+            child: ManualEntryScreen(
+              initialFoodName: initialFoodName,
+              initialSugarAmount: initialSugarAmount,
+              editingEntryId: editingEntryId,
+            ),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/edit-scanned-product',
+        pageBuilder: (context, state) {
+          final entry = state.extra as FoodEntry;
+          return MaterialPage(child: EditScannedProductScreen(entry: entry));
+        },
       ),
     ],
   );

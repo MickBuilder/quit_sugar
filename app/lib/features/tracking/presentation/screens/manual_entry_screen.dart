@@ -8,12 +8,21 @@ import 'package:quit_suggar/core/theme/app_theme.dart';
 import 'package:quit_suggar/core/widgets/standardized_widgets.dart';
 
 class ManualEntryScreen extends AppScreen {
-  const ManualEntryScreen({super.key});
+  final String? initialFoodName;
+  final double? initialSugarAmount;
+  final String? editingEntryId; // For editing existing entries
+
+  const ManualEntryScreen({
+    super.key,
+    this.initialFoodName,
+    this.initialSugarAmount,
+    this.editingEntryId,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final foodNameController = useTextEditingController();
-    final sugarAmountController = useTextEditingController();
+    final foodNameController = useTextEditingController(text: initialFoodName ?? '');
+    final sugarAmountController = useTextEditingController(text: initialSugarAmount?.toString() ?? '');
     final isLoading = useState(false);
 
     return CupertinoPageScaffold(
@@ -249,18 +258,32 @@ class ManualEntryScreen extends AppScreen {
         'sugar_amount': sugarAmount,
       });
 
-      final success = await ref.read(sugarTrackingProvider.notifier).addManualEntry(
-        foodName.trim(),
-        sugarAmount,
-      );
-
-      if (success && context.mounted) {
-        AppLogger.logUI('Manual entry added successfully');
-        context.pop();
-      } else {
-        if (context.mounted) {
-          _showError(context, 'Failed to add entry. Please try again.');
+      bool success;
+      
+      if (editingEntryId != null) {
+        // Editing existing entry
+        success = await ref.read(sugarTrackingProvider.notifier).editEntry(
+          editingEntryId!,
+          sugarAmount: sugarAmount,
+        );
+        if (success && context.mounted) {
+          AppLogger.logUI('Manual entry edited successfully');
+          context.pop();
         }
+      } else {
+        // Adding new entry
+        success = await ref.read(sugarTrackingProvider.notifier).addManualEntry(
+          foodName.trim(),
+          sugarAmount,
+        );
+        if (success && context.mounted) {
+          AppLogger.logUI('Manual entry added successfully');
+          context.pop();
+        }
+      }
+      
+      if (!success && context.mounted) {
+        _showError(context, 'Failed to ${editingEntryId != null ? 'edit' : 'add'} entry. Please try again.');
       }
     } catch (e) {
       AppLogger.logSugarTrackingError('Error adding manual entry: $e');
