@@ -368,6 +368,60 @@ class SugarTrackingUsecase {
     return false;
   }
 
+  /// Edit a food entry (portion size or sugar amount)
+  Future<bool> editEntry(String entryId, {
+    double? portionGrams,
+    double? sugarAmount,
+  }) async {
+    final index = _todayEntries.indexWhere((entry) => entry.id == entryId);
+    if (index != -1) {
+      final oldEntry = _todayEntries[index];
+      final oldSugarAmount = oldEntry.sugarAmount;
+      
+      // For scanned products, recalculate sugar amount based on new portion size
+      double newSugarAmount;
+      if (sugarAmount != null) {
+        // Manual entry - use provided sugar amount
+        newSugarAmount = sugarAmount;
+      } else if (portionGrams != null && oldEntry.product.sugarPer100g != null) {
+        // Scanned product - recalculate sugar amount based on new portion
+        newSugarAmount = oldEntry.product.calculateSugarForPortion(portionGrams);
+      } else {
+        // No changes or insufficient data
+        newSugarAmount = oldEntry.sugarAmount;
+      }
+      
+      // Create new entry with updated values
+      final newEntry = oldEntry.copyWith(
+        portionGrams: portionGrams ?? oldEntry.portionGrams,
+        sugarAmount: newSugarAmount,
+      );
+      
+      // Update the entry in the list
+      _todayEntries[index] = newEntry;
+      
+      // Recalculate total sugar intake
+      _currentSugarIntake = _currentSugarIntake - oldSugarAmount + newEntry.sugarAmount;
+      
+      // Save to repository
+      await _saveToRepository();
+
+      AppLogger.logSugarTracking(
+        'Edited food entry: ${newEntry.displayName} - ${oldSugarAmount.toStringAsFixed(1)}g → ${newEntry.sugarAmount.toStringAsFixed(1)}g sugar',
+      );
+      AppLogger.logSugarTracking(
+        'Daily total updated: ${_currentSugarIntake.toStringAsFixed(1)}g / ${_dailyLimit.toStringAsFixed(0)}g',
+      );
+
+      return true;
+    }
+
+    AppLogger.logSugarTracking(
+      'Failed to edit entry: Entry with ID $entryId not found',
+    );
+    return false;
+  }
+
   /// Set daily sugar limit
   Future<void> setDailyLimit(double limit) async {
     final oldLimit = _dailyLimit;

@@ -133,6 +133,30 @@ class SugarTracking extends _$SugarTracking {
     return success;
   }
 
+  /// Edit a food entry (portion size or sugar amount)
+  Future<bool> editEntry(String entryId, {
+    double? portionGrams,
+    double? sugarAmount,
+  }) async {
+    final usecaseState = await future;
+    AppLogger.logUserAction('Edit food entry', {
+      'entry_id': entryId,
+      'portion_grams': portionGrams,
+      'sugar_amount': sugarAmount,
+    });
+
+    final success = await usecaseState.editEntry(
+      entryId,
+      portionGrams: portionGrams,
+      sugarAmount: sugarAmount,
+    );
+    if (success) {
+      ref.invalidateSelf();
+      AppLogger.logState('SugarTracking state updated after editing entry');
+    }
+    return success;
+  }
+
   /// Check if streak evaluation has already been performed today
   bool hasCheckedStreakToday(String today) {
     return _usecase.hasCheckedStreakToday(today);
