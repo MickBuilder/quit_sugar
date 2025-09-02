@@ -11,6 +11,7 @@ part of 'food_entry.dart';
 
 // dart format off
 T _$identity<T>(T value) => value;
+
 /// @nodoc
 mixin _$FoodEntry {
 
@@ -21,6 +22,8 @@ mixin _$FoodEntry {
 @pragma('vm:prefer-inline')
 $FoodEntryCopyWith<FoodEntry> get copyWith => _$FoodEntryCopyWithImpl<FoodEntry>(this as FoodEntry, _$identity);
 
+  /// Serializes this FoodEntry to a JSON map.
+  Map<String, dynamic> toJson();
 
 
 @override
@@ -28,7 +31,7 @@ bool operator ==(Object other) {
   return identical(this, other) || (other.runtimeType == runtimeType&&other is FoodEntry&&(identical(other.id, id) || other.id == id)&&(identical(other.product, product) || other.product == product)&&(identical(other.portionGrams, portionGrams) || other.portionGrams == portionGrams)&&(identical(other.sugarAmount, sugarAmount) || other.sugarAmount == sugarAmount)&&(identical(other.customName, customName) || other.customName == customName)&&(identical(other.timestamp, timestamp) || other.timestamp == timestamp));
 }
 
-
+@JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode => Object.hash(runtimeType,id,product,portionGrams,sugarAmount,customName,timestamp);
 
@@ -217,11 +220,11 @@ return $default(_that.id,_that.product,_that.portionGrams,_that.sugarAmount,_tha
 }
 
 /// @nodoc
-
+@JsonSerializable()
 
 class _FoodEntry extends FoodEntry {
   const _FoodEntry({required this.id, required this.product, required this.portionGrams, required this.sugarAmount, this.customName, required this.timestamp}): super._();
-  
+  factory _FoodEntry.fromJson(Map<String, dynamic> json) => _$FoodEntryFromJson(json);
 
 @override final  String id;
 @override final  ProductInfo product;
@@ -236,14 +239,17 @@ class _FoodEntry extends FoodEntry {
 @pragma('vm:prefer-inline')
 _$FoodEntryCopyWith<_FoodEntry> get copyWith => __$FoodEntryCopyWithImpl<_FoodEntry>(this, _$identity);
 
-
+@override
+Map<String, dynamic> toJson() {
+  return _$FoodEntryToJson(this, );
+}
 
 @override
 bool operator ==(Object other) {
   return identical(this, other) || (other.runtimeType == runtimeType&&other is _FoodEntry&&(identical(other.id, id) || other.id == id)&&(identical(other.product, product) || other.product == product)&&(identical(other.portionGrams, portionGrams) || other.portionGrams == portionGrams)&&(identical(other.sugarAmount, sugarAmount) || other.sugarAmount == sugarAmount)&&(identical(other.customName, customName) || other.customName == customName)&&(identical(other.timestamp, timestamp) || other.timestamp == timestamp));
 }
 
-
+@JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode => Object.hash(runtimeType,id,product,portionGrams,sugarAmount,customName,timestamp);
 

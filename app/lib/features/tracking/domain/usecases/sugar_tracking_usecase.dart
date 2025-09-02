@@ -15,6 +15,7 @@ class SugarTrackingUsecase {
   final List<FoodEntry> _todayEntries = [];
   int _currentStreak = 0;
   bool _isInitialized = false;
+  String? _lastStreakCheckDate; // Track when streak was last evaluated
 
   SugarTrackingUsecase(this._repository);
 
@@ -92,7 +93,7 @@ class SugarTrackingUsecase {
 
   /// Reset data for a new day
   Future<void> _resetForNewDay(String today) async {
-    // Load current streak from repository, starts at 0
+    // Load current streak from repository
     _currentStreak = await _repository.getCurrentStreak();
 
     // Check if streak needs to be reset due to missing days
@@ -107,6 +108,7 @@ class SugarTrackingUsecase {
         _currentStreak > 0) {
       // Streak was broken due to missing day(s)
       _currentStreak = 0;
+      await _repository.saveCurrentStreak(0);
       AppLogger.logSugarTracking('Streak broken: missed a day');
     } else {
       AppLogger.logSugarTracking('Current streak: $_currentStreak days');
@@ -132,6 +134,15 @@ class SugarTrackingUsecase {
     // Only evaluate if we haven't already evaluated today
     if (lastStreakDate == today) {
       return false; // Already evaluated for today, no changes made
+    }
+
+    // Don't evaluate streak at the start of a new day when no sugar has been consumed
+    // This prevents the infinite streak bug
+    if (_currentSugarIntake <= 0.0) {
+      AppLogger.logSugarTracking(
+        'New day started - streak evaluation postponed until sugar is consumed',
+      );
+      return false;
     }
 
     final oldStreak = _currentStreak;
@@ -183,7 +194,64 @@ class SugarTrackingUsecase {
 
   /// Check if we should evaluate daily streak (called when user opens app)
   Future<bool> checkDailyStreakEvaluation() async {
+    final today = DateTime.now().toIso8601String().split('T')[0];
+    
+    // Mark that we've checked today
+    _lastStreakCheckDate = today;
+    
     return await _evaluateDailyStreak();
+  }
+
+  /// Check if streak evaluation has already been performed today
+  bool hasCheckedStreakToday(String today) {
+    return _lastStreakCheckDate == today;
+  }
+
+  /// Evaluate streak at end of day when user has consumed sugar
+  Future<bool> evaluateEndOfDayStreak() async {
+    final today = DateTime.now().toIso8601String().split('T')[0];
+    final lastStreakDate = await _repository.getLastStreakDate();
+
+    // Only evaluate if we haven't already evaluated today
+    if (lastStreakDate == today) {
+      return false; // Already evaluated for today, no changes made
+    }
+
+    // Only evaluate if user has actually consumed some sugar today
+    if (_currentSugarIntake <= 0.0) {
+      AppLogger.logSugarTracking('No sugar consumed today - streak evaluation postponed');
+      return false;
+    }
+
+    final oldStreak = _currentStreak;
+
+    // STREAK RULE: User gets a streak point ONLY if they stay within daily limit
+    if (_currentSugarIntake <= _dailyLimit) {
+      // SUCCESS: Under or at limit - achieved daily goal, increment streak
+      _currentStreak++;
+
+      // Mark today as a successful day
+      await _repository.saveLastStreakDate(today);
+      await _repository.saveCurrentStreak(_currentStreak);
+
+      AppLogger.logSugarTracking(
+        'Daily goal achieved! Streak: $_currentStreak days (stayed under ${_dailyLimit.toStringAsFixed(0)}g limit with ${_currentSugarIntake.toStringAsFixed(1)}g)',
+      );
+    } else {
+      // FAILURE: Over limit - goal not achieved, RESET STREAK TO 0
+      _currentStreak = 0;
+      await _repository.saveCurrentStreak(0);
+      await _repository.removeLastStreakDate();
+
+      AppLogger.logSugarTracking(
+        'Daily goal FAILED: ${_currentSugarIntake.toStringAsFixed(1)}g exceeds ${_dailyLimit.toStringAsFixed(0)}g limit - STREAK RESET TO 0',
+      );
+    }
+
+    // Always save the updated streak
+    await _saveToRepository();
+
+    return _currentStreak != oldStreak; // Return true if streak changed
   }
 
   /// Get product by barcode

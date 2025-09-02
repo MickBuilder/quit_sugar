@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:quit_suggar/features/tracking/presentation/providers/tracking_operations_provider.dart';
+import 'package:quit_suggar/features/tracking/presentation/providers/historical_data_providers.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
+import 'package:quit_suggar/core/utils/date_utils.dart';
 
 class CurrentMonthCalendar extends ConsumerWidget {
   const CurrentMonthCalendar({super.key});
@@ -9,7 +11,7 @@ class CurrentMonthCalendar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final now = DateTime.now();
-    final monthName = _getMonthName(now.month);
+    final monthName = DateUtils.getMonthName(now.month);
     final year = now.year;
     
     return Container(
@@ -33,7 +35,7 @@ class CurrentMonthCalendar extends ConsumerWidget {
           const SizedBox(height: 16),
           
           // Calendar grid
-          _buildCalendarGrid(now),
+          _buildCalendarGrid(now, ref),
         ],
       ),
     );
@@ -79,10 +81,9 @@ class CurrentMonthCalendar extends ConsumerWidget {
     );
   }
 
-  Widget _buildCalendarGrid(DateTime currentDate) {
-    final daysInMonth = DateTime(currentDate.year, currentDate.month + 1, 0).day;
-    final firstDayOfMonth = DateTime(currentDate.year, currentDate.month, 1);
-    final startingWeekday = firstDayOfMonth.weekday;
+  Widget _buildCalendarGrid(DateTime currentDate, WidgetRef ref) {
+    final daysInMonth = DateUtils.getDaysInMonth(currentDate.year, currentDate.month);
+    final startingWeekday = DateUtils.getFirstDayOfMonth(currentDate.year, currentDate.month);
     
     return Column(
       children: [
@@ -92,7 +93,7 @@ class CurrentMonthCalendar extends ConsumerWidget {
         const SizedBox(height: 12),
         
         // Calendar days grid
-        _buildDaysGrid(daysInMonth, startingWeekday, currentDate.day),
+        _buildDaysGrid(daysInMonth, startingWeekday, currentDate.day, ref),
       ],
     );
   }
@@ -118,7 +119,7 @@ class CurrentMonthCalendar extends ConsumerWidget {
     );
   }
 
-  Widget _buildDaysGrid(int daysInMonth, int startingWeekday, int currentDay) {
+  Widget _buildDaysGrid(int daysInMonth, int startingWeekday, int currentDay, WidgetRef ref) {
     final List<Widget> dayWidgets = [];
     
     // Add empty spaces for days before the first day of the month
@@ -128,7 +129,7 @@ class CurrentMonthCalendar extends ConsumerWidget {
     
     // Add days of the month
     for (int day = 1; day <= daysInMonth; day++) {
-      dayWidgets.add(_buildDayCell(day, day == currentDay, day < currentDay));
+      dayWidgets.add(_buildDayCell(day, day == currentDay, day < currentDay, ref));
     }
     
     // Organize into rows of 7
@@ -158,9 +159,9 @@ class CurrentMonthCalendar extends ConsumerWidget {
     return Column(children: rows);
   }
 
-  Widget _buildDayCell(int day, bool isToday, bool isPast) {
-    // Mock data for success/failure - replace with real data
-    final isSuccess = _getMockDayStatus(day, isPast);
+  Widget _buildDayCell(int day, bool isToday, bool isPast, WidgetRef ref) {
+    // Get real data for this day
+    final isSuccess = _getRealDayStatus(day, isPast, ref);
     
     Color backgroundColor;
     Color borderColor;
@@ -232,19 +233,33 @@ class CurrentMonthCalendar extends ConsumerWidget {
     );
   }
 
-  String _getMonthName(int month) {
-    const months = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
-    ];
-    return months[month - 1];
-  }
 
-  bool _getMockDayStatus(int day, bool isPast) {
+
+  bool _getRealDayStatus(int day, bool isPast, WidgetRef ref) {
     if (!isPast) return false;
     
-    // Mock pattern: mostly successful with some failures
-    final failureDays = [5, 12, 18, 25]; // Days when limit was exceeded
-    return !failureDays.contains(day);
+    // Get the date for this day
+    final now = DateTime.now();
+    final dateString = DateUtils.formatDate(DateTime(now.year, now.month, day));
+    
+    // Get historical data for this date
+    final historicalDataAsync = ref.watch(dailySummariesInRangeProvider(
+      dateString,
+      dateString,
+    ));
+    
+    // If no data available, assume success (conservative approach)
+    if (historicalDataAsync.isLoading || historicalDataAsync.hasError) {
+      return true;
+    }
+    
+    final historicalData = historicalDataAsync.value ?? [];
+    if (historicalData.isEmpty) {
+      return true; // No data means no failure recorded
+    }
+    
+    // Check if the day was successful (under limit)
+    final dayLog = historicalData.first;
+    return !dayLog.limitExceeded;
   }
 }

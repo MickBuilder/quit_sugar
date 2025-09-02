@@ -1,26 +1,28 @@
 import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:quit_suggar/features/tracking/domain/entities/daily_log.dart';
 import 'package:quit_suggar/features/tracking/data/models/daily_log_model.dart';
 import 'package:quit_suggar/core/services/logger_service.dart';
+import 'package:quit_suggar/core/storage/hive_storage_service.dart';
 
 class HistoricalDataService {
-  static const String _prefixKey = 'daily_history_';
-  static const String _historyIndexKey = 'history_date_index';
 
   /// Save a daily summary to historical storage
   Future<void> saveDailySummary(DailyLog summary) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
       final model = DailyLogModel.fromDomain(summary);
       final jsonString = json.encode(model.toJson());
       
+      // Get existing historical data
+      final historicalData = await HiveStorageService.getHistoricalData() ?? {};
+      
       // Save the summary with date as key
-      final key = '$_prefixKey${summary.date}';
-      await prefs.setString(key, jsonString);
+      historicalData[summary.date] = jsonString;
       
       // Update the index of available dates
-      await _addToDateIndex(summary.date);
+      await _addToDateIndex(summary.date, historicalData);
+      
+      // Save the updated data
+      await HiveStorageService.saveHistoricalData(historicalData);
       
       AppLogger.logSugarTracking(
         'Saved daily summary for ${summary.date}: ${summary.totalSugar.toStringAsFixed(1)}g sugar',
@@ -37,9 +39,8 @@ class HistoricalDataService {
   /// Get a specific daily summary by date (YYYY-MM-DD format)
   Future<DailyLog?> getDailySummary(String date) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final key = '$_prefixKey$date';
-      final jsonString = prefs.getString(key);
+      final historicalData = await HiveStorageService.getHistoricalData();
+      final jsonString = historicalData?[date];
       
       if (jsonString == null) return null;
       
@@ -136,10 +137,10 @@ class HistoricalDataService {
   /// Delete daily summary for a specific date
   Future<void> deleteDailySummary(String date) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final key = '$_prefixKey$date';
-      await prefs.remove(key);
-      await _removeFromDateIndex(date);
+      final historicalData = await HiveStorageService.getHistoricalData() ?? {};
+      historicalData.remove(date);
+      await _removeFromDateIndex(date, historicalData);
+      await HiveStorageService.saveHistoricalData(historicalData);
       
       AppLogger.logSugarTracking('Deleted daily summary for $date');
     } catch (e, stackTrace) {
@@ -154,19 +155,9 @@ class HistoricalDataService {
   /// Clear all historical data
   Future<void> clearAllHistory() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final dates = await _getDateIndex();
+      await HiveStorageService.saveHistoricalData({});
       
-      // Remove all daily summary entries
-      for (final date in dates) {
-        final key = '$_prefixKey$date';
-        await prefs.remove(key);
-      }
-      
-      // Clear the index
-      await prefs.remove(_historyIndexKey);
-      
-      AppLogger.logSugarTracking('Cleared all historical data (${dates.length} entries)');
+      AppLogger.logSugarTracking('Cleared all historical data');
     } catch (e, stackTrace) {
       AppLogger.logSugarTrackingError(
         'Failed to clear all historical data',
@@ -234,12 +225,12 @@ class HistoricalDataService {
   }
 
   /// Private method to maintain index of available dates
-  Future<void> _addToDateIndex(String date) async {
+  Future<void> _addToDateIndex(String date, Map<String, dynamic> historicalData) async {
     try {
-      final dates = await _getDateIndex();
+      final dates = _getDateIndexFromData(historicalData);
       if (!dates.contains(date)) {
         dates.add(date);
-        await _saveDateIndex(dates);
+        historicalData['_date_index'] = dates;
       }
     } catch (e, stackTrace) {
       AppLogger.logSugarTrackingError(
@@ -250,11 +241,11 @@ class HistoricalDataService {
     }
   }
 
-  Future<void> _removeFromDateIndex(String date) async {
+  Future<void> _removeFromDateIndex(String date, Map<String, dynamic> historicalData) async {
     try {
-      final dates = await _getDateIndex();
+      final dates = _getDateIndexFromData(historicalData);
       dates.remove(date);
-      await _saveDateIndex(dates);
+      historicalData['_date_index'] = dates;
     } catch (e, stackTrace) {
       AppLogger.logSugarTrackingError(
         'Failed to remove date $date from index',
@@ -266,29 +257,25 @@ class HistoricalDataService {
 
   Future<List<String>> _getDateIndex() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final jsonString = prefs.getString(_historyIndexKey);
-      
-      if (jsonString == null) return [];
-      
-      final List<dynamic> jsonList = json.decode(jsonString);
-      return jsonList.cast<String>();
+      final historicalData = await HiveStorageService.getHistoricalData();
+      return _getDateIndexFromData(historicalData ?? {});
     } catch (e) {
       return [];
     }
   }
 
-  Future<void> _saveDateIndex(List<String> dates) async {
+  List<String> _getDateIndexFromData(Map<String, dynamic> historicalData) {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final jsonString = json.encode(dates);
-      await prefs.setString(_historyIndexKey, jsonString);
-    } catch (e, stackTrace) {
-      AppLogger.logSugarTrackingError(
-        'Failed to save date index',
-        e,
-        stackTrace,
-      );
+      final dateIndex = historicalData['_date_index'];
+      if (dateIndex == null) return [];
+      
+      if (dateIndex is List) {
+        return dateIndex.cast<String>();
+      }
+      
+      return [];
+    } catch (e) {
+      return [];
     }
   }
 }

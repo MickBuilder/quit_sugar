@@ -32,8 +32,9 @@ class DashboardScreen extends AppScreen {
         );
 
         // Check daily streak evaluation and celebrations when dashboard loads
+        // Only check once per day to prevent infinite streak bug
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          ref.read(sugarTrackingProvider.notifier).checkDailyStreakEvaluation();
+          _checkDailyStreakEvaluationOnce(ref);
           _checkAndShowCelebration(context, ref);
         });
 
@@ -121,6 +122,22 @@ class DashboardScreen extends AppScreen {
 
 
 
+
+  /// Check daily streak evaluation only once per day to prevent infinite streak bug
+  void _checkDailyStreakEvaluationOnce(WidgetRef ref) {
+    final today = DateTime.now().toIso8601String().split('T')[0];
+    
+    // Check if we've already evaluated the streak today
+    final hasCheckedToday = ref.read(sugarTrackingProvider.notifier).hasCheckedStreakToday(today);
+    
+    if (!hasCheckedToday) {
+      // Only check if we haven't already done so today
+      ref.read(sugarTrackingProvider.notifier).checkDailyStreakEvaluation();
+      AppLogger.logState('Daily streak evaluation checked for $today');
+    } else {
+      AppLogger.logState('Daily streak evaluation already checked for $today - skipping');
+    }
+  }
 
   String _getFormattedDate() {
     final now = DateTime.now();

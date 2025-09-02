@@ -5,7 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:quit_suggar/core/router/app_router.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
 import 'package:quit_suggar/core/services/logger_service.dart';
-
+import 'package:quit_suggar/core/storage/hive_storage_service.dart';
 
 import 'package:shadcn_ui/shadcn_ui.dart';
 
@@ -13,6 +13,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   AppLogger.info('App starting up');
+
+  // Initialize Hive storage
+  await HiveStorageService.initialize();
+  AppLogger.info('Hive storage initialized successfully');
 
   // RevenueCat is now initialized via providers
 

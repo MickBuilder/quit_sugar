@@ -3,6 +3,7 @@ import 'package:quit_suggar/features/tracking/domain/entities/food_entry.dart';
 import 'package:quit_suggar/features/tracking/domain/entities/sugar_status.dart';
 
 part 'daily_summary.freezed.dart';
+part 'daily_summary.g.dart';
 
 @freezed
 abstract class DailySummary with _$DailySummary {
@@ -18,6 +19,9 @@ abstract class DailySummary with _$DailySummary {
   }) = _DailySummary;
 
   const DailySummary._();
+
+  factory DailySummary.fromJson(Map<String, dynamic> json) => 
+      _$DailySummaryFromJson(json);
 
   bool get isUnderLimit => totalSugar <= dailyLimit;
   bool get isOverLimit => totalSugar > dailyLimit;

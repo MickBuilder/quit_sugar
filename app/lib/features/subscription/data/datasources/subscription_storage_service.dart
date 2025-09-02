@@ -1,21 +1,15 @@
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:quit_suggar/features/subscription/domain/entities/subscription_status.dart';
 import 'package:quit_suggar/features/subscription/domain/entities/subscription_type.dart';
 import 'package:quit_suggar/core/services/logger_service.dart';
+import 'package:quit_suggar/core/storage/hive_storage_service.dart';
 
 class SubscriptionStorageService {
-  static const String _prefsKeySubscriptionStatus = 'subscription_status';
-  static const String _prefsKeyTrialStartDate = 'trial_start_date';
-  static const String _prefsKeyDailyScanCount = 'daily_scan_count';
-  static const String _prefsKeyLastScanDate = 'last_scan_date';
-  static const String _prefsKeySubscriptionType = 'subscription_type';
-  static const String _prefsKeySubscriptionExpiry = 'subscription_expiry';
 
   /// Load subscription status from storage
   Future<SubscriptionStatus> loadSubscriptionStatus() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final statusString = prefs.getString(_prefsKeySubscriptionStatus);
+      final subscriptionData = await HiveStorageService.getSubscriptionData();
+      final statusString = subscriptionData?['subscription_status'];
 
       if (statusString != null) {
         return SubscriptionStatus.values.firstWhere(
@@ -38,8 +32,9 @@ class SubscriptionStorageService {
   /// Save subscription status to storage
   Future<void> saveSubscriptionStatus(SubscriptionStatus status) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(_prefsKeySubscriptionStatus, status.name);
+      final subscriptionData = await HiveStorageService.getSubscriptionData() ?? {};
+      subscriptionData['subscription_status'] = status.name;
+      await HiveStorageService.saveSubscriptionData(subscriptionData);
     } catch (e, stackTrace) {
       AppLogger.logSugarTrackingError(
         'Failed to save subscription status to storage',
@@ -52,8 +47,8 @@ class SubscriptionStorageService {
   /// Load subscription type from storage
   Future<SubscriptionType?> loadSubscriptionType() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final typeString = prefs.getString(_prefsKeySubscriptionType);
+      final subscriptionData = await HiveStorageService.getSubscriptionData();
+      final typeString = subscriptionData?['subscription_type'];
 
       if (typeString != null) {
         return SubscriptionType.values.firstWhere(
@@ -76,13 +71,15 @@ class SubscriptionStorageService {
   /// Save subscription type to storage
   Future<void> saveSubscriptionType(SubscriptionType? type) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
+      final subscriptionData = await HiveStorageService.getSubscriptionData() ?? {};
 
       if (type != null) {
-        await prefs.setString(_prefsKeySubscriptionType, type.name);
+        subscriptionData['subscription_type'] = type.name;
       } else {
-        await prefs.remove(_prefsKeySubscriptionType);
+        subscriptionData.remove('subscription_type');
       }
+      
+      await HiveStorageService.saveSubscriptionData(subscriptionData);
     } catch (e, stackTrace) {
       AppLogger.logSugarTrackingError(
         'Failed to save subscription type to storage',
@@ -95,8 +92,8 @@ class SubscriptionStorageService {
   /// Load trial start date from storage
   Future<DateTime?> loadTrialStartDate() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final trialStartString = prefs.getString(_prefsKeyTrialStartDate);
+      final subscriptionData = await HiveStorageService.getSubscriptionData();
+      final trialStartString = subscriptionData?['trial_start_date'];
 
       if (trialStartString != null) {
         return DateTime.parse(trialStartString);
@@ -116,13 +113,15 @@ class SubscriptionStorageService {
   /// Save trial start date to storage
   Future<void> saveTrialStartDate(DateTime? date) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
+      final subscriptionData = await HiveStorageService.getSubscriptionData() ?? {};
 
       if (date != null) {
-        await prefs.setString(_prefsKeyTrialStartDate, date.toIso8601String());
+        subscriptionData['trial_start_date'] = date.toIso8601String();
       } else {
-        await prefs.remove(_prefsKeyTrialStartDate);
+        subscriptionData.remove('trial_start_date');
       }
+
+      await HiveStorageService.saveSubscriptionData(subscriptionData);
     } catch (e, stackTrace) {
       AppLogger.logSugarTrackingError(
         'Failed to save trial start date to storage',
@@ -135,8 +134,8 @@ class SubscriptionStorageService {
   /// Load subscription expiry date from storage
   Future<DateTime?> loadSubscriptionExpiry() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final expiryString = prefs.getString(_prefsKeySubscriptionExpiry);
+      final subscriptionData = await HiveStorageService.getSubscriptionData();
+      final expiryString = subscriptionData?['subscription_expiry'];
 
       if (expiryString != null) {
         return DateTime.parse(expiryString);
@@ -156,16 +155,15 @@ class SubscriptionStorageService {
   /// Save subscription expiry date to storage
   Future<void> saveSubscriptionExpiry(DateTime? expiry) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
+      final subscriptionData = await HiveStorageService.getSubscriptionData() ?? {};
 
       if (expiry != null) {
-        await prefs.setString(
-          _prefsKeySubscriptionExpiry,
-          expiry.toIso8601String(),
-        );
+        subscriptionData['subscription_expiry'] = expiry.toIso8601String();
       } else {
-        await prefs.remove(_prefsKeySubscriptionExpiry);
+        subscriptionData.remove('subscription_expiry');
       }
+
+      await HiveStorageService.saveSubscriptionData(subscriptionData);
     } catch (e, stackTrace) {
       AppLogger.logSugarTrackingError(
         'Failed to save subscription expiry to storage',
@@ -175,21 +173,11 @@ class SubscriptionStorageService {
     }
   }
 
-  /// Load daily scan count and reset if new day
+  /// Load daily scan count from storage
   Future<int> loadDailyScanCount() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final today = DateTime.now().toIso8601String().split('T')[0];
-      final lastScanDate = prefs.getString(_prefsKeyLastScanDate);
-
-      if (lastScanDate != today) {
-        // New day, reset scan count
-        await _saveScanCount(0);
-        return 0;
-      } else {
-        // Same day, load existing count
-        return prefs.getInt(_prefsKeyDailyScanCount) ?? 0;
-      }
+      final subscriptionData = await HiveStorageService.getSubscriptionData();
+      return subscriptionData?['daily_scan_count']?.toInt() ?? 0;
     } catch (e, stackTrace) {
       AppLogger.logSugarTrackingError(
         'Failed to load daily scan count from storage',
@@ -201,97 +189,82 @@ class SubscriptionStorageService {
   }
 
   /// Save daily scan count to storage
-  Future<void> saveScanCount(int count) async {
-    await _saveScanCount(count);
-  }
-
-  Future<void> _saveScanCount(int count) async {
+  Future<void> saveDailyScanCount(int count) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final today = DateTime.now().toIso8601String().split('T')[0];
-
-      await Future.wait([
-        prefs.setInt(_prefsKeyDailyScanCount, count),
-        prefs.setString(_prefsKeyLastScanDate, today),
-      ]);
+      final subscriptionData = await HiveStorageService.getSubscriptionData() ?? {};
+      subscriptionData['daily_scan_count'] = count;
+      await HiveStorageService.saveSubscriptionData(subscriptionData);
     } catch (e, stackTrace) {
       AppLogger.logSugarTrackingError(
-        'Failed to save scan count to storage',
+        'Failed to save daily scan count to storage',
         e,
         stackTrace,
       );
     }
   }
 
-  /// Save all subscription data in batch
-  Future<void> saveAllSubscriptionData({
-    required SubscriptionStatus status,
-    SubscriptionType? subscriptionType,
-    DateTime? trialStartDate,
-    DateTime? subscriptionExpiry,
-  }) async {
+  /// Load last scan date from storage
+  Future<String?> loadLastScanDate() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-
-      final futures = <Future>[
-        prefs.setString(_prefsKeySubscriptionStatus, status.name),
-      ];
-
-      if (subscriptionType != null) {
-        futures.add(
-          prefs.setString(_prefsKeySubscriptionType, subscriptionType.name),
-        );
-      } else {
-        futures.add(prefs.remove(_prefsKeySubscriptionType));
-      }
-
-      if (trialStartDate != null) {
-        futures.add(
-          prefs.setString(
-            _prefsKeyTrialStartDate,
-            trialStartDate.toIso8601String(),
-          ),
-        );
-      } else {
-        futures.add(prefs.remove(_prefsKeyTrialStartDate));
-      }
-
-      if (subscriptionExpiry != null) {
-        futures.add(
-          prefs.setString(
-            _prefsKeySubscriptionExpiry,
-            subscriptionExpiry.toIso8601String(),
-          ),
-        );
-      } else {
-        futures.add(prefs.remove(_prefsKeySubscriptionExpiry));
-      }
-
-      await Future.wait(futures);
-      AppLogger.logState('Saved subscription data - Status: ${status.name}');
+      final subscriptionData = await HiveStorageService.getSubscriptionData();
+      return subscriptionData?['last_scan_date'];
     } catch (e, stackTrace) {
       AppLogger.logSugarTrackingError(
-        'Failed to save subscription data in batch',
+        'Failed to load last scan date from storage',
+        e,
+        stackTrace,
+      );
+      return null;
+    }
+  }
+
+  /// Save last scan date to storage
+  Future<void> saveLastScanDate(String date) async {
+    try {
+      final subscriptionData = await HiveStorageService.getSubscriptionData() ?? {};
+      subscriptionData['last_scan_date'] = date;
+      await HiveStorageService.saveSubscriptionData(subscriptionData);
+    } catch (e, stackTrace) {
+      AppLogger.logSugarTrackingError(
+        'Failed to save last scan date to storage',
         e,
         stackTrace,
       );
     }
   }
 
-  /// Clear all subscription data (for reset/testing)
+  /// Reset daily scan count (called when date changes)
+  Future<void> resetDailyScanCount() async {
+    try {
+      await saveDailyScanCount(0);
+      AppLogger.logState('Reset daily scan count');
+    } catch (e, stackTrace) {
+      AppLogger.logSugarTrackingError(
+        'Failed to reset daily scan count',
+        e,
+        stackTrace,
+      );
+    }
+  }
+
+  /// Increment daily scan count
+  Future<void> incrementDailyScanCount() async {
+    try {
+      final currentCount = await loadDailyScanCount();
+      await saveDailyScanCount(currentCount + 1);
+    } catch (e, stackTrace) {
+      AppLogger.logSugarTrackingError(
+        'Failed to increment daily scan count',
+        e,
+        stackTrace,
+      );
+    }
+  }
+
+  /// Clear all subscription data
   Future<void> clearAllData() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-
-      await Future.wait([
-        prefs.remove(_prefsKeySubscriptionStatus),
-        prefs.remove(_prefsKeySubscriptionType),
-        prefs.remove(_prefsKeyTrialStartDate),
-        prefs.remove(_prefsKeySubscriptionExpiry),
-        prefs.remove(_prefsKeyDailyScanCount),
-        prefs.remove(_prefsKeyLastScanDate),
-      ]);
-
+      await HiveStorageService.saveSubscriptionData({});
       AppLogger.logState('Cleared all subscription data from storage');
     } catch (e, stackTrace) {
       AppLogger.logSugarTrackingError(

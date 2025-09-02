@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'product_info.freezed.dart';
+part 'product_info.g.dart';
 
 @freezed
 abstract class ProductInfo with _$ProductInfo {
@@ -19,6 +20,9 @@ abstract class ProductInfo with _$ProductInfo {
   }) = _ProductInfo;
 
   const ProductInfo._();
+
+  factory ProductInfo.fromJson(Map<String, dynamic> json) => 
+      _$ProductInfoFromJson(json);
 
   /// Calculate sugar content for a given portion size in grams
   double calculateSugarForPortion(double portionGrams) {

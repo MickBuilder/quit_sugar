@@ -11,6 +11,7 @@ part of 'product_info.dart';
 
 // dart format off
 T _$identity<T>(T value) => value;
+
 /// @nodoc
 mixin _$ProductInfo {
 
@@ -21,6 +22,8 @@ mixin _$ProductInfo {
 @pragma('vm:prefer-inline')
 $ProductInfoCopyWith<ProductInfo> get copyWith => _$ProductInfoCopyWithImpl<ProductInfo>(this as ProductInfo, _$identity);
 
+  /// Serializes this ProductInfo to a JSON map.
+  Map<String, dynamic> toJson();
 
 
 @override
@@ -28,7 +31,7 @@ bool operator ==(Object other) {
   return identical(this, other) || (other.runtimeType == runtimeType&&other is ProductInfo&&(identical(other.barcode, barcode) || other.barcode == barcode)&&(identical(other.name, name) || other.name == name)&&(identical(other.brand, brand) || other.brand == brand)&&(identical(other.sugarPer100g, sugarPer100g) || other.sugarPer100g == sugarPer100g)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.ingredients, ingredients) || other.ingredients == ingredients)&&(identical(other.nutritionGrade, nutritionGrade) || other.nutritionGrade == nutritionGrade)&&(identical(other.weightGrams, weightGrams) || other.weightGrams == weightGrams)&&const DeepCollectionEquality().equals(other.nutriments, nutriments)&&const DeepCollectionEquality().equals(other.categories, categories)&&(identical(other.servingSize, servingSize) || other.servingSize == servingSize));
 }
 
-
+@JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode => Object.hash(runtimeType,barcode,name,brand,sugarPer100g,imageUrl,ingredients,nutritionGrade,weightGrams,const DeepCollectionEquality().hash(nutriments),const DeepCollectionEquality().hash(categories),servingSize);
 
@@ -213,11 +216,11 @@ return $default(_that.barcode,_that.name,_that.brand,_that.sugarPer100g,_that.im
 }
 
 /// @nodoc
-
+@JsonSerializable()
 
 class _ProductInfo extends ProductInfo {
   const _ProductInfo({required this.barcode, required this.name, this.brand, this.sugarPer100g, this.imageUrl, this.ingredients, this.nutritionGrade, this.weightGrams, final  Map<String, dynamic>? nutriments, final  List<String> categories = const [], this.servingSize = 100.0}): _nutriments = nutriments,_categories = categories,super._();
-  
+  factory _ProductInfo.fromJson(Map<String, dynamic> json) => _$ProductInfoFromJson(json);
 
 @override final  String barcode;
 @override final  String name;
@@ -251,14 +254,17 @@ class _ProductInfo extends ProductInfo {
 @pragma('vm:prefer-inline')
 _$ProductInfoCopyWith<_ProductInfo> get copyWith => __$ProductInfoCopyWithImpl<_ProductInfo>(this, _$identity);
 
-
+@override
+Map<String, dynamic> toJson() {
+  return _$ProductInfoToJson(this, );
+}
 
 @override
 bool operator ==(Object other) {
   return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProductInfo&&(identical(other.barcode, barcode) || other.barcode == barcode)&&(identical(other.name, name) || other.name == name)&&(identical(other.brand, brand) || other.brand == brand)&&(identical(other.sugarPer100g, sugarPer100g) || other.sugarPer100g == sugarPer100g)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.ingredients, ingredients) || other.ingredients == ingredients)&&(identical(other.nutritionGrade, nutritionGrade) || other.nutritionGrade == nutritionGrade)&&(identical(other.weightGrams, weightGrams) || other.weightGrams == weightGrams)&&const DeepCollectionEquality().equals(other._nutriments, _nutriments)&&const DeepCollectionEquality().equals(other._categories, _categories)&&(identical(other.servingSize, servingSize) || other.servingSize == servingSize));
 }
 
-
+@JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode => Object.hash(runtimeType,barcode,name,brand,sugarPer100g,imageUrl,ingredients,nutritionGrade,weightGrams,const DeepCollectionEquality().hash(_nutriments),const DeepCollectionEquality().hash(_categories),servingSize);
 

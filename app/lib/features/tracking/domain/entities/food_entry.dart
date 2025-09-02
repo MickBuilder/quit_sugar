@@ -2,6 +2,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:quit_suggar/features/tracking/domain/entities/product_info.dart';
 
 part 'food_entry.freezed.dart';
+part 'food_entry.g.dart';
 
 @freezed
 abstract class FoodEntry with _$FoodEntry {
@@ -15,6 +16,9 @@ abstract class FoodEntry with _$FoodEntry {
   }) = _FoodEntry;
 
   const FoodEntry._();
+
+  factory FoodEntry.fromJson(Map<String, dynamic> json) => 
+      _$FoodEntryFromJson(json);
 
   String get displayName => customName ?? product.name;
 }

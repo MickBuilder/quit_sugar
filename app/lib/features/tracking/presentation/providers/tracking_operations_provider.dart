@@ -133,6 +133,11 @@ class SugarTracking extends _$SugarTracking {
     return success;
   }
 
+  /// Check if streak evaluation has already been performed today
+  bool hasCheckedStreakToday(String today) {
+    return _usecase.hasCheckedStreakToday(today);
+  }
+
   /// Set daily sugar limit
   Future<void> setDailyLimit(double limit) async {
     final usecaseState = await future;

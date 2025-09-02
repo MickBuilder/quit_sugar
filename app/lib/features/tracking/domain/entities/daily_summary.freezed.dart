@@ -11,6 +11,7 @@ part of 'daily_summary.dart';
 
 // dart format off
 T _$identity<T>(T value) => value;
+
 /// @nodoc
 mixin _$DailySummary {
 
@@ -21,6 +22,8 @@ mixin _$DailySummary {
 @pragma('vm:prefer-inline')
 $DailySummaryCopyWith<DailySummary> get copyWith => _$DailySummaryCopyWithImpl<DailySummary>(this as DailySummary, _$identity);
 
+  /// Serializes this DailySummary to a JSON map.
+  Map<String, dynamic> toJson();
 
 
 @override
@@ -28,7 +31,7 @@ bool operator ==(Object other) {
   return identical(this, other) || (other.runtimeType == runtimeType&&other is DailySummary&&(identical(other.totalSugar, totalSugar) || other.totalSugar == totalSugar)&&(identical(other.dailyLimit, dailyLimit) || other.dailyLimit == dailyLimit)&&(identical(other.remainingSugar, remainingSugar) || other.remainingSugar == remainingSugar)&&(identical(other.progressPercentage, progressPercentage) || other.progressPercentage == progressPercentage)&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other.entries, entries)&&(identical(other.motivationalMessage, motivationalMessage) || other.motivationalMessage == motivationalMessage)&&(identical(other.streak, streak) || other.streak == streak));
 }
 
-
+@JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode => Object.hash(runtimeType,totalSugar,dailyLimit,remainingSugar,progressPercentage,status,const DeepCollectionEquality().hash(entries),motivationalMessage,streak);
 
@@ -210,11 +213,11 @@ return $default(_that.totalSugar,_that.dailyLimit,_that.remainingSugar,_that.pro
 }
 
 /// @nodoc
-
+@JsonSerializable()
 
 class _DailySummary extends DailySummary {
   const _DailySummary({required this.totalSugar, required this.dailyLimit, required this.remainingSugar, required this.progressPercentage, required this.status, required final  List<FoodEntry> entries, required this.motivationalMessage, required this.streak}): _entries = entries,super._();
-  
+  factory _DailySummary.fromJson(Map<String, dynamic> json) => _$DailySummaryFromJson(json);
 
 @override final  double totalSugar;
 @override final  double dailyLimit;
@@ -237,14 +240,17 @@ class _DailySummary extends DailySummary {
 @pragma('vm:prefer-inline')
 _$DailySummaryCopyWith<_DailySummary> get copyWith => __$DailySummaryCopyWithImpl<_DailySummary>(this, _$identity);
 
-
+@override
+Map<String, dynamic> toJson() {
+  return _$DailySummaryToJson(this, );
+}
 
 @override
 bool operator ==(Object other) {
   return identical(this, other) || (other.runtimeType == runtimeType&&other is _DailySummary&&(identical(other.totalSugar, totalSugar) || other.totalSugar == totalSugar)&&(identical(other.dailyLimit, dailyLimit) || other.dailyLimit == dailyLimit)&&(identical(other.remainingSugar, remainingSugar) || other.remainingSugar == remainingSugar)&&(identical(other.progressPercentage, progressPercentage) || other.progressPercentage == progressPercentage)&&(identical(other.status, status) || other.status == status)&&const DeepCollectionEquality().equals(other._entries, _entries)&&(identical(other.motivationalMessage, motivationalMessage) || other.motivationalMessage == motivationalMessage)&&(identical(other.streak, streak) || other.streak == streak));
 }
 
-
+@JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode => Object.hash(runtimeType,totalSugar,dailyLimit,remainingSugar,progressPercentage,status,const DeepCollectionEquality().hash(_entries),motivationalMessage,streak);
 

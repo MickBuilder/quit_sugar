@@ -1,22 +1,15 @@
-import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:quit_suggar/features/tracking/data/models/food_entry_model.dart';
 import 'package:quit_suggar/features/tracking/domain/entities/food_entry.dart';
 import 'package:quit_suggar/core/services/logger_service.dart';
+import 'package:quit_suggar/core/storage/hive_storage_service.dart';
 
 class TrackingStorageService {
-  static const String _prefsKeyDailyLimit = 'daily_limit';
-  static const String _prefsKeySugarIntake = 'current_sugar_intake';
-  static const String _prefsKeyEntries = 'today_entries';
-  static const String _prefsKeyLastDate = 'last_date';
-  static const String _prefsKeyStreak = 'daily_streak';
-  static const String _prefsKeyLastStreakDate = 'last_streak_date';
-
+  
   /// Load daily limit from storage
   Future<double> loadDailyLimit(double defaultLimit) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      return prefs.getDouble(_prefsKeyDailyLimit) ?? defaultLimit;
+      final trackingData = await HiveStorageService.getDailyTracking();
+      return trackingData?['daily_limit']?.toDouble() ?? defaultLimit;
     } catch (e, stackTrace) {
       AppLogger.logSugarTrackingError(
         'Failed to load daily limit from storage',
@@ -30,8 +23,9 @@ class TrackingStorageService {
   /// Save daily limit to storage
   Future<void> saveDailyLimit(double limit) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setDouble(_prefsKeyDailyLimit, limit);
+      final trackingData = await HiveStorageService.getDailyTracking() ?? {};
+      trackingData['daily_limit'] = limit;
+      await HiveStorageService.saveDailyTracking(trackingData);
     } catch (e, stackTrace) {
       AppLogger.logSugarTrackingError(
         'Failed to save daily limit to storage',
@@ -44,8 +38,8 @@ class TrackingStorageService {
   /// Load current sugar intake from storage
   Future<double> loadSugarIntake() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      return prefs.getDouble(_prefsKeySugarIntake) ?? 0.0;
+      final trackingData = await HiveStorageService.getDailyTracking();
+      return trackingData?['sugar_intake']?.toDouble() ?? 0.0;
     } catch (e, stackTrace) {
       AppLogger.logSugarTrackingError(
         'Failed to load sugar intake from storage',
@@ -59,8 +53,9 @@ class TrackingStorageService {
   /// Save current sugar intake to storage
   Future<void> saveSugarIntake(double intake) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setDouble(_prefsKeySugarIntake, intake);
+      final trackingData = await HiveStorageService.getDailyTracking() ?? {};
+      trackingData['sugar_intake'] = intake;
+      await HiveStorageService.saveDailyTracking(trackingData);
     } catch (e, stackTrace) {
       AppLogger.logSugarTrackingError(
         'Failed to save sugar intake to storage',
@@ -73,17 +68,10 @@ class TrackingStorageService {
   /// Load today's entries from storage
   Future<List<FoodEntry>> loadTodayEntries() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final entriesJson = prefs.getString(_prefsKeyEntries);
-
-      if (entriesJson != null) {
-        final entriesList = json.decode(entriesJson) as List;
-        return entriesList
-            .map((entryMap) => FoodEntryModel.fromJson(entryMap).toDomain())
-            .toList();
-      }
-
-      return [];
+      final entries = await HiveStorageService.getFoodEntries();
+      return entries
+          .map((entryMap) => FoodEntryModel.fromJson(entryMap).toDomain())
+          .toList();
     } catch (e, stackTrace) {
       AppLogger.logSugarTrackingError(
         'Failed to load entries from storage',
@@ -97,11 +85,8 @@ class TrackingStorageService {
   /// Save today's entries to storage
   Future<void> saveTodayEntries(List<FoodEntry> entries) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final entriesJson = json.encode(
-        entries.map((e) => e.toModel().toJson()).toList(),
-      );
-      await prefs.setString(_prefsKeyEntries, entriesJson);
+      final entriesJson = entries.map((e) => e.toModel().toJson()).toList();
+      await HiveStorageService.saveFoodEntries(entriesJson);
     } catch (e, stackTrace) {
       AppLogger.logSugarTrackingError(
         'Failed to save entries to storage',
@@ -114,8 +99,8 @@ class TrackingStorageService {
   /// Load current streak from storage
   Future<int> loadStreak() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      return prefs.getInt(_prefsKeyStreak) ?? 0;
+      final streakData = await HiveStorageService.getStreakData();
+      return streakData?['streak']?.toInt() ?? 0;
     } catch (e, stackTrace) {
       AppLogger.logSugarTrackingError(
         'Failed to load streak from storage',
@@ -129,8 +114,9 @@ class TrackingStorageService {
   /// Save streak to storage
   Future<void> saveStreak(int streak) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setInt(_prefsKeyStreak, streak);
+      final streakData = await HiveStorageService.getStreakData() ?? {};
+      streakData['streak'] = streak;
+      await HiveStorageService.saveStreakData(streakData);
     } catch (e, stackTrace) {
       AppLogger.logSugarTrackingError(
         'Failed to save streak to storage',
@@ -143,8 +129,8 @@ class TrackingStorageService {
   /// Load last streak evaluation date
   Future<String?> loadLastStreakDate() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      return prefs.getString(_prefsKeyLastStreakDate);
+      final streakData = await HiveStorageService.getStreakData();
+      return streakData?['last_streak_date'];
     } catch (e, stackTrace) {
       AppLogger.logSugarTrackingError(
         'Failed to load last streak date from storage',
@@ -158,8 +144,9 @@ class TrackingStorageService {
   /// Save last streak evaluation date
   Future<void> saveLastStreakDate(String date) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(_prefsKeyLastStreakDate, date);
+      final streakData = await HiveStorageService.getStreakData() ?? {};
+      streakData['last_streak_date'] = date;
+      await HiveStorageService.saveStreakData(streakData);
     } catch (e, stackTrace) {
       AppLogger.logSugarTrackingError(
         'Failed to save last streak date to storage',
@@ -172,8 +159,9 @@ class TrackingStorageService {
   /// Remove last streak date (when streak is reset)
   Future<void> removeLastStreakDate() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.remove(_prefsKeyLastStreakDate);
+      final streakData = await HiveStorageService.getStreakData() ?? {};
+      streakData.remove('last_streak_date');
+      await HiveStorageService.saveStreakData(streakData);
     } catch (e, stackTrace) {
       AppLogger.logSugarTrackingError(
         'Failed to remove last streak date from storage',
@@ -186,8 +174,8 @@ class TrackingStorageService {
   /// Load last tracking date
   Future<String?> loadLastDate() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      return prefs.getString(_prefsKeyLastDate);
+      final trackingData = await HiveStorageService.getDailyTracking();
+      return trackingData?['last_date'];
     } catch (e, stackTrace) {
       AppLogger.logSugarTrackingError(
         'Failed to load last date from storage',
@@ -201,8 +189,9 @@ class TrackingStorageService {
   /// Save last tracking date
   Future<void> saveLastDate(String date) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(_prefsKeyLastDate, date);
+      final trackingData = await HiveStorageService.getDailyTracking() ?? {};
+      trackingData['last_date'] = date;
+      await HiveStorageService.saveDailyTracking(trackingData);
     } catch (e, stackTrace) {
       AppLogger.logSugarTrackingError(
         'Failed to save last date to storage',
@@ -221,18 +210,21 @@ class TrackingStorageService {
     required int streak,
   }) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
+      // Save tracking data
+      final trackingData = {
+        'last_date': date,
+        'daily_limit': dailyLimit,
+        'sugar_intake': sugarIntake,
+      };
+      await HiveStorageService.saveDailyTracking(trackingData);
 
-      await Future.wait([
-        prefs.setString(_prefsKeyLastDate, date),
-        prefs.setDouble(_prefsKeyDailyLimit, dailyLimit),
-        prefs.setDouble(_prefsKeySugarIntake, sugarIntake),
-        prefs.setString(
-          _prefsKeyEntries,
-          json.encode(entries.map((e) => e.toModel().toJson()).toList()),
-        ),
-        prefs.setInt(_prefsKeyStreak, streak),
-      ]);
+      // Save entries
+      final entriesJson = entries.map((e) => e.toModel().toJson()).toList();
+      await HiveStorageService.saveFoodEntries(entriesJson);
+
+      // Save streak data
+      final streakData = {'streak': streak};
+      await HiveStorageService.saveStreakData(streakData);
 
       AppLogger.logState(
         'Saved tracking data: ${sugarIntake.toStringAsFixed(1)}g sugar, ${entries.length} entries',
@@ -249,15 +241,10 @@ class TrackingStorageService {
   /// Clear all tracking data (for reset/testing)
   Future<void> clearAllData() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-
       await Future.wait([
-        prefs.remove(_prefsKeyDailyLimit),
-        prefs.remove(_prefsKeySugarIntake),
-        prefs.remove(_prefsKeyEntries),
-        prefs.remove(_prefsKeyLastDate),
-        prefs.remove(_prefsKeyStreak),
-        prefs.remove(_prefsKeyLastStreakDate),
+        HiveStorageService.saveDailyTracking({}),
+        HiveStorageService.saveFoodEntries([]),
+        HiveStorageService.saveStreakData({}),
       ]);
 
       AppLogger.logState('Cleared all tracking data from storage');

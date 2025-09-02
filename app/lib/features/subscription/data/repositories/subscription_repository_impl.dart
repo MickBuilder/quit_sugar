@@ -59,7 +59,7 @@ class SubscriptionRepositoryImpl implements SubscriptionRepository {
 
   @override
   Future<void> saveScanCount(int count) async {
-    await _storageService.saveScanCount(count);
+    await _storageService.saveDailyScanCount(count);
   }
 
   @override
@@ -69,12 +69,11 @@ class SubscriptionRepositoryImpl implements SubscriptionRepository {
     DateTime? trialStartDate,
     DateTime? subscriptionExpiry,
   }) async {
-    await _storageService.saveAllSubscriptionData(
-      status: status,
-      subscriptionType: subscriptionType,
-      trialStartDate: trialStartDate,
-      subscriptionExpiry: subscriptionExpiry,
-    );
+    // Save each piece of data individually since we removed the batch method
+    await _storageService.saveSubscriptionStatus(status);
+    await _storageService.saveSubscriptionType(subscriptionType);
+    await _storageService.saveTrialStartDate(trialStartDate);
+    await _storageService.saveSubscriptionExpiry(subscriptionExpiry);
   }
 
   @override

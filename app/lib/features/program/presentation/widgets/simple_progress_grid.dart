@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:quit_suggar/features/tracking/presentation/providers/tracking_operations_provider.dart';
+import 'package:quit_suggar/features/tracking/presentation/providers/historical_data_providers.dart';
 import 'package:quit_suggar/core/theme/app_theme.dart';
+import 'package:quit_suggar/core/utils/date_utils.dart';
 
 class SimpleProgressGrid extends ConsumerWidget {
   const SimpleProgressGrid({super.key});
@@ -104,15 +106,22 @@ class SimpleProgressGrid extends ConsumerWidget {
   }
 
   Map<String, dynamic> _getDayData(int dayIndex, WidgetRef ref) {
-    final isToday = dayIndex == 6;
-    final dailySummary = ref.watch(sugarTrackingProvider.notifier).getDailySummary();
+    // Get the last 7 days
+    final last7Days = DateUtils.getLastNDays(7);
+    final today = DateUtils.getCurrentDate();
+    
+    // Check if this day index corresponds to today
+    final isToday = last7Days[dayIndex] == today;
     
     // Get real data for the last 7 days
     final sugarData = _getRealSugarData(ref);
     final sugarValue = dayIndex < sugarData.length ? sugarData[dayIndex] : 0.0;
     
-    // Determine color based on daily limit
+    // Get daily limit from current tracking data
+    final dailySummary = ref.watch(sugarTrackingProvider.notifier).getDailySummary();
     final dailyLimit = dailySummary.dailyLimit;
+    
+    // Determine color based on daily limit
     final color = sugarValue == 0
         ? AppTheme.accentYellow
         : sugarValue <= dailyLimit
@@ -120,7 +129,7 @@ class SimpleProgressGrid extends ConsumerWidget {
         : AppTheme.accentOrange;
 
     return {
-      'day': ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][dayIndex],
+      'day': DateUtils.getShortDayName((DateTime.now().weekday + dayIndex - 7) % 7 + 1),
       'color': color,
       'value': sugarValue == 0 ? '-' : '${sugarValue.toInt()}g',
       'isToday': isToday,
@@ -128,25 +137,40 @@ class SimpleProgressGrid extends ConsumerWidget {
   }
 
   List<double> _getRealSugarData(WidgetRef ref) {
-    // For now, use current day's data and estimate past days
-    // In a full implementation, this would fetch from historical data
-    final dailySummary = ref.watch(sugarTrackingProvider.notifier).getDailySummary();
-    final currentSugar = dailySummary.totalSugar;
-    final dailyLimit = dailySummary.dailyLimit;
+    // Get the last 7 days
+    final last7Days = DateUtils.getLastNDays(7);
     
-    // Generate realistic data based on current streak and sugar intake
-    final List<double> data = [];
-    for (int i = 6; i >= 0; i--) {
-      if (i == 6) {
-        // Today
-        data.add(currentSugar);
-      } else {
-        // Past days - estimate based on streak
-        final daySugar = dailyLimit * (0.7 + (i * 0.05)); // Gradual increase
-        data.add(daySugar);
-      }
+    // Watch historical data for the last 7 days
+    final historicalDataAsync = ref.watch(dailySummariesInRangeProvider(
+      last7Days.first,
+      last7Days.last,
+    ));
+    
+    // Return loading state with zeros for now
+    if (historicalDataAsync.isLoading) {
+      return List.filled(7, 0.0);
     }
     
-    return data.reversed.toList(); // Return in chronological order
+    // Return error state with zeros for now
+    if (historicalDataAsync.hasError) {
+      return List.filled(7, 0.0);
+    }
+    
+    // Get the data
+    final historicalData = historicalDataAsync.value ?? [];
+    
+    // Create a map of date to sugar amount
+    final Map<String, double> dateToSugar = {};
+    for (final log in historicalData) {
+      dateToSugar[log.date] = log.totalSugar;
+    }
+    
+    // Build the list for the last 7 days
+    final List<double> data = [];
+    for (final date in last7Days) {
+      data.add(dateToSugar[date] ?? 0.0);
+    }
+    
+    return data;
   }
 }

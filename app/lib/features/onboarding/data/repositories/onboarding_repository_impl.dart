@@ -1,52 +1,44 @@
-import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:quit_suggar/core/services/logger_service.dart';
+import 'package:quit_suggar/core/storage/hive_storage_service.dart';
 import 'package:quit_suggar/features/onboarding/domain/entities/onboarding_data.dart';
 import 'package:quit_suggar/features/onboarding/domain/repositories/onboarding_repository.dart';
 
 class OnboardingRepositoryImpl implements OnboardingRepository {
-  static const String _onboardingCompletedKey = 'onboarding_completed';
-  static const String _onboardingDataKey = 'onboarding_data';
-
   
   @override
   Future<bool> isOnboardingCompleted() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(_onboardingCompletedKey) ?? false;
+    return await HiveStorageService.getOnboardingCompleted();
   }
   
   @override
   Future<void> markOnboardingCompleted() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_onboardingCompletedKey, true);
+    await HiveStorageService.saveOnboardingCompleted(true);
   }
   
   @override
   Future<void> saveOnboardingData(OnboardingData data) async {
-    final prefs = await SharedPreferences.getInstance();
-    final jsonString = json.encode(data.toJson());
-    await prefs.setString(_onboardingDataKey, jsonString);
+    final jsonData = data.toJson();
+    await HiveStorageService.saveOnboardingData(jsonData);
   }
   
   @override
   Future<OnboardingData?> getOnboardingData() async {
-    final prefs = await SharedPreferences.getInstance();
-    final jsonString = prefs.getString(_onboardingDataKey);
+    final jsonData = await HiveStorageService.getOnboardingData();
     
-    if (jsonString == null) return null;
+    if (jsonData == null) return null;
     
     try {
-      final jsonMap = json.decode(jsonString) as Map<String, dynamic>;
-      return OnboardingData.fromJson(jsonMap);
-    } catch (e) {
+      return OnboardingData.fromJson(jsonData);
+    } catch (e, stackTrace) {
+      AppLogger.logSugarTrackingError('Failed to parse onboarding data', e, stackTrace);
       return null;
     }
   }
   
   @override
   Future<void> clearOnboardingData() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_onboardingCompletedKey);
-    await prefs.remove(_onboardingDataKey);
+    await HiveStorageService.saveOnboardingCompleted(false);
+    await HiveStorageService.saveOnboardingData({});
   }
   
 
