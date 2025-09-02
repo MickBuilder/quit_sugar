@@ -12,8 +12,10 @@ class DailyProgressCard extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final remainingBudget = summary.remainingSugar;
-    final budgetPercentage = remainingBudget / summary.dailyLimit;
+    // Calculate the actual remaining budget (can be negative if exceeded)
+    final actualRemaining = summary.dailyLimit - summary.totalSugar;
+    final isOverBudget = actualRemaining < 0;
+    final budgetPercentage = summary.totalSugar / summary.dailyLimit;
     
     // Get onboarding data to show program progress
     final onboardingDataAsync = ref.watch(onboardingDataProvider);
@@ -33,7 +35,7 @@ class DailyProgressCard extends HookConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '${remainingBudget.toStringAsFixed(1)}g',
+                      '${actualRemaining.toStringAsFixed(1)}g',
                       style: AppTextStyles.title.copyWith(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -41,11 +43,11 @@ class DailyProgressCard extends HookConsumerWidget {
                       ),
                     ),
                     Text(
-                      remainingBudget > 0 
-                          ? 'remaining of ${summary.dailyLimit.toStringAsFixed(0)}g budget'
-                          : 'budget exceeded by ${(-remainingBudget).toStringAsFixed(1)}g',
+                      isOverBudget
+                          ? 'budget exceeded by ${(-actualRemaining).toStringAsFixed(1)}g'
+                          : 'remaining of ${summary.dailyLimit.toStringAsFixed(0)}g budget',
                       style: AppTextStyles.body.copyWith(
-                        color: remainingBudget > 0 ? null : AppTheme.accentRed,
+                        color: isOverBudget ? AppTheme.accentRed : null,
                       ),
                     ),
                     // Show dynamic limit indicator
@@ -69,7 +71,7 @@ class DailyProgressCard extends HookConsumerWidget {
 
   Widget _buildSugarCup(double budgetPercentage) {
     final cupFillLevel = budgetPercentage.clamp(0.0, 1.0);
-    final isOverBudget = budgetPercentage < 0;
+    final isOverBudget = budgetPercentage < 0 || budgetPercentage > 1;
     
     return SizedBox(
       width: 80, // Increased to accommodate handle
@@ -149,14 +151,14 @@ class DailyProgressCard extends HookConsumerWidget {
   }
 
   Color _getBudgetColor(double budgetPercentage) {
-    if (budgetPercentage < 0) return AppTheme.accentRed;
+    if (budgetPercentage < 0 || budgetPercentage > 1) return AppTheme.accentRed;
     if (budgetPercentage < 0.3) return AppTheme.accentOrange;
     if (budgetPercentage < 0.7) return AppTheme.textSecondary;
     return AppTheme.accentGreen;
   }
 
   Color _getSugarFillColor(double budgetPercentage) {
-    if (budgetPercentage < 0) return AppTheme.accentRed;
+    if (budgetPercentage < 0 || budgetPercentage > 1) return AppTheme.accentRed;
     if (budgetPercentage < 0.3) return AppTheme.accentOrange;
     return AppTheme.primaryBlack.withValues(alpha: 0.6);
   }
