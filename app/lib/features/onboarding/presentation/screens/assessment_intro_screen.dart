@@ -78,7 +78,7 @@ class AssessmentIntroScreen extends AppScreen {
               // Placeholder for the middle image (we'll add this later)
               Container(
                 width: double.infinity,
-                height: 300,
+                height: 200,
                 decoration: BoxDecoration(
                   color: AppTheme.accentOrange.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(16),
