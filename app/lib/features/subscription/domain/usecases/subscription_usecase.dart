@@ -11,7 +11,7 @@ import 'package:quit_suggar/core/services/logger_service.dart';
 /// - Free tier: 7-day trial + limited ongoing (3 scans/day, manual entry)
 /// - Premium: $6.99/month or $29.99/year (unlimited scans, all features)
 class SubscriptionUsecase {
-  static const int _freeTierDailyScanLimit = 3;
+  static const int _freeTierDailyScanLimit = 100;
   static const int _trialDurationDays = 7;
 
   final SubscriptionRepository _repository;

@@ -36,7 +36,6 @@ class ProductDetailsSheet extends HookWidget {
         ),
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
         children: [
           // Handle bar
           Container(
@@ -61,26 +60,27 @@ class ProductDetailsSheet extends HookWidget {
 
           const SizedBox(height: 20),
 
-          // Content
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              children: [
-                // Sugar content display
-                Container(
-                  decoration: AppCardStyles.primary,
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Sugar Content',
-                        style: AppTextStyles.heading.copyWith(
-                          fontSize: 16,
+          // Scrollable content area
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                children: [
+                  // Sugar content display
+                  Container(
+                    decoration: AppCardStyles.primary,
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Sugar Content',
+                          style: AppTextStyles.heading.copyWith(
+                            fontSize: 16,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                                              Row(
+                        const SizedBox(height: 8),
+                        Row(
                           children: [
                             Expanded(
                               child: Text(
@@ -97,55 +97,56 @@ class ProductDetailsSheet extends HookWidget {
                               ),
                           ],
                         ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
 
-                const SizedBox(height: 16),
-
-                // Smart portion selector
-                SmartPortionSelector(
-                  product: product,
-                  selectedPortion: selectedPortionState.value,
-                  onPortionChanged: (value) {
-                    selectedPortionState.value = value;
-                    onPortionChanged(value);
-                  },
-                ),
-
-                // Sugar swap suggestions (only show for high-sugar products)
-                if (showSuggestions.value && (product.sugarPer100g ?? 0.0) > 10.0) ...[
                   const SizedBox(height: 16),
-                  SugarSwapSuggestions(
-                    scannedProduct: product,
-                    onDismiss: () => showSuggestions.value = false,
+
+                  // Smart portion selector
+                  SmartPortionSelector(
+                    product: product,
+                    selectedPortion: selectedPortionState.value,
+                    onPortionChanged: (value) {
+                      selectedPortionState.value = value;
+                      onPortionChanged(value);
+                    },
                   ),
-                ],
 
-                const SizedBox(height: 20),
+                  // Sugar swap suggestions (only show for high-sugar products)
+                  if (showSuggestions.value && (product.sugarPer100g ?? 0.0) > 10.0) ...[
+                    const SizedBox(height: 16),
+                    SugarSwapSuggestions(
+                      scannedProduct: product,
+                      onDismiss: () => showSuggestions.value = false,
+                    ),
+                  ],
 
-                // Add to daily log button
-                SizedBox(
-                  width: double.infinity,
-                  child: Container(
-                    decoration: AppCardStyles.button,
-                    child: CupertinoButton(
-                      onPressed: onAddToDailyLog,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      child: Text(
-                        'Add to Daily Log',
-                        style: AppTextStyles.title.copyWith(
-                          color: AppTheme.primaryWhite,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
+                  const SizedBox(height: 20),
+
+                  // Add to daily log button
+                  SizedBox(
+                    width: double.infinity,
+                    child: Container(
+                      decoration: AppCardStyles.button,
+                      child: CupertinoButton(
+                        onPressed: onAddToDailyLog,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        child: Text(
+                          'Add to Daily Log',
+                          style: AppTextStyles.title.copyWith(
+                            color: AppTheme.primaryWhite,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
 
-                const SizedBox(height: 20),
-              ],
+                  const SizedBox(height: 20),
+                ],
+              ),
             ),
           ),
         ],

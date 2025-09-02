@@ -17,168 +17,179 @@ class SugarSwapSuggestions extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final sugarPer100g = scannedProduct.sugarPer100g ?? 0.0;
-    
+
     // Only show suggestions for high-sugar products
     if (sugarPer100g < 10.0) {
       return const SizedBox.shrink();
     }
 
     return Container(
-      margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: AppTheme.accentOrange.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: AppTheme.accentOrange,
-          width: 2,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.primaryBlack.withValues(alpha: 0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
+      decoration: AppCardStyles.primary,
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header with warning
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: AppTheme.accentOrange,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: const Icon(
-                  CupertinoIcons.lightbulb,
-                  color: AppTheme.primaryWhite,
-                  size: 16,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Sugar Swap Suggestion',
-                      style: AppTextStyles.body.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: AppTheme.accentOrange,
+          // Header with dismiss button
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppTheme.accentGreen,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: AppTheme.primaryBlack, width: 2),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppTheme.primaryBlack.withValues(alpha: 0.7),
+                        blurRadius: 0,
+                        offset: const Offset(2, 2),
                       ),
-                    ),
-                    Text(
-                      '${sugarPer100g.toStringAsFixed(1)}g sugar per 100g',
-                      style: AppTextStyles.caption.copyWith(
-                        color: AppTheme.textSecondary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              if (onDismiss != null)
-                GestureDetector(
-                  onTap: onDismiss,
-                  child: Container(
-                    padding: const EdgeInsets.all(4),
-                    child: const Icon(
-                      CupertinoIcons.xmark,
-                      size: 16,
-                      color: AppTheme.textSecondary,
-                    ),
+                    ],
+                  ),
+                  child: const Icon(
+                    CupertinoIcons.lightbulb,
+                    color: AppTheme.primaryWhite,
+                    size: 16,
                   ),
                 ),
-            ],
-          ),
-          
-          const SizedBox(height: 16),
-          
-          // Main message
-          Text(
-            _getSwapMessage(scannedProduct),
-            style: AppTextStyles.body.copyWith(
-              fontSize: 15,
-            ),
-          ),
-          
-          const SizedBox(height: 16),
-          
-          // Show 3 alternative products directly
-          Consumer(
-            builder: (context, ref, child) {
-              final recommendationsAsync = ref.watch(sugarSwapRecommendationsProvider(scannedProduct));
-              
-              return recommendationsAsync.when(
-                data: (recommendations) {
-                  if (recommendations == null || recommendations.alternatives.isEmpty) {
-                    // Fallback to static suggestions if no alternatives found
-                    return Column(
-                      children: [
-                        ..._getStaticSuggestions(scannedProduct).take(3).map((suggestion) =>
-                          _buildSuggestionItem(suggestion),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Healthier Alternatives',
+                        style: AppTextStyles.title.copyWith(
+                          fontSize: 18,
+                          color: AppTheme.primaryBlack,
                         ),
-                      ],
-                    );
-                  }
-                  
-                  // Show top 3 alternatives with product details
-                  final topAlternatives = recommendations.topAlternatives;
-                  return Column(
-                    children: topAlternatives.map((alt) => 
-                      _buildAlternativeProductCard(alt),
-                    ).toList(),
-                  );
-                },
-                loading: () => Column(
-                  children: [
-                    const CupertinoActivityIndicator(),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Finding alternatives...',
-                      style: AppTextStyles.caption.copyWith(
-                        color: AppTheme.textSecondary,
+                      ),
+                      Text(
+                        '${sugarPer100g.toStringAsFixed(1)}g sugar per 100g',
+                        style: AppTextStyles.caption.copyWith(
+                          color: AppTheme.textMuted,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (onDismiss != null)
+                  GestureDetector(
+                    onTap: onDismiss,
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: AppTheme.surfaceBackground,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: AppTheme.borderDefault,
+                          width: 2,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppTheme.primaryBlack.withValues(alpha: 0.7),
+                            blurRadius: 0,
+                            offset: const Offset(2, 2),
+                          ),
+                        ],
+                      ),
+                      child: const Icon(
+                        CupertinoIcons.xmark,
+                        size: 16,
+                        color: AppTheme.primaryBlack,
                       ),
                     ),
-                  ],
-                ),
-                error: (error, _) => Column(
-                  children: [
-                    ..._getStaticSuggestions(scannedProduct).take(3).map((suggestion) =>
-                      _buildSuggestionItem(suggestion),
-                    ),
-                  ],
-                ),
-              );
-            },
+                  ),
+              ],
+            ),
           ),
-          
-          const SizedBox(height: 16),
-          
-          // Track anyway button
-          GestureDetector(
-            onTap: () => _trackAnyway(context),
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              decoration: BoxDecoration(
-                color: AppTheme.surfaceBackground,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: AppTheme.borderDefault,
-                  width: 1,
-                ),
+
+          // Main message
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
+              _getSwapMessage(scannedProduct),
+              style: AppTextStyles.body.copyWith(
+                fontSize: 15,
+                color: AppTheme.textPrimary,
               ),
-              child: const Center(
-                child: Text(
-                  'Track Anyway',
-                  style: TextStyle(
-                    color: AppTheme.textPrimary,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // Alternatives list with horizontal scrolling
+          SizedBox(
+            height: 200,
+            child: Consumer(
+              builder: (context, ref, child) {
+                final recommendationsAsync = ref.watch(
+                  sugarSwapRecommendationsProvider(scannedProduct),
+                );
+
+                return recommendationsAsync.when(
+                  data: (recommendations) {
+                    if (recommendations == null ||
+                        recommendations.alternatives.isEmpty) {
+                      // Show message when no alternatives found
+                      return _buildNoAlternativesMessage();
+                    }
+
+                    // Show alternatives with horizontal scrolling
+                    final topAlternatives = recommendations.topAlternatives;
+                    return ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemCount: topAlternatives.length,
+                      itemBuilder: (context, index) {
+                        return _buildAlternativeProductCard(
+                          topAlternatives[index],
+                        );
+                      },
+                    );
+                  },
+                  loading: () => Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const CupertinoActivityIndicator(),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Finding alternatives...',
+                          style: AppTextStyles.caption.copyWith(
+                            color: AppTheme.textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  error: (error, _) => _buildNoAlternativesMessage(),
+                );
+              },
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // Track anyway button
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: GestureDetector(
+              onTap: () => _trackAnyway(context),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                decoration: AppCardStyles.primary,
+                child: Center(
+                  child: Text(
+                    'Track Anyway',
+                    style: AppTextStyles.button.copyWith(
+                      color: AppTheme.textPrimary,
+                      fontSize: 14,
+                    ),
                   ),
                 ),
               ),
@@ -189,115 +200,157 @@ class SugarSwapSuggestions extends HookConsumerWidget {
     );
   }
 
-  Widget _buildSuggestionItem(String suggestion) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            margin: const EdgeInsets.only(top: 6),
-            width: 6,
-            height: 6,
-            decoration: BoxDecoration(
-              color: AppTheme.accentOrange,
-              shape: BoxShape.circle,
+  Widget _buildNoAlternativesMessage() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: AppTheme.accentGreen.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppTheme.accentGreen, width: 2),
+              ),
+              child: const Icon(
+                CupertinoIcons.lightbulb,
+                color: AppTheme.accentGreen,
+                size: 32,
+              ),
             ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              suggestion,
+            const SizedBox(height: 16),
+            Text(
+              'No alternatives found',
+              style: AppTextStyles.title.copyWith(
+                fontSize: 16,
+                color: AppTheme.textPrimary,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Try searching for similar products with less sugar',
               style: AppTextStyles.body.copyWith(
                 fontSize: 14,
                 color: AppTheme.textSecondary,
               ),
+              textAlign: TextAlign.center,
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildAlternativeProductCard(dynamic alternative) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Row(
+    return Container(
+      width: 200,
+      margin: const EdgeInsets.only(right: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: AppCardStyles.elevated,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Product icon
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: AppTheme.progressGreen.withValues(alpha: 0.1),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              CupertinoIcons.checkmark_alt,
-              size: 20,
-              color: AppTheme.progressGreen,
-            ),
-          ),
-          
-          const SizedBox(width: 12),
-          
-          // Product details
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  alternative.product.name,
-                  style: AppTextStyles.body.copyWith(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 15,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                
-                const SizedBox(height: 2),
-                
-                Text(
-                  '${alternative.alternativeSugar.toStringAsFixed(1)}g sugar per 100g',
-                  style: AppTextStyles.caption.copyWith(
-                    color: AppTheme.textMuted,
-                    fontSize: 13,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          
-          // Sugar reduction info
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
+          // Product image with overlay badge
+          Stack(
             children: [
-              Text(
-                'Save ${alternative.sugarReduction.toStringAsFixed(1)}g',
-                style: AppTextStyles.body.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: AppTheme.progressGreen,
-                  fontSize: 14,
+              Container(
+                width: double.infinity,
+                height: 100, // Slightly reduced height
+                decoration: BoxDecoration(
+                  color: AppTheme.accentGreen.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
                 ),
+                child: alternative.product.imageUrl != null
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(6),
+                        child: Image.network(
+                          alternative.product.imageUrl!,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return _buildProductPlaceholder();
+                          },
+                        ),
+                      )
+                    : _buildProductPlaceholder(),
               ),
-              Text(
-                '${alternative.sugarReductionPercent.toStringAsFixed(0)}% less',
-                style: AppTextStyles.caption.copyWith(
-                  color: AppTheme.progressGreen,
-                  fontSize: 12,
+              // Savings badge overlay on top right
+              Positioned(
+                top: 2,
+                right: 2,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppTheme.accentGreen.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(color: AppTheme.accentGreen, width: 1),
+                  ),
+                  child: Text(
+                    'Save ${alternative.sugarReduction.toStringAsFixed(1)}g',
+                    style: AppTextStyles.caption.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: AppTheme.accentGreen,
+                      fontSize: 12,
+                    ),
+                  ),
                 ),
               ),
             ],
           ),
+
+          const SizedBox(height: 12),
+
+          // Product name
+          Text(
+            alternative.product.name,
+            style: AppTextStyles.body.copyWith(
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+
+          const SizedBox(height: 4),
+
+          // Sugar content
+          Text(
+            '${alternative.alternativeSugar.toStringAsFixed(1)}g per 100g',
+            style: AppTextStyles.caption.copyWith(
+              color: AppTheme.textMuted,
+              fontSize: 12,
+            ),
+          ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildProductPlaceholder() {
+    return Container(
+      width: double.infinity,
+      height: 100, // Match the image height
+      decoration: BoxDecoration(
+        color: AppTheme.accentGreen.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(6),
+        // No border as requested
+      ),
+      child: const Icon(
+        CupertinoIcons.cube,
+        color: AppTheme.accentGreen,
+        size: 24,
       ),
     );
   }
 
   String _getSwapMessage(ProductInfo product) {
     final sugar = product.sugarPer100g ?? 0.0;
-    
+
     if (sugar >= 25.0) {
       return 'This is very high in sugar! Consider these healthier alternatives:';
     } else if (sugar >= 15.0) {
@@ -306,65 +359,6 @@ class SugarSwapSuggestions extends HookConsumerWidget {
       return 'Looking for something with even less sugar? Try these:';
     }
   }
-
-  List<String> _getStaticSuggestions(ProductInfo product) {
-    final productName = product.name.toLowerCase();
-    
-    // Basic category-based suggestions
-    if (productName.contains('soda') || productName.contains('cola') || productName.contains('soft drink')) {
-      return [
-        'Try sparkling water with a splash of fruit juice',
-        'Zero-sugar sodas or diet versions',
-        'Flavored sparkling water (LaCroix, Perrier)',
-        'Homemade iced tea with stevia',
-      ];
-    }
-    
-    if (productName.contains('juice') || productName.contains('drink')) {
-      return [
-        'Dilute with sparkling water (50/50 mix)',
-        'Fresh fruit infused water',
-        'Unsweetened tea or coffee',
-        'Low-sugar vegetable juices',
-      ];
-    }
-    
-    if (productName.contains('yogurt') || productName.contains('yoghurt')) {
-      return [
-        'Plain Greek yogurt with fresh berries',
-        'Unsweetened yogurt with a drizzle of honey',
-        'Plant-based unsweetened yogurt',
-        'Cottage cheese with fruit',
-      ];
-    }
-    
-    if (productName.contains('cereal') || productName.contains('granola')) {
-      return [
-        'Low-sugar cereals (check labels for <6g sugar)',
-        'Plain oatmeal with fresh fruit',
-        'Homemade granola with nuts and seeds',
-        'Whole grain cereals without added sugar',
-      ];
-    }
-    
-    if (productName.contains('cookie') || productName.contains('biscuit') || productName.contains('candy')) {
-      return [
-        'Fresh fruit (apple, berries, orange)',
-        'Nuts and seeds mix',
-        'Dark chocolate (85%+ cacao)',
-        'Homemade energy balls with dates',
-      ];
-    }
-    
-    // Default suggestions
-    return [
-      'Look for "no added sugar" or "unsweetened" versions',
-      'Try the same product in smaller portions',
-      'Consider natural alternatives without artificial sweeteners',
-      'Check if there\'s a diet or light version available',
-    ];
-  }
-
 
   void _trackAnyway(BuildContext context) {
     // Close the suggestions and proceed with tracking
