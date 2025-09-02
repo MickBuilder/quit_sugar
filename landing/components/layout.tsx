@@ -5,22 +5,29 @@ import { Button } from "@/components/ui/button";
 
 interface LayoutProps {
   children: React.ReactNode;
-  currentPage?: 'home' | 'blog' | 'privacy';
+  currentPage?: 'home' | 'blog' | 'privacy' | 'support';
 }
 
 export default function Layout({ children, currentPage = 'home' }: LayoutProps) {
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
       {/* Navigation */}
       <nav className="flex items-center justify-between p-3 lg:p-4 border-b-2 border-border">
         <div className="flex items-center space-x-8">
-          <Link href="/" className="text-foreground hover:text-accent transition-colors font-medium">
+          <Link href="/" className={`transition-colors font-medium ${
+            currentPage === 'home' ? 'text-accent' : 'text-foreground hover:text-accent'
+          }`}>
             Home
           </Link>
           <Link href="/blog" className={`transition-colors font-medium ${
             currentPage === 'blog' ? 'text-accent' : 'text-foreground hover:text-accent'
           }`}>
             Blog
+          </Link>
+          <Link href="/support" className={`transition-colors font-medium ${
+            currentPage === 'support' ? 'text-accent' : 'text-foreground hover:text-accent'
+          }`}>
+            Support
           </Link>
         </div>
         
@@ -43,11 +50,13 @@ export default function Layout({ children, currentPage = 'home' }: LayoutProps) 
         </Button>
       </nav>
 
-      {/* Main Content */}
-      {children}
+      {/* Main Content - Flex grow to push footer down */}
+      <main className="flex-1">
+        {children}
+      </main>
 
-      {/* Footer */}
-      <footer className="bg-muted py-4">
+      {/* Footer - Always at bottom */}
+      <footer className="bg-muted py-4 mt-auto">
         <div className="container mx-auto px-3 lg:px-4">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="flex items-center space-x-2">
