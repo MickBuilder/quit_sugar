@@ -61,7 +61,7 @@ export default function Home() {
             className="inline-block"
           >
             <Image 
-              src="/images/appstore.png" 
+              src="/images/apple-download-black-btn.svg" 
               alt="Download on the App Store" 
               width={140} 
               height={42}
@@ -75,7 +75,7 @@ export default function Home() {
             className="inline-block"
           >
             <Image 
-              src="/images/playstore.png" 
+              src="/images/google-play-button.png" 
               alt="Get it on Google Play" 
               width={140} 
               height={42}
