@@ -46,8 +46,17 @@ export default function RootLayout({
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
               gtag('config', 'G-VLPXJHB3PY');
+              
+              // Debug: Log to console when GA loads
+              console.log('Google Analytics loaded with ID: G-VLPXJHB3PY');
             `,
           }}
+        />
+        {/* Umami Analytics */}
+        <script 
+          defer 
+          src="https://apps-analytics-umami.mikebapps.com/script.js" 
+          data-website-id="31fa9080-4c9a-4df4-93ac-b622f3a84ba3"
         />
       </head>
       <body
