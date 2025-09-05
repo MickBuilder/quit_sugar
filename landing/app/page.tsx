@@ -55,7 +55,7 @@ export default function Home() {
         {/* Download Buttons */}
         <div id="download-buttons" className="flex justify-center space-x-6 mb-6">
           <a 
-            href="https://apps.apple.com/app/sugaddict" 
+            href="https://apps.apple.com/us/app/sugaddict/id6751548010" 
             target="_blank" 
             rel="noopener noreferrer"
             className="inline-block"
